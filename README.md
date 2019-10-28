@@ -1,2 +1,2 @@
 # Frida ios hook
-A script help you to trace class - function and modify value of methods
+A script that helps you trace classes, functions, and modify the return values of methods
