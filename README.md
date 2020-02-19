@@ -29,7 +29,7 @@ Updated some frida scripts to help you with the pentest ios app
 ## Usage
 1. Git clone https://github.com/noobpk/frida-ios-hook
 1. cd frida-ios-hook/
-1. python3 hook.py package script
+1. ```python3 hook.py <package> <script>```
 
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
