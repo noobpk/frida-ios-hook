@@ -1,0 +1,15 @@
+frida-tools
+time
+os
+sys
+optparse
+threading
+codecs
+shutil
+tempfile
+subprocess
+re
+paramiko
+scp
+tqdm
+traceback
