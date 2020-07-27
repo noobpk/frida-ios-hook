@@ -1,6 +1,6 @@
 # Frida ios hook
 A script that helps you trace classes, functions, and modify the return values of methods
-
+<img width="930" alt="image" src="https://user-images.githubusercontent.com/31820707/88503076-d628e780-cffa-11ea-8e1e-82c36cea687a.png">
 ## Update
 
 [Version: 2.1]
@@ -40,4 +40,3 @@ Updated some frida scripts to help you with the pentest ios app
 
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
-
