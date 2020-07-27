@@ -142,8 +142,8 @@ def main():
                     action="store_true", help="List the installed apps", dest="listapp")    
     options, args = parser.parse_args()
     try:
-        device = get_usb_iphone()
         if options.listapp:
+            device = get_usb_iphone()
             list_applications(device)
 
         elif options.package and options.script:
