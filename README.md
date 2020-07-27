@@ -1,5 +1,6 @@
 # Frida ios hook
 A script that helps you trace classes, functions, and modify the return values of methods on iOS platform
+For Android platform: https://github.com/noobpk/frida-android-hook
 <img width="930" alt="image" src="https://user-images.githubusercontent.com/31820707/88503076-d628e780-cffa-11ea-8e1e-82c36cea687a.png">
 ## Update
 
