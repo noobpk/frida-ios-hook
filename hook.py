@@ -15,155 +15,108 @@ from paramiko import SSHClient
 from scp import SCPClient
 from tqdm import tqdm
 import traceback
-
+from module.listapp import *
 
 print ('''\033[1;31m \n
-_|      _|                      _|                  _|      
-_|_|    _|    _|_|      _|_|    _|_|_|    _|_|_|    _|  _|  
-_|  _|  _|  _|    _|  _|    _|  _|    _|  _|    _|  _|_|    
-_|    _|_|  _|    _|  _|    _|  _|    _|  _|    _|  _|  _|  
-_|      _|    _|_|      _|_|    _|_|_|    _|_|_|    _|    _|
-        https://noobpk.github.io          _|                 
-Trace Class/Func & Modify Return Value    _|   #noobteam
+_|    _|_|      _|_|_|      _|    _|                      _|        
+    _|    _|  _|            _|    _|    _|_|      _|_|    _|  _|    
+_|  _|    _|    _|_|        _|_|_|_|  _|    _|  _|    _|  _|_|      
+_|  _|    _|        _|      _|    _|  _|    _|  _|    _|  _|  _|    
+_|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|  
+                https://noobpk.github.io          #noobteam      
+            Trace Class/Func & Modify Return Value  
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 2.1\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.0\033[1;37m")
 print ("")
 
-def get_usb_iphone():
-    Type = 'usb'
-    if int(frida.__version__.split('.')[0]) < 12:
-        Type = 'tether'
-    device_manager = frida.get_device_manager()
-    changed = threading.Event()
-
-    def on_changed():
-        changed.set()
-
-    device_manager.on('changed', on_changed)
-
-    device = None
-    while device is None:
-        devices = [dev for dev in device_manager.enumerate_devices() if dev.type == Type]
-        if len(devices) == 0:
-            print('Waiting for USB device...')
-            changed.wait()
-        else:
-            device = devices[0]
-
-    device_manager.off('changed', on_changed)
-
-    return device
-
-def compare_applications(a, b):
-    a_is_running = a.pid != 0
-    b_is_running = b.pid != 0
-    if a_is_running == b_is_running:
-        if a.name > b.name:
-            return 1
-        elif a.name < b.name:
-            return -1
-        else:
-            return 0
-    elif a_is_running:
-        return -1
-    else:
-        return 1
-
-def cmp_to_key(mycmp):
-    """Convert a cmp= function into a key= function"""
-
-    class K:
-        def __init__(self, obj):
-            self.obj = obj
-
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0
-
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-
-    return K
-
-def get_applications(device):
-    try:
-        applications = device.enumerate_applications()
-    except Exception as e:
-        sys.exit('Failed to enumerate applications: %s' % e)
-
-    return applications
-
-def list_applications(device):
-    applications = get_applications(device)
-
-    if len(applications) > 0:
-        pid_column_width = max(map(lambda app: len('{}'.format(app.pid)), applications))
-        name_column_width = max(map(lambda app: len(app.name), applications))
-        identifier_column_width = max(map(lambda app: len(app.identifier), applications))
-    else:
-        pid_column_width = 0
-        name_column_width = 0
-        identifier_column_width = 0
-
-    header_format = '%' + str(pid_column_width) + 's  ' + '%-' + str(name_column_width) + 's  ' + '%-' + str(
-        identifier_column_width) + 's'
-    print(header_format % ('PID', 'Name', 'Identifier'))
-    print('%s  %s  %s' % (pid_column_width * '-', name_column_width * '-', identifier_column_width * '-'))
-    line_format = '%' + str(pid_column_width) + 's  ' + '%-' + str(name_column_width) + 's  ' + '%-' + str(
-        identifier_column_width) + 's'
-    for application in sorted(applications, key=cmp_to_key(compare_applications)):
-        if application.pid == 0:
-            print(line_format % ('-', application.name, application.identifier))
-        else:
-            print(line_format % (application.pid, application.name, application.identifier))
-
 def main():
-    usage = "Usage: python3 %prog [options] arg\n\rExample: python3 hook.py -p com.apple.AppStore -s trace_class.js"
+    usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -s trace_class.js\n\n\r[>] Example for attach app with -m(--method) options:\npython3 hook.py -n App Store -m app_info"
     parser = optparse.OptionParser(usage,add_help_option=False)
     parser.add_option('-h', "--help", action="help", dest="help", help="Show basic help message and exit")
+    #Using options -p(--package) for spawn application and load script
     parser.add_option("-p", "--package", dest="package",
-                    help="Bundle identifier of the target app", metavar="PACKAGE", action="store", type="string")
+                    help="Identifier of the target app", metavar="PACKAGE", action="store", type="string")
     parser.add_option("-s", "--script", dest="script",
                     help="Frida Script Hooking", metavar="SCIPRT.JS")
-    parser.add_option("-l", "--list",
-                    action="store_true", help="List the installed apps", dest="listapp")    
+    #Using options -n(--name) for attach script to application is running
+    parser.add_option("-n", "--name", dest="name",
+                    help="Name of the target app", metavar="NAME", action="store", type="string")                
+    parser.add_option("-m", "--method", dest="method", type="choice", choices=['app_static','bypass_jb','bypass_ssl'],
+                    help="__app_static: Static Ananlysis Application\n\r__bypass_jb: Bypass Jailbreak Detection   \n\r__bypass_ssl: Bypass SSL Pinning", metavar="<app_static | bypass_jb | bypass_ssl>")
+    #Some options to get info from device and applications
+    parser.add_option("--listdevices",
+                    action="store_true", help="List All Devices", dest="listdevices")
+    parser.add_option("--listapp",
+                    action="store_true", help="List The Installed apps", dest="listapp")
+    parser.add_option("--listappinfo",
+                    action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")                   
     options, args = parser.parse_args()
     try:
-        if options.listapp:
+        if options.listdevices:
+            print('[*] List All Devices: ')
+            os.system('frida-ls-devices')
+
+        elif options.listapp:
             device = get_usb_iphone()
             list_applications(device)
 
+        elif options.listappinfo:
+            print('[*] List Info of Apps on Itunes: ')
+            process = 'itunesstored'
+            method = "method/ios_list_apps.js"
+            os.system('frida -U -n '+ process + ' -l ' + method)
+            #sys.stdin.read()
+
+        #Spawning application and load script
         elif options.package and options.script:
             print('[*] Spawning: ' + options.package)
             print('[*] Script: ' + options.script)
+            time.sleep(2)
             pid = frida.get_usb_device().spawn(options.package)
             session = frida.get_usb_device().attach(pid)
             hook = open(options.script, 'r')
             script = session.create_script(hook.read())
             script.load()
             frida.get_usb_device().resume(pid)
-            print('---------------Hook---Done---------------')
+            print('-----------Hook---Done!!--------')
             sys.exit(0)
+
+        #Attaching script to application
+        elif options.name and options.script:
+            print('[*] Attaching: ' + options.name)
+            print('[*] Script: ' + options.script)
+            time.sleep(2)
+            process = frida.get_usb_device().attach(options.name)
+            hook = open(options.script, 'r')
+            script = process.create_script(hook.read())
+            script.load()
+            sys.stdin.read()
+
+        #Static Analysis Application
+        elif options.name and options.method == "app_static":
+            print('[*] Attaching: ' + options.name)
+            print('[*] Method: ' + options.method)
+            time.sleep(2)
+            process = frida.get_usb_device().attach(options.name)
+            method = open("method/static_analysis.js", 'r')
+            script = process.create_script(method.read())
+            script.load()
+            sys.stdin.read()
+        
+        elif options.name and options.method == "bypass_jb":
+            print('[!] The Method Is Updating!!')
+
+        elif options.name and options.method == "bypass_ssl":
+            print('[!] The Method Is Updating!!')
 
         else:
             print("[-] specify the options. use (-h) for more help!")
             sys.exit(0)
 
     except KeyboardInterrupt:
-        print("[] Bye!!")
+        print("[-] Bye bro!!")
         sys.exit(0)
 
 if __name__ == '__main__':

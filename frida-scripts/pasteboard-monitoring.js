@@ -1,19 +1,14 @@
-function start_pasteboard_monitoring(interval_value)
-{
+function start_pasteboard_monitoring(interval_value) {
     var pasteboard = (ObjC.classes.UIPasteboard).generalPasteboard();
     var latest_word = "";
-    setInterval(function(){
-        try
-        {
+    setInterval(function() {
+        try {
             var on_pasteboard = pasteboard.string().toString()
-            if(on_pasteboard != latest_word)
-            {
-                console.log("[*] Found on pasteboard: "+ on_pasteboard);
+            if (on_pasteboard != latest_word) {
+                console.log("[*] Found on pasteboard: " + on_pasteboard);
                 latest_word = on_pasteboard;
             }
-        }
-        catch(err)
-        {
+        } catch (err) {
             a = "";
         }
     }, interval_value);

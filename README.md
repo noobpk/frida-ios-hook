@@ -6,35 +6,41 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 <img width="930" alt="image" src="https://user-images.githubusercontent.com/31820707/88503076-d628e780-cffa-11ea-8e1e-82c36cea687a.png">
 ## Update
 
-[Version: 2.1]
+[Version: 3.0]
 
-​	[+] Update new command usage
+​	[+] Update new interface and command usage
 
-​	[+] New feature: Can list installed apps in phone
+​	[+] New feature:
+        [+] Add new options: 
+            [-] -n(--name) for attach function in frida
+            [-] -m(--method) using for option -n(--name)
+            [-] --listdevices : List All Devices
+            [-] --listappinfo : List Information of All Apps install on Itunes
 
-Updated some frida scripts to help you with the pentest ios app
+Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
 
-|Script Name| Script Description|
-|:---|:---|
-|bypass-jailbreak-1.js|Basic bypass jailbreak detection|
-|dump-ios-url-scheme.js|Dump iOS url scheme when "openURL" is called|
-|dump-ui.js|Dump the current on-screen User Interface structure|
-|find-all-classes.js|Dump all classes used by the app|
-|find-all-methods-all-classes.js|Dump all methods inside all classes|
-|find-specific-method.js|Find a specific method in all classes|
-|frida_python_script.py|Python script to run Frida scripts|
-|frida_without_jailbreak_ipa.png|Screenshot from Reddit for using Frida without jailbreak|
-|hook-all-methods-of-specific-class.js|Hook all the methods of a particular class|
-|hook-specific-method-of-class.js|Hook a particular method of a specific class|
-|ios-app-static-analysis.js|iOS app static analysis|
-|pasteboard-monitoring.js|Monitor usage of pasteboard. Useful to show lack of secure attribute on sensitive fields allowing data copying.|
-|read-nsuserdefaults.js|Show contents fo NSUserDefaults|
-|show-all-methods-of-specific-class.js|Dump all methods of a particular class|
-|show-argument-type-count-and-return-value-type.js|Show argument type & count and type of return value for a function in a class|
-|show-instance-variables-for-specific-class.js|Show all instance variables of a particular class|
-|show-modify-function-arguments.js|Show and modify arguments of a function inside a class|
-|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
-|show_binarycookies.js|Show contents of Cookies.binarycookies file|
+|Spawn/Attach|Script Name| Script Description|
+|:---|:---|:---|
+|S|bypass-jailbreak-1.js|Basic bypass jailbreak detection|
+|S|dump-ios-url-scheme.js|Dump iOS url scheme when "openURL" is called|
+|S|dump-ui.js|Dump the current on-screen User Interface structure|
+|S+A|find-all-classes.js|Dump all classes used by the app|
+|S+A|find-all-methods-all-classes.js|Dump all methods inside all classes|
+|S+A|find-specific-method.js|Find a specific method in all classes|
+|S+A|frida_without_jailbreak_ipa.png|Screenshot from Reddit for using Frida without jailbreak|
+|S+A|hook-all-methods-of-specific-class.js|Hook all the methods of a particular class|
+|S+A|hook-specific-method-of-class.js|Hook a particular method of a specific class|
+|S+A|ios-app-static-analysis.js|iOS app static analysis|
+|S+A|ios-list-apps.js|iOS list information application|
+|S+A|ios-url-scheme-fuzzing.js|iOS url scheme fuzzing|
+|S|pasteboard-monitoring.js|Monitor usage of pasteboard. Useful to show lack of secure attribute on sensitive fields allowing data copying.|
+|A|read-nsuserdefaults.js|Show contents fo NSUserDefaults|
+|S+A|show-all-methods-of-specific-class.js|Dump all methods of a particular class|
+|S+A|show-argument-type-count-and-return-value-type.js|Show argument type & count and type of return value for a function in a class|
+|S+A|show-instance-variables-for-specific-class.js|Show all instance variables of a particular class|
+|S+A|show-modify-function-arguments.js|Show and modify arguments of a function inside a class|
+|S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
+|A|show_binarycookies.js|Show contents of Cookies.binarycookies file|
 
 ## Usage
 1. Git clone https://github.com/noobpk/frida-ios-hook
