@@ -11,10 +11,15 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 ​	[+] Update new interface and command usage
 
 ​	[+] New feature:
+
         [+] Add new options: 
+        
             [-] -n(--name) for attach function in frida
+            
             [-] -m(--method) using for option -n(--name)
+            
             [-] --listdevices : List All Devices
+            
             [-] --listappinfo : List Information of All Apps install on Itunes
 
 Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
