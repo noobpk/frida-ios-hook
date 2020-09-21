@@ -32,7 +32,6 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |S+A|find-all-classes.js|Dump all classes used by the app|
 |S+A|find-all-methods-all-classes.js|Dump all methods inside all classes|
 |S+A|find-specific-method.js|Find a specific method in all classes|
-|S+A|frida_without_jailbreak_ipa.png|Screenshot from Reddit for using Frida without jailbreak|
 |S+A|hook-all-methods-of-specific-class.js|Hook all the methods of a particular class|
 |S+A|hook-specific-method-of-class.js|Hook a particular method of a specific class|
 |S+A|ios-app-static-analysis.js|iOS app static analysis|
