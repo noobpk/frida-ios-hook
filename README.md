@@ -3,10 +3,10 @@ A script that helps you trace classes, functions, and modify the return values o
 
 For Android platform: https://github.com/noobpk/frida-android-hook
 
-<img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/89362090-2983ef80-d6f7-11ea-9f53-e28e3120be5e.png">
+<img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/97841353-3aed8f80-1d18-11eb-9047-b31cad44b0c0.png">
 ## Update
 
-[Version: 3.0]
+[Version: 3.1]
 
 ​	[+] Update new interface and command usage
 
@@ -21,6 +21,8 @@ For Android platform: https://github.com/noobpk/frida-android-hook
             [-] --listdevices : List All Devices
             
             [-] --listappinfo : List Information of All Apps install on Itunes
+            
+            [-] --listscripts : List All Scripts
 
 Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
 
