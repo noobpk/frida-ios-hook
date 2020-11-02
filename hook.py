@@ -9,6 +9,7 @@ import shutil
 import tempfile
 import subprocess
 import re
+import fnmatch
 
 import paramiko
 from paramiko import SSHClient
@@ -28,30 +29,41 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.0\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.1\033[1;37m")
 print ("")
 
 def main():
-    usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -s trace_class.js\n\n\r[>] Example for attach app with -m(--method) options:\npython3 hook.py -n App Store -m app_info"
+    usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -m app-static"
     parser = optparse.OptionParser(usage,add_help_option=False)
+    info = optparse.OptionGroup(parser,"Information:")
+    quick = optparse.OptionGroup(parser,"Quick Method:")
+
     parser.add_option('-h', "--help", action="help", dest="help", help="Show basic help message and exit")
     #Using options -p(--package) for spawn application and load script
     parser.add_option("-p", "--package", dest="package",
                     help="Identifier of the target app", metavar="PACKAGE", action="store", type="string")
-    parser.add_option("-s", "--script", dest="script",
-                    help="Frida Script Hooking", metavar="SCIPRT.JS")
     #Using options -n(--name) for attach script to application is running
     parser.add_option("-n", "--name", dest="name",
-                    help="Name of the target app", metavar="NAME", action="store", type="string")                
-    parser.add_option("-m", "--method", dest="method", type="choice", choices=['app_static','bypass_jb','bypass_ssl'],
-                    help="__app_static: Static Ananlysis Application\n\r__bypass_jb: Bypass Jailbreak Detection   \n\r__bypass_ssl: Bypass SSL Pinning", metavar="<app_static | bypass_jb | bypass_ssl>")
+                    help="Name of the target app", metavar="NAME", action="store", type="string")
+
+    parser.add_option("-s", "--script", dest="script",
+                    help="Frida Script Hooking", metavar="SCIPRT.JS")
+
+    quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl'],
+                    help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-s)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-s)", metavar="<app-static | bypass-jb | bypass-ssl>")
     #Some options to get info from device and applications
-    parser.add_option("--listdevices",
+    info.add_option("--listdevices",
                     action="store_true", help="List All Devices", dest="listdevices")
-    parser.add_option("--listapp",
+    info.add_option("--listapp",
                     action="store_true", help="List The Installed apps", dest="listapp")
-    parser.add_option("--listappinfo",
-                    action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")                   
+    info.add_option("--listappinfo",
+                    action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")
+    info.add_option("--listscripts",
+                    action="store_true", help="List All Scripts", dest="listscripts")
+
+    parser.add_option_group(info)
+    parser.add_option_group(quick)
+
     options, args = parser.parse_args()
     try:
         if options.listdevices:
@@ -68,6 +80,12 @@ def main():
             method = "method/ios_list_apps.js"
             os.system('frida -U -n '+ process + ' -l ' + method)
             #sys.stdin.read()
+        
+        elif options.listscripts:
+            print('[*] List All Scripts: ')
+            for file_name in os.listdir('frida-scripts/'):
+                if fnmatch.fnmatch(file_name, '*.js'):
+                    print('[*]' + file_name)
 
         #Spawning application and load script
         elif options.package and options.script:
@@ -95,7 +113,7 @@ def main():
             sys.stdin.read()
 
         #Static Analysis Application
-        elif options.name and options.method == "app_static":
+        elif options.name and options.method == "app-static":
             print('[*] Attaching: ' + options.name)
             print('[*] Method: ' + options.method)
             time.sleep(2)
@@ -105,11 +123,17 @@ def main():
             script.load()
             sys.stdin.read()
         
-        elif options.name and options.method == "bypass_jb":
+        elif options.name and options.method == "bypass-jb":
             print('[!] The Method Is Updating!!')
 
-        elif options.name and options.method == "bypass_ssl":
-            print('[!] The Method Is Updating!!')
+        #Bypass SSL Pinning
+        elif options.package and options.method == "bypass-ssl":
+            print('[*] Bypass SSL Pinning: ')
+            print('[*] Spawning: ' + options.package)
+            method = "method/bypass_ssl.js"
+            print('[*] Script: ' + method)
+            os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
+            #sys.stdin.read()
 
         else:
             print("[-] specify the options. use (-h) for more help!")

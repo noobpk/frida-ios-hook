@@ -45,6 +45,7 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |S+A|show-modify-function-arguments.js|Show and modify arguments of a function inside a class|
 |S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
 |A|show_binarycookies.js|Show contents of Cookies.binarycookies file|
+|S|bypass-ssl-ios13.js|iOS13 bypass ssl pinning|
 
 ## Usage
 1. Git clone https://github.com/noobpk/frida-ios-hook
