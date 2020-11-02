@@ -6,7 +6,7 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 <img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/97841353-3aed8f80-1d18-11eb-9047-b31cad44b0c0.png">
 ## Update
 
-[Version: 3.1]
+[Version: 3.2]
 
 ​	[+] Update new interface and command usage
 
@@ -23,6 +23,10 @@ For Android platform: https://github.com/noobpk/frida-android-hook
             [-] --listappinfo : List Information of All Apps install on Itunes
             
             [-] --listscripts : List All Scripts
+
+            [-] Update script for trace_class, trace_method, return_value
+
+            [-] Add new script hooking.js
 
 Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
 
@@ -52,7 +56,7 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 ## Usage
 1. Git clone https://github.com/noobpk/frida-ios-hook
 1. cd frida-ios-hook/
-1. ```python3 hook.py -p <package> -s <script>```
+1. ```python3 hook.py --help(-h)```
 
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```

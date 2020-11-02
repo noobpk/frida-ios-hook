@@ -98,8 +98,7 @@ def main():
             script = session.create_script(hook.read())
             script.load()
             frida.get_usb_device().resume(pid)
-            print('-----------Hook---Done!!--------')
-            sys.exit(0)
+            sys.stdin.read()
 
         #Attaching script to application
         elif options.name and options.script:
