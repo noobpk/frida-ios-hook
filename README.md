@@ -6,7 +6,7 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 <img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/97841353-3aed8f80-1d18-11eb-9047-b31cad44b0c0.png">
 ## Update
 
-[Version: 3.2]
+[Version: 3.2a]
 
 ​	[+] Update new interface and command usage
 
@@ -18,15 +18,17 @@ For Android platform: https://github.com/noobpk/frida-android-hook
             
             [-] -m(--method) using for option -n(--name)
             
-            [-] --listdevices : List All Devices
+            [-] --list-devices : List All Devices
             
-            [-] --listappinfo : List Information of All Apps install on Itunes
+            [-] --list-appinfo : List Information of All Apps install on Itunes
             
-            [-] --listscripts : List All Scripts
+            [-] --list-scripts : List All Scripts
 
             [-] Update script for trace_class, trace_method, return_value
 
             [-] Add new script hooking.js
+
+            [-] Add Log Hander
 
 Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
 

@@ -30,14 +30,14 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.1a\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.2a\033[1;37m")
 print ("")
 
 def main():
 
     try:
 
-        usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\npython3 hook.py -p com.apple.AppStore [-n App Store] -m app-static"
+        usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore / [-n App Store] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\npython3 hook.py -p com.apple.AppStore / [-n App Store] -m app-static"
         parser = optparse.OptionParser(usage,add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
         quick = optparse.OptionGroup(parser,"Quick Method")
@@ -54,12 +54,12 @@ def main():
                         help="Frida Script Hooking", metavar="SCIPRT.JS")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-s)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-s)", metavar="<app-static | bypass-jb | bypass-ssl>")
+                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)", metavar="app-static / bypass-jb / bypass-ssl")
         #Some options to get info from device and applications
-        info.add_option("--listdevices",
+        info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
         info.add_option("--list-apps",
-                        action="store_true", help="List The Installed apps", dest="listapp")
+                        action="store_true", help="List The Installed apps", dest="listapps")
         info.add_option("--list-appinfo",
                         action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")
         info.add_option("--list-scripts",
@@ -70,39 +70,47 @@ def main():
 
         options, args = parser.parse_args()
 
+        methods = [
+            "method/ios_list_apps.js",
+            "method/static_analysis.js",
+            "method/bypass_ssl.js",
+            "method/bypass_jailbreak.js"
+        ]
+
         if options.listdevices:
-            print('[*] List All Devices: ')
+            logger.info('[*] List All Devices: ')
             os.system('frida-ls-devices')
 
-        elif options.listapp:
+        elif options.listapps:
+            logger.info('[*] List All Apps on Devies: ')
             device = get_usb_iphone()
             list_applications(device)
 
         elif options.listappinfo:
-            method = 'method/ios_list_apps.js'
+            method = methods[0]
             if os.path.isfile(method):
-                print('[*] List Info of Apps on Itunes: ')
+                logger.info('[*] List Info of Apps on Itunes: ')
                 process = 'itunesstored'
                 os.system('frida -U -n '+ process + ' -l ' + method)
                 #sys.stdin.read()
             else:
-                logger.error('Script not found!')
+                logger.error('[?] Script not found!')
         
         elif options.listscripts:
             path = 'frida-scripts/'
             if os.path.exists(path):
-                print('[*] List All Scripts: ')
+                logger.info('[*] List All Scripts: ')
                 for file_name in os.listdir(path):
                     if fnmatch.fnmatch(file_name, '*.js'):
-                        print('[*]' + file_name)
+                        print('[*] ' + file_name)
             else:
-                logger.error('Path frida-script not exists!')
+                logger.error('[?] Path frida-script not exists!')
 
         #Spawning application and load script
         elif options.package and options.script:
             if os.path.isfile(options.script):
-                print('[*] Spawning: ' + options.package)
-                print('[*] Script: ' + options.script)
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
                 pid = frida.get_usb_device().spawn(options.package)
                 session = frida.get_usb_device().attach(pid)
@@ -112,13 +120,13 @@ def main():
                 frida.get_usb_device().resume(pid)
                 sys.stdin.read()
             else:
-                logger.error('Script not found!')
+                logger.error('[?] Script not found!')
 
         #Attaching script to application
         elif options.name and options.script:
             if os.path.isfile(options.script):
-                print('[*] Attaching: ' + options.name)
-                print('[*] Script: ' + options.script)
+                logger.info('[*] Attaching: ' + options.name)
+                logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
                 process = frida.get_usb_device().attach(options.name)
                 hook = open(options.script, 'r')
@@ -126,14 +134,14 @@ def main():
                 script.load()
                 sys.stdin.read()
             else:
-                logger.error('Script not found!')
+                logger.error('[?] Script not found!')
 
         #Static Analysis Application
         elif options.name and options.method == "app-static":
-            method = 'method/static_analysis.js'
+            method = methods[1]
             if os.path.isfile(method):
-                print('[*] Attaching: ' + options.name)
-                print('[*] Method: ' + options.method)
+                logger.info('[*] Attaching: ' + options.name)
+                logger.info('[*] Method: ' + options.method)
                 time.sleep(2)
                 process = frida.get_usb_device().attach(options.name)
                 method = open(method, 'r')
@@ -141,28 +149,28 @@ def main():
                 script.load()
                 sys.stdin.read()
             else:
-                logger.error('Script not found!')
+                logger.error('[?] Script not found!')
         
         elif options.name and options.method == "bypass-jb":
-            print('[!] The Method Is Updating!!')
+            logger.warning('[!] The Method Is Updating!!')
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
-            method = "method/bypass_ssl.js"
+            method = methods[2]
             if os.path.isfile(method):
-                print('[*] Bypass SSL Pinning: ')
-                print('[*] Spawning: ' + options.package)
-                print('[*] Script: ' + method)
+                logger.info('[*] Bypass SSL Pinning: ')
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Script: ' + method)
                 os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
                 #sys.stdin.read()
             else:
-                logger.error('Script not found!')
+                logger.error('[?] Script not found!')
         else:
-            logger.info("Specify the options. use (-h) for more help!")
+            logger.warning("[!] Specify the options. use (-h) for more help!")
             # sys.exit(0)
 
     except Exception as e:
-        logger.error("Something went wrong, please check your error message.\n Error - {0}".format(e))
+        logger.error("[x_x] Something went wrong, please check your error message.\n Error - {0}".format(e))
 
     except KeyboardInterrupt:
         logger.info("Bye bro!!")
