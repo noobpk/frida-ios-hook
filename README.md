@@ -3,7 +3,7 @@ A script that helps you trace classes, functions, and modify the return values o
 
 For Android platform: https://github.com/noobpk/frida-android-hook
 
-<img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/97841353-3aed8f80-1d18-11eb-9047-b31cad44b0c0.png">
+<img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/102172745-f97e0180-3ecb-11eb-91d4-c266afafb924.png">
 ## Update
 
 [Version: 3.2a]
