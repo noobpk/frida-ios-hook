@@ -15,11 +15,11 @@ Support both spawn & attach script to process.
 ```
 [+] Options:
 
-	-p(--package)						Identifier of application ex: com.apple.AppStore
-	-n(--name) 							Name of application ex: AppStore
-	-s(--script) 						Using script format javascript.js
+	-p(--package)			Identifier of application ex: com.apple.AppStore
+	-n(--name) 			Name of application ex: AppStore
+	-s(--script) 			Using script format javascript.js
 	-c(--check-version) 		Check for the newest version
-	-u(--upadte) 						Update to the newest version
+	-u(--upadte) 			Update to the newest version
 
 	[*] Information:
 
@@ -31,9 +31,9 @@ Support both spawn & attach script to process.
 	[*] Quick method:
 
 	-m(--method)			Support commonly used methods
-											-app-static(-n)
-											-bypass-jb(-p)
-											-bypass-ssl(-p)
+				-app-static(-n)
+				-bypass-jb(-p)
+				-bypass-ssl(-p)
 ```
 
 ## Update
@@ -59,7 +59,8 @@ Version: 3.2b
 	2. cd frida-ios-hook/
 	3. python3 hook.py --help(-h)
 	4. rebellion :))
-<!-- ``` -->
+```
+
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
 
