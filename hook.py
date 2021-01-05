@@ -10,6 +10,8 @@ import tempfile
 import subprocess
 import re
 import fnmatch
+import shlex
+import subprocess
 
 import paramiko
 from paramiko import SSHClient
@@ -17,7 +19,8 @@ from scp import SCPClient
 from tqdm import tqdm
 import traceback
 from module.listapp import *
-from library.log import *
+from lib.checkversion import *
+from lib.log import *
 
 print ('''\033[1;31m \n
 _|    _|_|      _|_|_|      _|    _|                      _|        
@@ -30,13 +33,12 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.2a\033[1;37m")
+print ("\033[1;34m[*]___version___: x.y\033[1;37m")
 print ("")
 
 def main():
-
     try:
-
+        
         usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore / [-n App Store] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\npython3 hook.py -p com.apple.AppStore / [-n App Store] -m app-static"
         parser = optparse.OptionParser(usage,add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
@@ -52,6 +54,8 @@ def main():
 
         parser.add_option("-s", "--script", dest="script",
                         help="Frida Script Hooking", metavar="SCIPRT.JS")
+        parser.add_option("-c", "--check-version", action="store_true", help="Check iOS hook for the newest version", dest="checkversion")
+        parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl'],
                         help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)", metavar="app-static / bypass-jb / bypass-ssl")
@@ -64,6 +68,7 @@ def main():
                         action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")
         info.add_option("--list-scripts",
                         action="store_true", help="List All Scripts", dest="listscripts")
+
 
         parser.add_option_group(info)
         parser.add_option_group(quick)
@@ -165,6 +170,21 @@ def main():
                 #sys.stdin.read()
             else:
                 logger.error('[?] Script not found!')
+
+        #check newversion
+        elif options.checkversion:
+            logger.info('[*] Checking for updates...')
+            is_newest = check_version(speak=True)
+            # if not is_newest:
+            #     logger.info('[*] There is an update available for iOS hook')
+
+        #update newversion
+        elif options.update:
+            logger.info('[*] Update in progress...')
+            cmd = shlex.split("git pull origin master")
+            subprocess.call(cmd)
+            sys.exit(0)
+
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
             # sys.exit(0)
@@ -177,6 +197,11 @@ def main():
         # sys.exit(0)
 
 if __name__ == '__main__':
+    #check python version
+    if sys.version_info < (3, 0):
+        logger.error("[x_x] iOS hook requires Python 3.x")
+        sys.exit(1)
+    else:
         main()
 
     

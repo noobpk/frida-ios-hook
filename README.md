@@ -1,36 +1,71 @@
-# Frida ios hook
-A script that helps you trace classes, functions, and modify the return values of methods on iOS platform
+<img width="538" alt="image" src="https://user-images.githubusercontent.com/31820707/103606590-5f006380-4f49-11eb-9f57-c1c78c76a506.png">
+
+# Frida iOS hook
+
+A script that helps you trace classes, functions, and modify the return values of methods on iOS platform.
 
 For Android platform: https://github.com/noobpk/frida-android-hook
 
-<img width="1018" alt="image" src="https://user-images.githubusercontent.com/31820707/102172745-f97e0180-3ecb-11eb-91d4-c266afafb924.png">
+## Feature
+
+Running with python3.x
+
+Support both spawn & attach script to process.
+
+```
+[+] Options:
+
+	-p(--package)						Identifier of application ex: com.apple.AppStore
+	-n(--name) 							Name of application ex: AppStore
+	-s(--script) 						Using script format javascript.js
+	-c(--check-version) 		Check for the newest version
+	-u(--upadte) 						Update to the newest version
+
+	[*] Information:
+
+	--list-devices    List All Devices
+	--list-apps       List The Installed apps
+	--list-appinfo    List Info of Apps on Itunes
+	--list-scripts    List All Scripts
+
+	[*] Quick method:
+
+	-m(--method)			Support commonly used methods
+											-app-static(-n)
+											-bypass-jb(-p)
+											-bypass-ssl(-p)
+```
+
 ## Update
 
-[Version: 3.2a]
+Version: 3.2b
+```
+	[+] Change:
+	
+		[-] Update new interface and command usage
+		
+		[-] Update README.md
+		
+	[+] New:
+	
+		[-] Add option -c(--check-version) and -u(--update)
+	
+```
 
-​	[+] Update new interface and command usage
+## Install & Usage
 
-​	[+] New feature:
+```
+	1. Git clone https://github.com/noobpk/frida-ios-hook
+	2. cd frida-ios-hook/
+	3. python3 hook.py --help(-h)
+	4. rebellion :))
+<!-- ``` -->
+If you run the script but it doesn't work, you can try the following:
+```frida -U -f package -l script.js```
 
-        [+] Add new options: 
-        
-            [-] -n(--name) for attach function in frida
-            
-            [-] -m(--method) using for option -n(--name)
-            
-            [-] --list-devices : List All Devices
-            
-            [-] --list-appinfo : List Information of All Apps install on Itunes
-            
-            [-] --list-scripts : List All Scripts
+## Frida-Script
 
-            [-] Update script for trace_class, trace_method, return_value
-
-            [-] Add new script hooking.js
-
-            [-] Add Log Hander
-
-Updated some frida scripts to help you with the pentest ios app. Filter script using spawn or attach 
+Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A) 
 
 |Spawn/Attach|Script Name| Script Description|
 |:---|:---|:---|
@@ -54,11 +89,4 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
 |A|show_binarycookies.js|Show contents of Cookies.binarycookies file|
 |S|bypass-ssl-ios13.js|iOS13 bypass ssl pinning|
-
-## Usage
-1. Git clone https://github.com/noobpk/frida-ios-hook
-1. cd frida-ios-hook/
-1. ```python3 hook.py --help(-h)```
-
-If you run the script but it doesn't work, you can try the following:
-```frida -U -f package -l script.js```
+|S|flutter_trace_function.js|iOS flutter trace function|
