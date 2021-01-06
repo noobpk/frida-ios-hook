@@ -89,8 +89,6 @@ function singleBlindTracer(className, methodName) {
                 this.className = ObjC.Object(args[0]).toString();
                 this.methodName = ObjC.selectorAsString(args[1]);
                 logMessage("detect call to: " + this.className + ":" + this.methodName);
-                console.log('Arguments in method:');
-                print_arguments(args);
             }
         })
     } catch (err) {
@@ -215,11 +213,11 @@ var interestingFlutterClasses = [
     "FlutterJSONMessageCodec",
     //https://api.flutter.dev/objcdoc/Protocols/FlutterMethodCodec.html
     "FlutterJSONMethodCodec",
-    // "FlutterStandardReader",
+    //"FlutterStandardReader",
     //https://api.flutter.dev/objcdoc/Classes/FlutterEventChannel.html
     "FlutterEventChannel",
     //https://api.flutter.dev/objcdoc/Classes/FlutterViewController.html
-    // "FlutterViewController",
+    //"FlutterViewController",
     //https://api.flutter.dev/objcdoc/Classes/FlutterBasicMessageChannel.html
     "FlutterBasicMessageChannel",
 ]
