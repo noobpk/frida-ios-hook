@@ -27,7 +27,7 @@ def check_version(speak=True):
                 logger.info('[*] iOShook already up to date.')
                 return True
     except Exception:
-        logger.error("[x_x] Error checking version, skipping")
+        logger.error("[x_x] Error checking version, try again laster.")
         return True
 
 # if __name__ == '__main__':
