@@ -7,9 +7,15 @@ Hooks into methods
 * Neither class nor method full name is needed in order to hook. If a partial string is given, the script will hook into all the methods that have the string in their name.
 */
 
-
 var search_class = [''];
 var search_method = [''];
+
+var colors = {
+    "resetColor": "\x1b[0m",
+    "green": "\x1b[32m",
+    "yellow": "\x1b[33m",
+    "red": "\x1b[31m"
+}
 
 function search_methods(className) {
     var methods_found = [];
@@ -72,7 +78,7 @@ It stops when:
 
 if (ObjC.available)
 {
-    console.log('\n[*] Starting Hooking');
+    console.log(colors.green,"\n[*] Started: Hooking.... ",colors.resetColor);
     var classes_found = search_classes();
     for (var i = 0; i < classes_found.length; ++i) {
         var methods_found = 0;
@@ -91,16 +97,17 @@ if (ObjC.available)
                 onEnter: function (args) {
                     this._className = ObjC.Object(args[0]).toString();
                     this._methodName = ObjC.selectorAsString(args[1]);
-                    console.log('Detected call to:');
+                    console.log(colors.green,"[+] Detected call to: ",colors.resetColor);
                     console.log('   ' + this._className + ' --> ' + this._methodName);
-                    console.log('Arguments in method:');
-                    print_arguments(args);
+                    console.log(colors.green,"[+] Dump Arugment in method: ",colors.resetColor);
+                    //print_arguments(args);
+                    //console.log(ObjC.Object(args[2]));
                 },
                 onLeave: function(returnValues) {
-                    console.log('Return value of:');
+                    console.log(colors.green,"Return value of: ",colors.resetColor);
                     console.log('   ' + this._className + ' --> ' + this._methodName);
-                    console.log("\t[-] Type of return value: " + Object.prototype.toString.call(returnValues));
-                    console.log("\t[-] Return Value: " + returnValues); 
+                    console.log(colors.green,"\t[-] Type of return value: ",colors.resetColor + Object.prototype.toString.call(returnValues));
+                    console.log(colors.green,"\t[-] Return Value: ",colors.resetColor + returnValues); 
                 }
             });
         }
