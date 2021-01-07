@@ -33,7 +33,7 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.2b\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.2c\033[1;37m")
 print ("")
 
 def run():
@@ -81,7 +81,7 @@ def main():
         parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','url-req'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__url-req: Monitor URLRequest in App", metavar="app-static / bypass-jb / bypass-ssl / url-req")
+                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__url-req: Monitor URLRequest in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / url-req")
         #Some options to get info from device and applications
         info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
