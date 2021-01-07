@@ -36,6 +36,28 @@ print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
 print ("\033[1;34m[*]___version___: 3.2b\033[1;37m")
 print ("")
 
+def run():
+    #check python version
+    if sys.version_info < (3, 0):
+        logger.error("[x_x] iOS hook requires Python 3.x")
+        sys.exit(1)
+    else:
+        handle_del_log()
+        main()
+
+def handle_del_log():
+    try:
+        pwd = os.getcwd()
+        path = pwd + '/errors.log'
+        file_stats = os.stat(path)
+        if (file_stats.st_size > 1024000000): #delete errors.log if file size > 1024 MB
+            os.remove(path)
+        else:
+            return True
+    except Exception as e:
+        logger.error("[x_x] Something went wrong when clear error log. Please clear error log manual.")
+
+
 def main():
     try:
         
@@ -54,11 +76,12 @@ def main():
 
         parser.add_option("-s", "--script", dest="script",
                         help="Frida Script Hooking", metavar="SCIPRT.JS")
+        parser.add_option("-d", "--dump", action="store_true", help="Dump decrypt application.ipa", dest="dump")
         parser.add_option("-c", "--check-version", action="store_true", help="Check iOS hook for the newest version", dest="checkversion")
         parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
-        quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)", metavar="app-static / bypass-jb / bypass-ssl")
+        quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','url-req'],
+                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__url-req: Monitor URLRequest in App", metavar="app-static / bypass-jb / bypass-ssl / url-req")
         #Some options to get info from device and applications
         info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
@@ -76,10 +99,11 @@ def main():
         options, args = parser.parse_args()
 
         methods = [
-            "method/ios_list_apps.js",
-            "method/static_analysis.js",
-            "method/bypass_ssl.js",
-            "method/bypass_jailbreak.js"
+            "method/ios_list_apps.js", #0
+            "method/static_analysis.js", #1
+            "method/bypass_ssl.js", #2
+            "method/bypass_jailbreak.js", #3
+            "method/url_request.js" #4
         ]
 
         if options.listdevices:
@@ -156,8 +180,23 @@ def main():
             else:
                 logger.error('[?] Script not found!')
         
-        elif options.name and options.method == "bypass-jb":
-            logger.warning('[!] The Method Is Updating!!')
+        #Bypass jailbreak
+        elif options.package and options.method == "bypass-jb":
+            method = methods[3]
+            if os.path.isfile(method):
+                logger.info('[*] Bypass Jailbreak: ')
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Script: ' + method)
+                time.sleep(2)
+                pid = frida.get_usb_device().spawn(options.package)
+                session = frida.get_usb_device().attach(pid)
+                hook = open(method, 'r')
+                script = session.create_script(hook.read())
+                script.load()
+                frida.get_usb_device().resume(pid)
+                sys.stdin.read()
+            else:
+                logger.error('[?] Script for method not found!')
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
@@ -169,8 +208,25 @@ def main():
                 os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
                 #sys.stdin.read()
             else:
-                logger.error('[?] Script not found!')
+                logger.error('[?] Script for method not found!')
 
+        #Monitor url request in app
+        elif options.package and options.method == "url-req":
+            method = methods[4]
+            if os.path.isfile(method):
+                logger.info('[*] Monitor UrlRequest: ')
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Script: ' + method)
+                time.sleep(2)
+                pid = frida.get_usb_device().spawn(options.package)
+                session = frida.get_usb_device().attach(pid)
+                hook = open(method, 'r')
+                script = session.create_script(hook.read())
+                script.load()
+                frida.get_usb_device().resume(pid)
+                sys.stdin.read()
+            else:
+                logger.error('[?] Script for method not found!')
         #check newversion
         elif options.checkversion:
             logger.info('[*] Checking for updates...')
@@ -185,23 +241,34 @@ def main():
             subprocess.call(cmd)
             sys.exit(0)
 
+        #dump decrypt application
+        elif options.dump:
+            logger.warning('[!] The Method Is Updating!!')
+
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
             # sys.exit(0)
 
+    #EXCEPTION FOR FRIDA
+    except frida.ServerNotRunningError:
+        logger.error('Frida server is not running')
+    except frida.TimedOutError:
+        logger.error('Timed out while waiting for device to appear')
+    except (frida.ProcessNotFoundError,
+            frida.TransportError,
+            frida.InvalidOperationError):
+        logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
+    #EXCEPTION FOR OPTIONPARSING
+
+    #EXCEPTION FOR SYSTEM
     except Exception as e:
-        logger.error("[x_x] Something went wrong, please check your error message.\n Error - {0}".format(e))
+        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
     except KeyboardInterrupt:
         logger.info("Bye bro!!")
         # sys.exit(0)
 
 if __name__ == '__main__':
-    #check python version
-    if sys.version_info < (3, 0):
-        logger.error("[x_x] iOS hook requires Python 3.x")
-        sys.exit(1)
-    else:
-        main()
+    run()
 
     
