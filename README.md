@@ -18,6 +18,7 @@ Support both spawn & attach script to process.
 	-p(--package)			Identifier of application ex: com.apple.AppStore
 	-n(--name) 			Name of application ex: AppStore
 	-s(--script) 			Using script format javascript.js
+	-d(--dump)			Dump decrypt application.ipa
 	-c(--check-version) 		Check for the newest version
 	-u(--upadte) 			Update to the newest version
 
@@ -31,24 +32,28 @@ Support both spawn & attach script to process.
 	[*] Quick method:
 
 	-m(--method)			Support commonly used methods
-				-app-static(-n)
-				-bypass-jb(-p)
-				-bypass-ssl(-p)
+				- app-static(-n)
+				- bypass-jb(-p)
+				- bypass-ssl(-p)
+				- url-req(-p)
 ```
 
 ## Update
 
-Version: 3.2b
+Version: 3.2c
 ```
 	[+] Change:
 	
 		[-] Update new interface and command usage
 		
+		[-] Optimize core hook.py
+		
 		[-] Update README.md
+		
 		
 	[+] New:
 	
-		[-] Add option -c(--check-version) and -u(--update)
+		[-] Add new method Monitor Request in application
 	
 ```
 
