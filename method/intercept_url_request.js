@@ -40,7 +40,7 @@ if (ObjC.available) {
                     OGCompletionHandler_DTWRM = completionHandler.implementation;
 
                     completionHandler.implementation = function(data_nsdata, response_nsurlresponse, error_nserror){
-                            //console.log(colors.green,"[+] Response Headers: ",colors.resetColor + ObjC.Object(response_nsurlresponse));
+                            console.log(colors.green,"[+] Response Headers: ",colors.resetColor + ObjC.Object(response_nsurlresponse));
                             // Convert NSData to NSString
                             var data_nsstring = ObjC.classes.NSString.alloc().initWithData_encoding_(data_nsdata, 4);
 
