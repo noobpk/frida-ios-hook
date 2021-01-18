@@ -35,7 +35,7 @@ if (ObjC.available) {
                 } else{
                     console.log(colors.yellow,"[!] HTTPBody Empty",colors.resetColor);
                 }
-
+                //SHOW RESPONSE - IT CAN MAKE APP CRASH
                 var completionHandler = new ObjC.Block(args[3]);
                     OGCompletionHandler_DTWRM = completionHandler.implementation;
 
