@@ -80,8 +80,8 @@ def main():
         parser.add_option("-c", "--check-version", action="store_true", help="Check iOS hook for the newest version", dest="checkversion")
         parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
-        quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','url-req'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__url-req: Monitor URLRequest in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / url-req")
+        quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
+                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-url-req: Intercept URLRequest in App(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-crypto: Intercept Crypto in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / i-url-req / i-crypto")
         #Some options to get info from device and applications
         info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
@@ -103,7 +103,8 @@ def main():
             "method/static_analysis.js", #1
             "method/bypass_ssl.js", #2
             "method/bypass_jailbreak.js", #3
-            "method/url_request.js" #4
+            "method/intercept_url_request.js", #4
+            "method/intercept_crypto.js" #5
         ]
 
         if options.listdevices:
@@ -210,11 +211,12 @@ def main():
             else:
                 logger.error('[?] Script for method not found!')
 
-        #Monitor url request in app
-        elif options.package and options.method == "url-req":
+        #Intercept url request in app
+        elif options.package and options.method == "i-url-req":
             method = methods[4]
+            print(method)
             if os.path.isfile(method):
-                logger.info('[*] Monitor UrlRequest: ')
+                logger.info('[*] Intercept UrlRequest: ')
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
@@ -227,6 +229,19 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[?] Script for method not found!')
+
+        #Intercept Crypto Operations
+        elif options.package and options.method == "i-crypto":
+            method = methods[5]
+            if os.path.isfile(method):
+                logger.info('[*] Intercept Crypto Operations: ')
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Script: ' + method)
+                os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
+                #sys.stdin.read()
+            else:
+                logger.error('[?] Script for method not found!')
+
         #check newversion
         elif options.checkversion:
             logger.info('[*] Checking for updates...')
@@ -251,11 +266,12 @@ def main():
 
     #EXCEPTION FOR FRIDA
     except frida.ServerNotRunningError:
-        logger.error('Frida server is not running')
+        logger.error("Frida server is not running.")
     except frida.TimedOutError:
-        logger.error('Timed out while waiting for device to appear')
+        logger.error("Timed out while waiting for device to appear.")
+    except frida.TransportError:
+        logger.error("[x_x] The application may crash or lose connection.")
     except (frida.ProcessNotFoundError,
-            frida.TransportError,
             frida.InvalidOperationError):
         logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
     #EXCEPTION FOR OPTIONPARSING
