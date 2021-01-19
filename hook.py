@@ -212,20 +212,17 @@ def main():
                 logger.error('[?] Script for method not found!')
 
         #Intercept url request in app
-        elif options.package and options.method == "i-url-req":
+        elif options.name and options.method == "i-url-req":
             method = methods[4]
-            print(method)
             if os.path.isfile(method):
                 logger.info('[*] Intercept UrlRequest: ')
-                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
-                pid = frida.get_usb_device().spawn(options.package)
-                session = frida.get_usb_device().attach(pid)
-                hook = open(method, 'r')
-                script = session.create_script(hook.read())
+                process = frida.get_usb_device().attach(options.name)
+                method = open(method, 'r')
+                script = process.create_script(method.read())
                 script.load()
-                frida.get_usb_device().resume(pid)
                 sys.stdin.read()
             else:
                 logger.error('[?] Script for method not found!')
