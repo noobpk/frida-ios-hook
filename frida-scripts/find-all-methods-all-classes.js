@@ -1,4 +1,4 @@
-console.log("[*] Started: Find Methods")
+console.log("[*] Started: Find Methods of All Classes")
 if (ObjC.available)
 {
     for (var className in ObjC.classes)
@@ -6,7 +6,8 @@ if (ObjC.available)
         if (ObjC.classes.hasOwnProperty(className))
         {
             console.log("[+] Class: " + className);
-            var methods = eval('ObjC.classes.' + className + '.$methods');
+            //var methods = eval('ObjC.classes.' + className + '.$methods');
+            var methods = ObjC.classes[className].$methods;
             for (var i = 0; i < methods.length; i++)
             {
                 console.log("\t[-] Method: "+methods[i]);
