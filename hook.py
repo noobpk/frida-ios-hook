@@ -33,7 +33,7 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.2c\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.3\033[1;37m")
 print ("")
 
 def check_platform():
