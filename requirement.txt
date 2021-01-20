@@ -2,3 +2,4 @@ frida-tools
 paramiko
 scp
 tqdm
+colorlog
