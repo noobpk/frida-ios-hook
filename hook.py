@@ -36,7 +36,23 @@ print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
 print ("\033[1;34m[*]___version___: 3.2c\033[1;37m")
 print ("")
 
+def check_platform():
+    try:
+        platforms = {
+        'linux'  : 'Linux',
+        'linux1' : 'Linux',
+        'linux2' : 'Linux',
+        'darwin' : 'OS X',
+        }
+        if sys.platform not in platforms:
+            logger.error("[x_x] Your platform currently does not support.")
+            sys.exit(0)
+    except Exception as e:
+        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
+
 def run():
+    #check platform support
+    check_platform()
     #check python version
     if sys.version_info < (3, 0):
         logger.error("[x_x] iOS hook requires Python 3.x")
@@ -55,7 +71,7 @@ def handle_del_log():
         else:
             return True
     except Exception as e:
-        logger.error("[x_x] Something went wrong when clear error log. Please clear error log manual.")
+        logger.error("[x_x] Something went wrong when clear error log. Please clear error log manual.\n Message - {0}".format(e))
 
 
 def main():
