@@ -2,7 +2,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from lib.log import *
 
-VERSION = "3.2c"
+VERSION = "3.3"
 
 def check_version(speak=True):
     """
