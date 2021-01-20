@@ -35,12 +35,13 @@ Support both spawn & attach script to process.
 				- app-static(-n)
 				- bypass-jb(-p)
 				- bypass-ssl(-p)
-				- url-req(-p)
+				- i-url-req(-p)
+				- i-crypto(-n)
 ```
 
 ## Update
 
-Version: 3.2c
+Version: 3.3
 ```
 	[+] Change:
 	
@@ -53,7 +54,7 @@ Version: 3.2c
 		
 	[+] New:
 	
-		[-] Add new method Monitor Request in application
+		[-] Add new method Intercept Crypto in application
 	
 ```
 
@@ -73,26 +74,28 @@ If you run the script but it doesn't work, you can try the following:
 
 Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A) 
 
-|Spawn/Attach|Script Name| Script Description|
-|:---|:---|:---|
-|S|bypass-jailbreak-1.js|Basic bypass jailbreak detection|
-|S|dump-ios-url-scheme.js|Dump iOS url scheme when "openURL" is called|
-|S|dump-ui.js|Dump the current on-screen User Interface structure|
-|S+A|find-all-classes.js|Dump all classes used by the app|
-|S+A|find-all-methods-all-classes.js|Dump all methods inside all classes|
-|S+A|find-specific-method.js|Find a specific method in all classes|
-|S+A|hook-all-methods-of-specific-class.js|Hook all the methods of a particular class|
-|S+A|hook-specific-method-of-class.js|Hook a particular method of a specific class|
-|S+A|ios-app-static-analysis.js|iOS app static analysis|
-|S+A|ios-list-apps.js|iOS list information application|
-|S+A|ios-url-scheme-fuzzing.js|iOS url scheme fuzzing|
-|S|pasteboard-monitoring.js|Monitor usage of pasteboard. Useful to show lack of secure attribute on sensitive fields allowing data copying.|
-|A|read-nsuserdefaults.js|Show contents fo NSUserDefaults|
-|S+A|show-all-methods-of-specific-class.js|Dump all methods of a particular class|
-|S+A|show-argument-type-count-and-return-value-type.js|Show argument type & count and type of return value for a function in a class|
-|S+A|show-instance-variables-for-specific-class.js|Show all instance variables of a particular class|
-|S+A|show-modify-function-arguments.js|Show and modify arguments of a function inside a class|
-|S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
-|A|show_binarycookies.js|Show contents of Cookies.binarycookies file|
-|S|bypass-ssl-ios13.js|iOS13 bypass ssl pinning|
-|S|flutter_trace_function.js|iOS flutter trace function|
+|N|Spawn/Attach|Script Name| Script Description|
+|:---|:---|:---|:---|
+|1|S|bypass-jailbreak-1.js|Basic bypass jailbreak detection|
+|2|S|dump-ios-url-scheme.js|Dump iOS url scheme when "openURL" is called|
+|3|S|dump-ui.js|Dump the current on-screen User Interface structure|
+|4|S+A|find-all-classes.js|Dump all classes used by the app|
+|5|S+A|find-all-methods-all-classes.js|Dump all methods inside all classes|
+|6|S+A|find-specific-method.js|Find a specific method in all classes|
+|7|S+A|hook-all-methods-of-specific-class.js|Hook all the methods of a particular class|
+|8|S+A|hook-specific-method-of-class.js|Hook a particular method of a specific class|
+|9|S+A|ios-app-static-analysis.js|iOS app static analysis|
+|10|S+A|ios-list-apps.js|iOS list information application|
+|11|S+A|ios-url-scheme-fuzzing.js|iOS url scheme fuzzing|
+|12|S|pasteboard-monitoring.js|Monitor usage of pasteboard. Useful to show lack of secure attribute on sensitive fields allowing data copying.|
+|13|A|read-nsuserdefaults.js|Show contents fo NSUserDefaults|
+|14|S+A|show-all-methods-of-specific-class.js|Dump all methods of a particular class|
+|15|S+A|show-argument-type-count-and-return-value-type.js|Show argument type & count and type of return value for a function in a class|
+|16|S+A|show-instance-variables-for-specific-class.js|Show all instance variables of a particular class|
+|17|S+A|show-modify-function-arguments.js|Show and modify arguments of a function inside a class|
+|18|S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|
+|19|A|show_binarycookies.js|Show contents of Cookies.binarycookies file|
+|20|S|bypass-ssl-ios13.js|iOS13 bypass ssl pinning|
+|21|S|flutter_trace_function.js|iOS flutter trace function|
+|22|S+A|ios-intercept-crypto.js|Intercepts Crypto Operations|
+|23|S+A|ios-intercept-crypto-2.js|Intercepts Crypto Operations 2|
