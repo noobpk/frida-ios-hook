@@ -23,19 +23,20 @@ if (ObjC.available) {
             {
                 console.log("-".repeat(20));
                 console.log(colors.green,"[+] HTTPMethod: ",colors.resetColor + ObjC.Object(args[2]).HTTPMethod() );
-                console.log(colors.green,"[+] URL: ",colors.resetColor + ObjC.Object(args[2]).URL().absoluteString() )
+                console.log(colors.green,"[+] URL: ",colors.resetColor + ObjC.Object(args[2]).URL().absoluteString() );
                 
                 var httpbody_nsdata = ObjC.Object(args[2]).HTTPBody();
                 var httpbody_nsstring = ObjC.classes.NSString.alloc().initWithData_encoding_(httpbody_nsdata, 4);
                 
-                console.log (colors.green,"[+] HTTPBody (NSString): ",colors.resetColor + httpbody_nsstring);
+                console.log(colors.green,"[+] HTTPBody (NSData): ",colors.resetColor + httpbody_nsdata);
+
                 if (httpbody_nsstring += null) {
-                    console.log(colors.green,"[+] HTTPBody (NSData): ",colors.resetColor + httpbody_nsstring);
+                    console.log (colors.green,"[+] HTTPBody (NSString): ",colors.resetColor + httpbody_nsstring);
                     console.log("");
                 } else{
                     console.log(colors.yellow,"[!] HTTPBody Empty",colors.resetColor);
                 }
-                //SHOW RESPONSE - IT CAN MAKE APP CRASH
+                //SHOW RESPONSE - SOMETIME IT CAN MAKE APP CRASH :))
                 var completionHandler = new ObjC.Block(args[3]);
                     OGCompletionHandler_DTWRM = completionHandler.implementation;
 
@@ -44,7 +45,12 @@ if (ObjC.available) {
                             // Convert NSData to NSString
                             var data_nsstring = ObjC.classes.NSString.alloc().initWithData_encoding_(data_nsdata, 4);
 
-                            console.log(colors.green,"[+] Response Data: ",colors.resetColor + data_nsstring)
+                            if (data_nsstring += null) {
+                                console.log(colors.green,"[+] Response Data: ",colors.resetColor + data_nsstring);
+                                console.log("");
+                            } else{
+                                console.log(colors.yellow,"[!] Response Data Empty",colors.resetColor);
+                            }
 
                             // return original completion handler
                             return OGCompletionHandler_DTWRM(data_nsdata, response_nsurlresponse, error_nserror);
