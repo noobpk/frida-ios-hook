@@ -12,6 +12,7 @@ import re
 import fnmatch
 import shlex
 import subprocess
+import psutil
 
 import paramiko
 from paramiko import SSHClient
