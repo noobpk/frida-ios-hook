@@ -43,20 +43,36 @@ def check_platform():
         'linux1' : 'Linux',
         'linux2' : 'Linux',
         'darwin' : 'OS X',
+        'win32'  : 'Windows'
         }
         if sys.platform not in platforms:
-            logger.error("[x_x] Your platform currently does not support.")
-            sys.exit(0)
+            sys.exit(logger.error("[x_x] Your platform currently does not support."))
+    except Exception as e:
+        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
+
+def check_ps_for_win32():
+    try:
+        if sys.platform == "win32":
+            PROCESSNAME = "iTunes.exe"
+            for proc in psutil.process_iter():
+                try:
+                    if proc.name() == PROCESSNAME:
+                        return True
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
+                    pass
+            return sys.exit(logger.error("[x_x] Please install iTunes on MicrosoftStore or run iTunes frist."))              
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
 def run():
     #check platform support
     check_platform()
+    #check process iTunes for Win32s
+    check_ps_for_win32()
     #check python version
     if sys.version_info < (3, 0):
         logger.error("[x_x] iOS hook requires Python 3.x")
-        sys.exit(1)
+        sys.exit(0)
     else:
         handle_del_log()
         main()
