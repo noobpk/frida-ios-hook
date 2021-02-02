@@ -6,12 +6,12 @@ A script that helps you trace classes, functions, and modify the return values o
 
 For Android platform: https://github.com/noobpk/frida-android-hook
 
-## OS Support
+## Env OS Support
 | OS      | Supported          | Noted   |
 | ------- | ------------------ | ------- |
-| MacOS   | :white_check_mark: | main OS |
-| Linux   | :white_check_mark: | sub-OS  |
-| Windows | :white_check_mark: | sub-OS  |
+| MacOS   | :white_check_mark: | main	 |
+| Linux   | :white_check_mark: | sub  	 |
+| Windows | :white_check_mark: | sub	 |
 
 ## Feature
 
