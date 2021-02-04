@@ -24,11 +24,15 @@ Support both spawn & attach script to process.
 
 	-p(--package)			Identifier of application ex: com.apple.AppStore
 	-n(--name) 			Name of application ex: AppStore
-	-s(--script) 			Using script format javascript.js
-	-d(--dump)			Dump decrypt application.ipa
+	-s(--script) 			Using script format script.js
 	-c(--check-version) 		Check for the newest version
 	-u(--upadte) 			Update to the newest version
-
+	
+	[*] Dump decrypt IPA:
+	
+    	-d, --dump         Dump decrypt application.ipa
+    	-o OUTPUT_IPA, --output=OUTPUT_IPA
+                           Specify name of the decrypted IPA
 	[*] Information:
 
 	--list-devices    List All Devices
@@ -48,11 +52,11 @@ Support both spawn & attach script to process.
 
 ## Update
 
-Version: 3.3
+Version: 3.3a
 ```
 	[+] Change:
 	
-		[-] Update new interface and command usage
+		[-] Update example usage
 		
 		[-] Optimize core hook.py
 		
@@ -61,7 +65,7 @@ Version: 3.3
 		
 	[+] New:
 	
-		[-] Add new method Intercept Crypto in application
+		[-] Add new new option dump decrypt application.ipa
 	
 ```
 
