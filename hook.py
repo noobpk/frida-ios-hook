@@ -299,13 +299,19 @@ def main():
             sys.exit(0)
 
         #dump decrypt application
-        elif options.package and options.dumpapp:
+        elif options.package or options.name and options.dumpapp:
             logger.info('[*] Dumping...')
             lib = libs[0]
-            if options.output_ipa is None:
-                cmd = shlex.split("python3 " + lib + " " + options.package)
+            if options.name is None:
+                if options.output_ipa is None:
+                    cmd = shlex.split("python3 " + lib + " " + options.package)
+                else:
+                    cmd = shlex.split("python3 " + lib + " " + options.package + " -o " + options.output_ipa)
             else:
-                cmd = shlex.split("python3 " + lib + " " + options.package + " -o " + options.output_ipa)
+                if options.output_ipa is None:
+                    cmd = shlex.split("python3 " + lib + " " + "'" + options.name + "'")
+                else:
+                    cmd = shlex.split("python3 " + lib + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
             subprocess.call(cmd)
             sys.exit(0)
 
