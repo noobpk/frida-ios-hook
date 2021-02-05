@@ -294,7 +294,7 @@ def main():
         #update newversion
         elif options.update:
             logger.info('[*] Update in progress...')
-            cmd = shlex.split("git pull origin master")
+            cmd = shlex.split("git reset --hard & git pull origin master")
             subprocess.call(cmd)
             sys.exit(0)
 
