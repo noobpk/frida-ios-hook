@@ -110,3 +110,7 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |21|S|flutter_trace_function.js|iOS flutter trace function|
 |22|S+A|ios-intercept-crypto.js|Intercepts Crypto Operations|
 |23|S+A|ios-intercept-crypto-2.js|Intercepts Crypto Operations 2|
+
+## Disclaimer
+Because I am not a developer, so my coding skills might not be the best. Therefore, if this tool have any issue or not working for you, create an issue and i will try to fix it.
+Any suggestions for new feature and comments are welcome!
