@@ -115,7 +115,7 @@ def main():
         parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-url-req: Intercept URLRequest in App(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-crypto: Intercept Crypto in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / i-url-req / i-crypto")
+                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-url-req: Intercept URLRequest in App(-n)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-crypto: Intercept Crypto in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / i-url-req / i-crypto")
         #Some options to get info from device and applications
         info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
@@ -299,7 +299,7 @@ def main():
             sys.exit(0)
 
         #dump decrypt application
-        elif options.package or options.name and options.dumpapp:
+        elif (options.package or options.name) and options.dumpapp:
             logger.info('[*] Dumping...')
             lib = libs[0]
             if options.name is None:
