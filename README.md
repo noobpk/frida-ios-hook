@@ -13,6 +13,11 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 | Linux   | :white_check_mark: | sub  	 |
 | Windows | :white_check_mark: | sub	 |
 
+## Compatible with
+| iOS      |   Frida  | Supported         |
+| -------- | -------- | ----------------- |
+|  13.2.3  | 14.2.13  | :white_check_mark:|
+
 ## Feature
 
 Running with python3.x
