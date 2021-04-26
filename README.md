@@ -17,6 +17,7 @@ For Android platform: https://github.com/noobpk/frida-android-hook
 | iOS      |   Frida  | Supported         |
 | -------- | -------- | ----------------- |
 |  13.2.3  | 14.2.13  | :white_check_mark:|
+|  14.4.2  | 14.2.13  | :white_check_mark:|
 
 ## Feature
 
