@@ -92,10 +92,11 @@ def handle_del_log():
 
 def dump_memory(option, process):
     try:
+        util = "core/utils/dump-memory/fridump.py"
         if option != "-h":
-            cmd = shlex.split("python3 " + "utils/dump-memory/fridump.py " + "-U " + option + ' ' + '"' + process + '"')
+            cmd = shlex.split("python3 " + util + " -U " + option + ' ' + '"' + process + '"')
         else:
-            cmd = shlex.split("python3 " + "utils/dump-memory/fridump.py " + option)
+            cmd = shlex.split("python3 " + util + ' ' + option)
         subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:

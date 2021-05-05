@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+
+"""
+We wrap the execution of the binary in a Python3 class to keep the new (Py3)
+versions of setuptools happy
+"""
+import subprocess
+import shlex
+import sys
+
+command = shlex.split("python3 " +"core/hook.py")
+command.extend(sys.argv[1:])
+subprocess.call(command)
