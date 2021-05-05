@@ -19,9 +19,9 @@ from paramiko import SSHClient
 from scp import SCPClient
 from tqdm import tqdm
 import traceback
-from lib.listapp import *
-from lib.checkversion import *
-from lib.log import *
+from utils.listapp import *
+from utils.checkversion import *
+from utils.log import *
 
 print ('''\033[1;31m \n
 _|    _|_|      _|_|_|      _|    _|                      _|        
@@ -93,9 +93,9 @@ def handle_del_log():
 def dump_memory(option, process):
     try:
         if option != "-h":
-            cmd = shlex.split("python3 " + "lib/dump-memory/fridump.py " + "-U " + option + ' ' + '"' + process + '"')
+            cmd = shlex.split("python3 " + "utils/dump-memory/fridump.py " + "-U " + option + ' ' + '"' + process + '"')
         else:
-            cmd = shlex.split("python3 " + "lib/dump-memory/fridump.py " + option)
+            cmd = shlex.split("python3 " + "utils/dump-memory/fridump.py " + option)
         subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:
@@ -161,8 +161,8 @@ def main():
             "method/dump.js" #6
         ]
 
-        libs = [
-            "lib/dump.py" #0
+        utils = [
+            "utils/dump.py" #0
         ]
 
         if options.listdevices:
@@ -316,17 +316,17 @@ def main():
         #dump decrypt application
         elif (options.package or options.name) and options.dumpapp:
             logger.info('[*] Dumping...')
-            lib = libs[0]
+            util = utils[0]
             if options.name is None:
                 if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + lib + " " + options.package)
+                    cmd = shlex.split("python3 " + util + " " + options.package)
                 else:
-                    cmd = shlex.split("python3 " + lib + " " + options.package + " -o " + options.output_ipa)
+                    cmd = shlex.split("python3 " + util + " " + options.package + " -o " + options.output_ipa)
             else:
                 if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + lib + " " + "'" + options.name + "'")
+                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'")
                 else:
-                    cmd = shlex.split("python3 " + lib + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
+                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
             subprocess.call(cmd)
             sys.exit(0)
 

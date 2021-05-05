@@ -1,6 +1,6 @@
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from lib.log import *
+from utils.log import *
 
 VERSION = "3.4"
 
