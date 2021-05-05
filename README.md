@@ -85,14 +85,15 @@ Version: 3.4
 ```
 	[+] Latest version
 	
-		pip install Frida-iOS-Hook==3.4
+		https://github.com/noobpk/frida-ios-hook/releases
 		
 	[+] Develop version
 	
-	1. Git clone https://github.com/noobpk/frida-ios-hook
-	2. cd frida-ios-hook/
-	3. python3 hook.py --help(-h)
-	4. rebellion :))
+		1. Git clone https://github.com/noobpk/frida-ios-hook
+		2. cd frida-ios-hook/
+		3. chmod -x frida-ios-hook
+		4. ./frida-ios-hook --help(-h)
+		5. rebellion :))
 ```
 
 If you run the script but it doesn't work, you can try the following:
