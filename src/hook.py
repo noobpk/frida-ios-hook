@@ -152,13 +152,13 @@ def main():
         options, args = parser.parse_args()
         
         methods = [
-            "method/ios_list_apps.js", #0
-            "method/static_analysis.js", #1
-            "method/bypass_ssl.js", #2
-            "method/bypass_jailbreak.js", #3
-            "method/intercept_url_request.js", #4
-            "method/intercept_crypto.js", #5
-            "method/dump.js" #6
+            "methods/ios_list_apps.js", #0
+            "methods/static_analysis.js", #1
+            "methods/bypass_ssl.js", #2
+            "methods/bypass_jailbreak.js", #3
+            "methods/intercept_url_request.js", #4
+            "methods/intercept_crypto.js", #5
+            "methods/dump.js" #6
         ]
 
         utils = [
