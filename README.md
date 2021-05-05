@@ -83,6 +83,9 @@ Version: 3.4
 ## Install & Usage
 
 ```
+	[+] Latest version
+		pip install Frida-iOS-Hook==3.4
+	[+] Develop version
 	1. Git clone https://github.com/noobpk/frida-ios-hook
 	2. cd frida-ios-hook/
 	3. python3 hook.py --help(-h)
