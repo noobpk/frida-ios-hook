@@ -5,7 +5,7 @@ with open ("README.md", "r") as fh:
 
 setuptools.setup(
     name='Frida iOS Hook',
-    version='3.3',
+    version='3.4',
     description='Trace Class/Func & Modify Return Value',
     author='noobpk',
     author_email='ltp.noobpk@gmail.com',
