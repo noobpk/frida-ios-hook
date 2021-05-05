@@ -39,6 +39,11 @@ Support both spawn & attach script to process.
     	-d, --dump         Dump decrypt application.ipa
     	-o OUTPUT_IPA, --output=OUTPUT_IPA
                            Specify name of the decrypted IPA
+	
+	[*] Dump memory of Application:
+	
+	--dump-memory		Dump memory of application
+	
 	[*] Information:
 
 	--list-devices    List All Devices
@@ -58,7 +63,7 @@ Support both spawn & attach script to process.
 
 ## Update
 
-Version: 3.3a
+Version: 3.4
 ```
 	[+] Change:
 	
@@ -71,7 +76,7 @@ Version: 3.3a
 		
 	[+] New:
 	
-		[-] Add new new option dump decrypt application.ipa
+		[-] Add new new option dump memory of application
 	
 ```
 
