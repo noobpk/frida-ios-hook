@@ -37,9 +37,9 @@ setup(
     packages=find_packages(),
     # include other files
     package_data={
-        '': _package_files(os.path.join(path, 'src'), '.js') +
-            _package_files(os.path.join(path, 'src/frida-scripts'), '.js') +
-            _package_files(os.path.join(path, 'src/methods'), '.js')
+        '': _package_files(os.path.join(path, 'frida-ios-hook'), '.js') +
+            _package_files(os.path.join(path, 'frida-ios-hook/frida-scripts'), '.js') +
+            _package_files(os.path.join(path, 'frida-ios-hook/methods'), '.js')
     },
     install_requires=requirements,
     classifiers=[
@@ -50,10 +50,9 @@ setup(
 
     ],
     python_requires='>=3.0',
-    # entry_points={
-    #     'console_scripts': [
-    #         'frida-ios-hook=src.hook.run:run',
-    #     ],
-    # },
-    scripts=['frida-ios-hook'],
+    entry_points={
+        'console_scripts': [
+            'ioshook=core.hook.run:run',
+        ],
+    },
 )
