@@ -94,7 +94,8 @@ def dump_memory(option, process):
     try:
         util = "core/utils/dump-memory/fridump.py"
         if option != "-h":
-            cmd = shlex.split("python3 " + util + " -U " + option + ' ' + '"' + process + '"')
+            cmd = shlex.split("python3 " + util + ' ' + "-u" + ' ' + option + ' ' + '"' + process + '"')
+            print(cmd)
         else:
             cmd = shlex.split("python3 " + util + ' ' + option)
         subprocess.call(cmd)
@@ -163,7 +164,7 @@ def main():
         ]
 
         utils = [
-            "utils/dump.py" #0
+            "core/utils/dump.py" #0
         ]
 
         if options.listdevices:

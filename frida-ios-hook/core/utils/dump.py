@@ -21,7 +21,7 @@ from paramiko import SSHClient
 from scp import SCPClient
 from tqdm import tqdm
 import traceback
-from utils.log import *
+from log import *
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
