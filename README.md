@@ -91,7 +91,7 @@ Version: 3.4
 	
 		1. Git clone https://github.com/noobpk/frida-ios-hook
 		2. cd frida-ios-hook/frida-ios-hook
-		3. chmod -x ioshook
+		3. chmod +x ioshook
 		4. ./ioshook --help(-h)
 		5. rebellion :))
 ```
