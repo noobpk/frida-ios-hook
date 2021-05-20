@@ -25,7 +25,7 @@ from log import *
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
-DUMP_JS = os.path.join(script_dir, '../method/dump.js')
+DUMP_JS = os.path.join(script_dir, '../../methods/dump.js')
 
 User = 'root'
 Password = 'alpine'
