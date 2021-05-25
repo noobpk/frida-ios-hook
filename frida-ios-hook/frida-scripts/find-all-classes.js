@@ -13,4 +13,5 @@ function show_classes_of_app()
     console.log("\n[*] Classes found: " + count);
     console.log("[*] Completed: Find Classes")
 }
-show_classes_of_app()
+
+setTimeout(show_classes_of_app, 1000);
