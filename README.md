@@ -44,6 +44,11 @@ Support both spawn & attach script to process.
 	
 	--dump-memory		Dump memory of application
 	
+	[*] HexByte Scan IPA:
+	--hexbyte-scan		Scan or Patch IPA with byte patterns
+	-t TASK, --task=TASK
+          			Task for hexbytescan
+	
 	[*] Information:
 
 	--list-devices    List All Devices
@@ -63,7 +68,7 @@ Support both spawn & attach script to process.
 
 ## Update
 
-Version: 3.4
+Version: 3.5-beta
 ```
 	[+] Change:
 	
@@ -76,7 +81,7 @@ Version: 3.4
 		
 	[+] New:
 	
-		[-] Add new new option dump memory of application
+		[-] Add new new option hexbytescan
 	
 ```
 
@@ -128,6 +133,13 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |21|S|flutter_trace_function.js|iOS flutter trace function|
 |22|S+A|ios-intercept-crypto.js|Intercepts Crypto Operations|
 |23|S+A|ios-intercept-crypto-2.js|Intercepts Crypto Operations 2|
+
+## Hexbytescan-Task
+|N|Task Name| Task Description|
+|:---|:---|:---|
+|1|openssl_hook.json|OpenSSL 1.0.2 certificate pinning hook on arm64|
+|2|openssl_1_1_0_hook.json|OpenSSL 1.1.0 certifiate pinning hook for arm64, it modifies cmp instruction in tls_process_server_certificate method|
+|3|openssl_hook_v2.json|OpenSSL 1.0.2 certificate pinning hook on arm64, improved pattern, possibly for different compiler version or slighlty updated OpenSSL, use if first version does not find patch location. These hooks patch call to ssl_verify_cert_chain in ssl3_get_server_certificate.|
 
 ## Disclaimer
 Because I am not a developer, so my coding skills might not be the best. Therefore, if this tool have any issue or not working for you, create an issue and i will try to fix it.
