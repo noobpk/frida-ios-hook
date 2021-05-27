@@ -34,7 +34,7 @@ _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
 ''')
 
 print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.4\033[1;37m")
+print ("\033[1;34m[*]___version___: 3.5-beta\033[1;37m")
 print ("")
 
 def check_platform():
@@ -95,9 +95,20 @@ def dump_memory(option, process):
         util = "core/utils/dump-memory/fridump.py"
         if option != "-h":
             cmd = shlex.split("python3 " + util + ' ' + "-u" + ' ' + option + ' ' + '"' + process + '"')
-            print(cmd)
         else:
             cmd = shlex.split("python3 " + util + ' ' + option)
+        subprocess.call(cmd)
+        sys.exit(0)
+    except Exception as e:
+        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
+
+def hexbyte_scan(option, task):
+    try:
+        util = "core/utils/hexbytescanner/hexbytescanner"
+        if option != "-h":
+            cmd = shlex.split("./"+util + ' ' + option + ' ' + task)
+        else:
+            cmd = shlex.split("./"+util)
         subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:
@@ -106,11 +117,12 @@ def dump_memory(option, process):
 def main():
     try:
         
-        usage = "[>] python3 %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\npython3 hook.py -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\npython3 hook.py -p com.apple.AppStore / [-n 'App Store'] -m app-static\n\n\r[>] Example dump decrypt ipa with -d(--dump) and -o(--output) options:\npython3 hook.py -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name\n\n\r[>] Example dump memory of application with --dump-memory and -s(--string) options:\npython3 hook.py -n 'App Store' --dump-memory '-s(--string)'"
+        usage = "[>] ./ioshook %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static\n\n\r[>] Example dump decrypt ipa with -d(--dump) and -o(--output) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name\n\n\r[>] Example dump memory of application with --dump-memory and -s(--string) options:\n./ioshook -n 'App Store' --dump-memory '-s(--string)'\n\n\r[>] Example Scan IPA with file task:\n./ioshook --hexbyte-scan 'scan AppStore.ipa' -t /hexbyscan-tasks/openssl_hook.json"
         parser = optparse.OptionParser(usage,add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
         quick = optparse.OptionGroup(parser,"Quick Method")
         dump = optparse.OptionGroup(parser,"Dump decrypt IPA")
+        hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
 
         parser.add_option('-h', "--help", action="help", dest="help", help="Show basic help message and exit")
@@ -146,8 +158,13 @@ def main():
         #Dump memory of application using the code of Nightbringer21's repo fridump - Link: https://github.com/Nightbringer21/fridump
         dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
 
+        #Hexbytescan of application using the code of karek314's repo hexbytescanner - Link: https://github.com/karek314/hexbytescanner
+        hexscan.add_option("--hexbyte-scan", action="store", help="Scan or Patch IPA with byte patterns", dest="hexscan")
+        hexscan.add_option("-t", "--task", action="store", help="Task for hexbytescan", dest="task")
+
         parser.add_option_group(dump)
         parser.add_option_group(dumpmemory)
+        parser.add_option_group(hexscan)
         parser.add_option_group(info)
         parser.add_option_group(quick)
 
@@ -335,6 +352,10 @@ def main():
         #dump memory application
         elif options.name and options.dumpmemory:
             dump_memory(options.dumpmemory, options.name)
+
+        #hexbytescan ipa
+        elif options.hexscan:
+            hexbyte_scan(options.hexscan, options.task)
 
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
