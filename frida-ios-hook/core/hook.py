@@ -149,6 +149,7 @@ def main():
                         action="store_true", help="List The Installed apps", dest="listapps")
         info.add_option("--list-appinfo",
                         action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")
+        #The script list referenced from the repo of interference-security - Link: https://github.com/interference-security/frida-scripts/
         info.add_option("--list-scripts",
                         action="store_true", help="List All Scripts", dest="listscripts")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
