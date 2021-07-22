@@ -133,6 +133,7 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |21|S|flutter_trace_function.js|iOS flutter trace function|
 |22|S+A|ios-intercept-crypto.js|Intercepts Crypto Operations|
 |23|S+A|ios-intercept-crypto-2.js|Intercepts Crypto Operations 2|
+|24|S|bypass-flutter-ssl.js|Flutter bypass ssl pinning|
 
 ## Hexbytescan-Task
 |N|Task Name| Task Description|
