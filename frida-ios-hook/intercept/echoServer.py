@@ -9,8 +9,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         request_path = self.path
 
         request_headers = self.headers
-        content_length = request_headers.getheaders('content-length')
-        length = int(content_length[0]) if content_length else 0
+        content_length = request_headers.get('content-length')
+        # length = int(content_length[0]) if content_length else 0
+        length = int(content_length) if content_length else 0
 
         self.send_response(200)
         self.end_headers()
