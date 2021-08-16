@@ -6,6 +6,8 @@ A script that helps you trace classes, functions, and modify the return values o
 
 For Android platform: https://github.com/noobpk/frida-android-hook
 
+Currently I'm moving the intercept api functionality to a separate repository : https://github.com/noobpk/frida-ios-intercept-api
+
 ## Env OS Support
 | OS      | Supported          | Noted   |
 | ------- | ------------------ | ------- |
@@ -103,18 +105,6 @@ Version: 3.5-beta
 
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
-
-## New Feature Development
-### Tracing API calls in Burp with Frida for iOS
-### Usage
-1. Set up Burp listener
-    - Listen on 127.0.0.1:26080
-    - Redirect to 127.0.0.1:27080 and Check (Support invisible proxying)
-1. Run echoServer.py
-1. Config handlers.js
-1. Run burpTracer.py
-
-### Note: Features developed for iOS based on a blog by [cedricvb.be](https://cedricvb.be/post/tracing-api-calls-in-burp-with-frida/). You can contribute to help me improve this feature. Thanks
 
 ## Frida-Script
 
