@@ -106,9 +106,9 @@ Version: 3.5-beta
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
 
-## Demo Featuer
-1. https://youtu.be/7D5OuKAUQ_s
-2. https://youtu.be/xd685sCMqSw
+## Demo Feature
+1. Part 1 [List application, Dump decrypt application, Dump Memory application] : https://youtu.be/7D5OuKAUQ_s
+2. Part 2 [Static Analysis Application, Intercept URL Request] : https://youtu.be/xd685sCMqSw
 
 ## Frida-Script
 
