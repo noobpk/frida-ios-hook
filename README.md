@@ -20,6 +20,7 @@ Currently I'm moving the intercept api functionality to a separate repository : 
 | -------- | -------- | ----------------- |
 |  13.2.3  | 14.2.13  | :white_check_mark:|
 |  14.4.2  | 14.2.13  | :white_check_mark:|
+|  14.4.2  | 15.0.18  | :white_check_mark:|
 
 ## Feature
 
