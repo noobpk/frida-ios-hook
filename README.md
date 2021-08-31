@@ -110,6 +110,7 @@ If you run the script but it doesn't work, you can try the following:
 ## Demo Feature
 1. Part 1 [List application, Dump decrypt application, Dump Memory application] : https://youtu.be/7D5OuKAUQ_s
 2. Part 2 [Static Analysis Application, Intercept URL Request] : https://youtu.be/xd685sCMqSw
+3. Part 3 [Bypass Jailbreak Detection] : https://youtu.be/DAJywMZ9nHg
 
 ## Frida-Script
 
