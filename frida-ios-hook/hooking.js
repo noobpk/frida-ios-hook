@@ -100,8 +100,19 @@ if (ObjC.available)
                     console.log(colors.green,"[+] Detected call to: ",colors.resetColor);
                     console.log('   ' + this._className + ' --> ' + this._methodName);
                     console.log(colors.green,"[+] Dump Arugment in method: ",colors.resetColor);
-                    //print_arguments(args);
-                    //console.log(ObjC.Object(args[2]));
+                    // print_arguments(args);
+                    // console.log(ObjC.Object(args[2]));
+                    // var data = new ObjC.Object(args[2]);
+                    console.log(colors.green,"[+] Arugment type: ",colors.resetColor);
+                    // console.log(data.$className);
+                    /* Converting NSData to String */
+                    // var buf = data.bytes().readUtf8String(data.length());
+                    console.log(colors.green,"[+] NSData to String: ",colors.resetColor);
+                    /* Converting NSData to Binary Data */
+                    // var buf = data.bytes().readByteArray(data.length());
+                    console.log(colors.green,"[+] NSData to Binary Data: ",colors.resetColor)
+                    // console.log(hexdump(buf, { ansi: true }))
+
                 },
                 onLeave: function(returnValues) {
                     console.log(colors.green,"Return value of: ",colors.resetColor);
