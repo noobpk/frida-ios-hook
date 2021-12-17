@@ -45,7 +45,7 @@ function search_classes(){
     for (var className in ObjC.classes) {
         if (Array.isArray(search_class) && search_class.length) {
             for (var i = 0; i < search_class.length; i++) {
-                if (className.toLowerCase().includes(search_class[i].toLowerCase())) {
+                if (className.toLowerCase().includes(search_class[i].toLowerCase())) {  
                     classes_found.push(className);
                 }
             }
@@ -108,10 +108,11 @@ if (ObjC.available)
                     /* Converting NSData to String */
                     // var buf = data.bytes().readUtf8String(data.length());
                     console.log(colors.green,"[+] NSData to String: ",colors.resetColor);
+                    // console.log(buf);
                     /* Converting NSData to Binary Data */
                     // var buf = data.bytes().readByteArray(data.length());
-                    console.log(colors.green,"[+] NSData to Binary Data: ",colors.resetColor)
-                    // console.log(hexdump(buf, { ansi: true }))
+                    console.log(colors.green,"[+] NSData to Binary Data: ",colors.resetColor);
+                    // console.log(hexdump(buf, { ansi: true }));
 
                 },
                 onLeave: function(returnValues) {
