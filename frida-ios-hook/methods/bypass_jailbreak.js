@@ -81,7 +81,8 @@ function bypassJailbreakDetection(){
         "/pguntether",
         "/usr/sbin/frida-server",
         "/private/Jailbreaktest.txt",
-        "/var/mobile/Media/.evasi0n7_installed"
+        "/var/mobile/Media/.evasi0n7_installed",
+        "cydia://package/com.example.package"
     ];
 
     try {
@@ -95,7 +96,7 @@ function bypassJailbreakDetection(){
                     if (arg.indexOf(paths[path]) > -1) {
                         console.log("Hooking native function stat64: " + arg);
                         this.is_common_path = true;
-                        //return -1;
+                        return -1;
                     }
                 }
             },

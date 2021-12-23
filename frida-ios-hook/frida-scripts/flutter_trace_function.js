@@ -213,7 +213,7 @@ var interestingFlutterClasses = [
     "FlutterJSONMessageCodec",
     //https://api.flutter.dev/objcdoc/Protocols/FlutterMethodCodec.html
     "FlutterJSONMethodCodec",
-    //"FlutterStandardReader",
+    "FlutterStandardReader",
     //https://api.flutter.dev/objcdoc/Classes/FlutterEventChannel.html
     "FlutterEventChannel",
     //https://api.flutter.dev/objcdoc/Classes/FlutterViewController.html
