@@ -3,40 +3,50 @@
  * OS: iOS
  * Author: @federicodotta
  * Source: https://github.com/federicodotta/Brida
+ * Update: @noobpk
  **************************************************************************************/
+var colors = {
+            "resetColor": "\x1b[0m",
+            "green": "\x1b[32m",
+            "yellow": "\x1b[33m",
+            "red": "\x1b[31m"
+    }
 
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCrypt"),
     {
     onEnter: function(args) {
 
-        send("*** ENTER CCCrypt ****");
-        send("CCOperation: " + parseInt(args[0]));
-        send("CCAlgorithm: " + parseInt(args[1]));
-        send("CCOptions: " + parseInt(args[2]));
-        
+        console.log("")
+        console.log(colors.green,"[*] ENTER CCCrypt",colors.resetColor);
+        console.log(colors.yellow," [+] CCOperation: " + parseInt(args[0]),colors.resetColor);
+        console.log(colors.yellow," [+] CCAlgorithm: " + parseInt(args[1]),colors.resetColor);
+        console.log(colors.yellow," [+] CCOptions: " + parseInt(args[2]),colors.resetColor);
+
         if(ptr(args[3]) != 0 ) {
-            send("Key:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[3]),parseInt(args[4]))));
+
+            console.log(colors.red," [+] Key: " + base64ArrayBuffer(Memory.readByteArray(ptr(args[3]),parseInt(args[4]))),colors.resetColor);
+
         } else {
-            send("Key: 0");
+            console.log(colors.yellow," [!] Key: 0",colors.resetColor);
         }
 
         if(ptr(args[5]) != 0 ) {
-            send("IV:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[5]),16)));
+
+            console.log(colors.red," [+] IV: " + base64ArrayBuffer(Memory.readByteArray(ptr(args[5]),16)),colors.resetColor);
+
         } else {
-            send("IV: 0");
+            console.log(colors.yellow," [!] IV: 0",colors.resetColor);
         }
 
         this.dataInLength = parseInt(args[7]);
 
         if(ptr(args[6]) != 0 ) {
 
-            send("Data in ****:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[6]),this.dataInLength)));
+            console.log(colors.green," [+] Data in: ",colors.resetColor);
+            console.log(base64ArrayBuffer(Memory.readByteArray(ptr(args[6]),this.dataInLength)));
 
         } else {
-            send("Data in: null");
+            console.log(colors.yellow," [!] Data in: null",colors.resetColor);
         }
 
         this.dataOut = args[8];
@@ -47,15 +57,18 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCrypt"),
     onLeave: function(retval) {
 
         if(ptr(this.dataOut) != 0 ) {
-            send("Data out");
-            send(base64ArrayBuffer(Memory.readByteArray(this.dataOut,parseInt(ptr(Memory.readU32(ptr(this.dataOutLength),4))))));
+
+            console.log(colors.green," [+] Data out: ",colors.resetColor);
+            console.log(base64ArrayBuffer(Memory.readByteArray(this.dataOut,parseInt(ptr(Memory.readU32(ptr(this.dataOutLength),4))))));
+            console.log(colors.red," [+] Decode Base64 Data out: ",colors.resetColor);
+            console.log(base64_decode(base64ArrayBuffer(Memory.readByteArray(this.dataOut,parseInt(ptr(Memory.readU32(ptr(this.dataOutLength),4)))))))
 
         } else {
-            send("Data out: null");
+            console.log(colors.yellow," [!] Data out: null",colors.resetColor);
         }
 
-        send("*** EXIT CCCrypt ****");
-        
+        console.log(colors.green,"[*] EXIT CCCrypt",colors.resetColor);
+        console.log("-".repeat(50))
     }
 
 });
@@ -64,29 +77,33 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorCreate"
     {
     onEnter: function(args) {
 
-        send("*** CCCryptorCreate ENTER ****");
-        send("CCOperation: " + parseInt(args[0]));
-        send("CCAlgorithm: " + parseInt(args[1]));
-        send("CCOptions: " + parseInt(args[2]));
+        console.log("")
+        console.log(colors.green,"[*] CCCryptorCreate ENTER",colors.resetColor);
+        console.log(colors.yellow," [+] CCOperation: " + parseInt(args[0]),colors.resetColor);
+        console.log(colors.yellow," [+] CCAlgorithm: " + parseInt(args[1]),colors.resetColor);
+        console.log(colors.yellow," [+] CCOptions: " + parseInt(args[2]),colors.resetColor);
 
         if(ptr(args[3]) != 0 ) {
-            send("Key:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[3]),parseInt(args[4]))));
+
+            console.log(colors.red," [+] Key: " + base64ArrayBuffer(Memory.readByteArray(ptr(args[3]),parseInt(args[4]))),colors.resetColor);
 
         } else {
-            send("Key: 0");
+            console.log(colors.yellow," [!] Key: 0",colors.resetColor);
         }
 
         if(ptr(args[5]) != 0 ) {
-            send("IV:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[5]),16)));
+
+            console.log(colors.red," [+] IV:" + base64ArrayBuffer(Memory.readByteArray(ptr(args[5]),16)),colors.resetColor);
+
         } else {
-            send("IV: 0");
+            console.log(colors.yellow," [!] IV: 0",colors.resetColor);
         }
 
     },
     onLeave: function(retval) {
-        send("*** CCCryptorCreate EXIT ****");
+
+        console.log(colors.green,"[*] CCCryptorCreate EXIT",colors.resetColor);
+        console.log("-".repeat(50))
     }
 
 });
@@ -95,13 +112,15 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorCreate"
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorUpdate"),
     {
     onEnter: function(args) {
-        send("*** CCCryptorUpdate ENTER ****");
+
+        console.log(colors.green,"[*] CCCryptorUpdate ENTER",colors.resetColor);
         if(ptr(args[1]) != 0) {
-            send("Data in:");
-            send(base64ArrayBuffer(Memory.readByteArray(ptr(args[1]),parseInt(args[2]))));
+
+            console.log(colors.green," [+] Data in: ",colors.resetColor);
+            console.log(base64ArrayBuffer(Memory.readByteArray(ptr(args[1]),parseInt(args[2]))));
 
         } else {
-            send("Data in: null");
+            console.log(colors.yellow," [!] Data in: null",colors.resetColor);
         }
 
         //this.len = args[4];
@@ -113,13 +132,17 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorUpdate"
     onLeave: function(retval) {
 
         if(ptr(this.out) != 0) {
-            send("Data out CCUpdate:");
-            send(base64ArrayBuffer(Memory.readByteArray(this.out,parseInt(ptr(Memory.readU32(ptr(this.len),4))))));
 
+            console.log(colors.green," [+] Data out CCUpdate:",colors.resetColor);
+            console.log(base64ArrayBuffer(Memory.readByteArray(this.out,parseInt(ptr(Memory.readU32(ptr(this.len),4))))));
+            console.log(colors.red," [+] Decode Base64 Data out CCUpdate:",colors.resetColor);
+            console.log(base64_decode(base64ArrayBuffer(Memory.readByteArray(this.out,parseInt(ptr(Memory.readU32(ptr(this.len),4)))))));
         } else {
-            send("Data out: null");
+            console.log(colors.yellow," [!] Data out: null",colors.resetColor);
         }
-        send("*** CCCryptorUpdate EXIT ****");
+
+        console.log(colors.green,"[*] CCCryptorUpdate EXIT",colors.resetColor);
+        console.log("-".repeat(50))
     }
 
 });
@@ -127,20 +150,26 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorUpdate"
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorFinal"),
     {
     onEnter: function(args) {
-        send("*** CCCryptorFinal ENTER ****");
+
+        console.log(colors.green,"[*] CCCryptorFinal ENTER",colors.resetColor);
         //this.len2 = args[2];
         this.len2 = args[3];
         this.out2 = args[1];
     },
     onLeave: function(retval) {
         if(ptr(this.out2) != 0) {
-            send("Data out CCCryptorFinal:");
-            send(base64ArrayBuffer(Memory.readByteArray(this.out2,parseInt(ptr(Memory.readU32(ptr(this.len2),4))))));
+
+            console.log(colors.green," [+] Data out CCCryptorFinal:",colors.resetColor);
+            console.log(base64ArrayBuffer(Memory.readByteArray(this.out2,parseInt(ptr(Memory.readU32(ptr(this.len2),4))))));
+            console.log(colors.red," [+] Decode Base64 Data out CCCryptorFinal:",colors.resetColor);
+            console.log(base64_decode(base64ArrayBuffer(Memory.readByteArray(this.out2,parseInt(ptr(Memory.readU32(ptr(this.len2),4)))))))
 
         } else {
-            send("Data out: null")
+            console.log(colors.yellow," [!] Data out: null",colors.resetColor);
         }
-        send("*** CCCryptorFinal EXIT ****");
+
+        console.log(colors.green,"[*] CCCryptorFinal EXIT",colors.resetColor);
+        console.log("-".repeat(50))
     }
 
 });
@@ -149,8 +178,8 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorFinal")
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Init"),
 {
     onEnter: function(args) {
-    send("*** CC_SHA1_Init ENTER ****");        
-    send("Context address: " + args[0]);       
+    console.log("*** CC_SHA1_Init ENTER ****");        
+    console.log("Context address: " + args[0]);       
     }
 });
 
@@ -158,13 +187,13 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Init"),
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Update"),
 {
     onEnter: function(args) {
-    send("*** CC_SHA1_Update ENTER ****");
-    send("Context address: " + args[0]);
+    console.log("*** CC_SHA1_Update ENTER ****");
+    console.log("Context address: " + args[0]);
     if(ptr(args[1]) != 0) {
-        send("data:");
-        send(base64ArrayBuffer(Memory.readByteArray(ptr(args[1]),parseInt(args[2]))));
+        console.log("data:");
+        console.log(base64ArrayBuffer(Memory.readByteArray(ptr(args[1]),parseInt(args[2]))));
     } else {
-        send("data: null");
+        console.log("data: null");
     }
     }
 });
@@ -177,14 +206,14 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Final"),
     this.ctxSha = args[1];
     },
     onLeave: function(retval) {
-    send("*** CC_SHA1_Final ENTER ****");
-    send("Context address: " + this.ctxSha);
+    console.log("*** CC_SHA1_Final ENTER ****");
+    console.log("Context address: " + this.ctxSha);
     if(ptr(this.mdSha) != 0) {
-        send("Hash:");
-        send(base64ArrayBuffer(Memory.readByteArray(ptr(this.mdSha),20)));
+        console.log("Hash:");
+        console.log(base64ArrayBuffer(Memory.readByteArray(ptr(this.mdSha),20)));
 
     } else {
-        send("Hash: null");
+        console.log("Hash: null");
     }   
     }
 });
@@ -241,4 +270,48 @@ function base64ArrayBuffer(arrayBuffer) {
     }
     
     return base64
+}
+
+//Decode Base64
+/*
+ * JavaScript base64 / base64url encoder and decoder
+ */
+
+var b64c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"   // base64 dictionary
+var b64u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"   // base64url dictionary
+var b64pad = '='
+
+/* base64_charIndex
+ * Internal helper to translate a base64 character to its integer index.
+ */
+function base64_charIndex(c) {
+    if (c == "+") return 62
+    if (c == "/") return 63
+    return b64u.indexOf(c)
+}
+
+/* base64_decode
+ * Decode a base64 or base64url string to a JavaScript string.
+ * Input is assumed to be a base64/base64url encoded UTF-8 string.
+ * Returned result is a JavaScript (UCS-2) string.
+ */
+function base64_decode(data) {
+    var dst = ""
+    var i, a, b, c, d, z
+    
+    for (i = 0; i < data.length - 3; i += 4) {
+        a = base64_charIndex(data.charAt(i+0))
+        b = base64_charIndex(data.charAt(i+1))
+        c = base64_charIndex(data.charAt(i+2))
+        d = base64_charIndex(data.charAt(i+3))
+
+        dst += String.fromCharCode((a << 2) | (b >>> 4))
+        if (data.charAt(i+2) != b64pad)
+            dst += String.fromCharCode(((b << 4) & 0xF0) | ((c >>> 2) & 0x0F))
+        if (data.charAt(i+3) != b64pad)
+            dst += String.fromCharCode(((c << 6) & 0xC0) | d)
+    }
+
+    dst = decodeURIComponent(escape(dst))
+    return dst
 }
