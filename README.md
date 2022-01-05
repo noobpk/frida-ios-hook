@@ -68,8 +68,8 @@ Support both spawn & attach script to process.
 				- app-static(-n)
 				- bypass-jb(-p)
 				- bypass-ssl(-p)
-				- i-url-req(-p)
-				- i-crypto(-n)
+				- i-url-req(-n)
+				- i-crypto(-p)
 ```
 
 ## Update
