@@ -314,8 +314,14 @@ def main():
                 logger.info('[*] Intercept Crypto Operations: ')
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
-                os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
-                #sys.stdin.read()
+                time.sleep(2)
+                pid = frida.get_usb_device().spawn(options.package)
+                session = frida.get_usb_device().attach(pid)
+                hook = open(method, 'r')
+                script = session.create_script(hook.read())
+                script.load()
+                frida.get_usb_device().resume(pid)
+                sys.stdin.read()
             else:
                 logger.error('[?] Script for method not found!')
 
