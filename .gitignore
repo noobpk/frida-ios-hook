@@ -133,3 +133,5 @@ dmypy.json
 # macos
 .DS
 .DS_Store
+*.ipa
+*.zip
