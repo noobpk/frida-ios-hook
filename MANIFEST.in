@@ -1,1 +1,3 @@
 include requirements.txt
+include .gitignore
+include setup.cfg
