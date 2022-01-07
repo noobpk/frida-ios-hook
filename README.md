@@ -3,7 +3,6 @@
 # Frida iOS hook
 
 [![CodeQL](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml)
-[![Snyk Infrastructure as Code](https://github.com/noobpk/frida-ios-hook/actions/workflows/snyk-infrastructure-analysis.yml/badge.svg?branch=master)](https://github.com/noobpk/frida-ios-hook/actions/workflows/snyk-infrastructure-analysis.yml)
 
 📌 A tool that helps you can easy using frida. It support script for trace classes, functions, and modify the return values of methods on iOS platform.
 
