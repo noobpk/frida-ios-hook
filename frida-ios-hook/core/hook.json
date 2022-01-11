@@ -1,0 +1,49 @@
+{
+    "name": "frida-ios-hook",
+    "version": "3.6",
+    "author": "noobpk",
+    "license": "LICENSE",
+    "requirements": "requirements.txt",
+    "fristRun": false,
+    "packages": {
+        "windows": {
+            "libimobiledevice": "",
+            "ideviceinstaller": ""
+        },
+        "linux": {
+            "libimobiledevice": "libimobiledevice",
+            "ideviceinstaller": "ideviceinstaller"
+        },
+        "darwin": {
+            "libimobiledevice": "libimobiledevice",
+            "ideviceinstaller": "ideviceinstaller"
+        }
+    },
+    "errorLog": "errors.log",
+    "methods": {
+        "List All Application": "methods/ios_list-apps.js",
+        "Application Static Analysis": "methods/static_analysis.js",
+        "Bypass Jailbreak Detection": "methods/bypass_jailbreak.js",
+        "Bypass SSL Pinning": "methods/bypass_ssl.js",
+        "Intercept URL Request": "methods/intercept_url_request.js",
+        "Intercept Crypto": "methods/intercept_crypto.js"
+    },
+    "utils": {
+        "Dump Decrypt Application": "core/utils/dump.py",
+        "Dump Memory": "core/utils/dump-memory/fridump.py",
+        "HexByte Scanner": "core/utils/hexbytescanner/hexbytescanner"
+    },
+    "ssh": {
+        "user": "root",
+        "ip": "127.0.0.1",
+        "port": 2222
+    },
+    "platformSupport": {
+        "linux": "Linux",
+        "linux1": "Linux",
+        "linux2": "Linux",
+        "darwin": "OS X",
+        "win32": "Windows"
+    },
+    "fridaScripts": "frida-scripts/"
+}

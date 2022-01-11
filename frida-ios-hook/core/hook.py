@@ -11,7 +11,6 @@ import subprocess
 import re
 import fnmatch
 import shlex
-import subprocess
 import psutil
 
 import paramiko
@@ -22,77 +21,18 @@ import traceback
 from utils.listapp import *
 from utils.checkversion import *
 from utils.log import *
+from utils.config import *
 
-print ('''\033[1;31m \n
-_|    _|_|      _|_|_|      _|    _|                      _|        
-    _|    _|  _|            _|    _|    _|_|      _|_|    _|  _|    
-_|  _|    _|    _|_|        _|_|_|_|  _|    _|  _|    _|  _|_|      
-_|  _|    _|        _|      _|    _|  _|    _|  _|    _|  _|  _|    
-_|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|  
-                https://noobpk.github.io          #noobteam      
-            Trace Class/Func & Modify Return Value  
-''')
+GLOBLA_CONFIG = config.loadConfig()
 
-print ("\033[1;34m[*]___author___: @noobpk\033[1;37m")
-print ("\033[1;34m[*]___version___: 3.5-beta\033[1;37m")
-print ("")
-
-def check_platform():
-    try:
-        platforms = {
-        'linux'  : 'Linux',
-        'linux1' : 'Linux',
-        'linux2' : 'Linux',
-        'darwin' : 'OS X',
-        'win32'  : 'Windows'
-        }
-        if sys.platform not in platforms:
-            sys.exit(logger.error("[x_x] Your platform currently does not support."))
-    except Exception as e:
-        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
-
-def check_ps_for_win32():
-    try:
-        if sys.platform == "win32":
-            PROCESSNAME = "iTunes.exe"
-            for proc in psutil.process_iter():
-                try:
-                    if proc.name() == PROCESSNAME:
-                        return True
-                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
-                    pass
-            return sys.exit(logger.error("[x_x] Please install iTunes on MicrosoftStore or run iTunes frist."))              
-    except Exception as e:
-        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
-
-def run():
-    #check platform support
-    check_platform()
-    #check process iTunes for Win32s
-    check_ps_for_win32()
-    #check python version
-    if sys.version_info < (3, 0):
-        logger.error("[x_x] iOS hook requires Python 3.x")
-        sys.exit(0)
-    else:
-        handle_del_log()
-        main()
-
-def handle_del_log():
-    try:
-        pwd = os.getcwd()
-        path = pwd + '/errors.log'
-        file_stats = os.stat(path)
-        if (file_stats.st_size > 1024000000): #delete errors.log if file size > 1024 MB
-            os.remove(path)
-        else:
-            return True
-    except Exception as e:
-        logger.error("[x_x] Something went wrong when clear error log. Please clear error log manual.\n Message - {0}".format(e))
+APP_FRIDA_SCRIPTS = GLOBLA_CONFIG['fridaScripts']
+APP_METHODS = GLOBLA_CONFIG['methods']
+APP_UTILS = GLOBLA_CONFIG['utils']
+APP_SSH = GLOBLA_CONFIG['ssh']
 
 def dump_memory(option, process):
     try:
-        util = "core/utils/dump-memory/fridump.py"
+        util = APP_UTILS['Dump Memory']
         if option != "-h":
             cmd = shlex.split("python3 " + util + ' ' + "-u" + ' ' + option + ' ' + '"' + process + '"')
         else:
@@ -104,7 +44,7 @@ def dump_memory(option, process):
 
 def hexbyte_scan(option, task):
     try:
-        util = "core/utils/hexbytescanner/hexbytescanner"
+        util = APP_UTILS['HexByte Scanner']
         if option != "-h":
             cmd = shlex.split("./"+util + ' ' + option + ' ' + task)
         else:
@@ -117,18 +57,30 @@ def hexbyte_scan(option, task):
 def main():
     try:
         
-        usage = "[>] ./ioshook %prog [options] arg\n\n\r[>] Example for spawn or attach app with -s(--script) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js\n\n\r[>] Example for spawn or attach app with -m(--method) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static\n\n\r[>] Example dump decrypt ipa with -d(--dump) and -o(--output) options:\n./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name\n\n\r[>] Example dump memory of application with --dump-memory and -s(--string) options:\n./ioshook -n 'App Store' --dump-memory '-s(--string)'\n\n\r[>] Example Scan IPA with file task:\n./ioshook --hexbyte-scan 'scan AppStore.ipa' -t /hexbyscan-tasks/openssl_hook.json"
-        parser = optparse.OptionParser(usage,add_help_option=False)
+        usage = '''
+        [>] ./ioshook %prog [options] arg
+        Example for spawn or attach app with -s(--script) options:
+        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
+        Example for spawn or attach app with -m(--method) options:
+        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
+        Example dump decrypt ipa with -d(--dump) and -o(--output) options:
+        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
+        Example dump memory of application with --dump-memory and -s(--string) options:
+        [+] ./ioshook -n 'App Store' --dump-memory '-s(--string)'
+        Example Scan IPA with file task:
+        [+] ./ioshook --hexbyte-scan 'scan AppStore.ipa' -t /hexbyscan-tasks/openssl_hook.json'''
+
+        parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
         quick = optparse.OptionGroup(parser,"Quick Method")
         dump = optparse.OptionGroup(parser,"Dump decrypt IPA")
         hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
 
-        parser.add_option('-h', "--help", action="help", dest="help", help="Show basic help message and exit")
+        parser.add_option('-h', "--help", action="help", dest="help", help='''Show basic help message and exit''')
         #Using options -p(--package) for spawn application and load script
         parser.add_option("-p", "--package", dest="package",
-                        help="Identifier of the target app", metavar="PACKAGE", action="store", type="string")
+                        help='''Identifier of the target app''', metavar="PACKAGE", action="store", type="string")
         #Using options -n(--name) for attach script to application is running
         parser.add_option("-n", "--name", dest="name",
                         help="Name of the target app", metavar="NAME", action="store", type="string")
@@ -140,7 +92,11 @@ def main():
         parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
-                        help="__app-static: Static Ananlysis Application(-n)\n\n\r\r__bypass-jb: Bypass Jailbreak Detection(-p)\n\n\r\r\r\r\r\r__bypass-ssl: Bypass SSL Pinning(-p)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-url-req: Intercept URLRequest in App(-n)\n\n\n\n\n\n\n\n\n\r\r\r\r\r\r__i-crypto: Intercept Crypto in App(-p)", metavar="app-static / bypass-jb / bypass-ssl / i-url-req / i-crypto")
+                        help='''app-static: Static Analysis Application(-n)
+                        bypass-jb: Bypass Jailbreak Detection(-p)
+                        bypass-ssl: Bypass SSL Pinning(-p)
+                        i-url-req: Intercept URLRequest in App(-n)
+                        i-crypto: Intercept Crypto in App(-p)''', metavar="METHOD")
         #Some options to get info from device and applications
         info.add_option("--list-devices",
                         action="store_true", help="List All Devices", dest="listdevices")
@@ -152,6 +108,8 @@ def main():
         #The script list referenced from the repo of interference-security - Link: https://github.com/interference-security/frida-scripts/
         info.add_option("--list-scripts",
                         action="store_true", help="List All Scripts", dest="listscripts")
+        info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
+        info.add_option("--shell", action="store_true", help="Get the shell of connect device", dest="shell")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
         dump.add_option("-d", "--dump", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
         dump.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
@@ -170,20 +128,6 @@ def main():
         parser.add_option_group(quick)
 
         options, args = parser.parse_args()
-        
-        methods = [
-            "methods/ios_list_apps.js", #0
-            "methods/static_analysis.js", #1
-            "methods/bypass_ssl.js", #2
-            "methods/bypass_jailbreak.js", #3
-            "methods/intercept_url_request.js", #4
-            "methods/intercept_crypto.js", #5
-            "methods/dump.js" #6
-        ]
-
-        utils = [
-            "core/utils/dump.py" #0
-        ]
 
         if options.listdevices:
             logger.info('[*] List All Devices: ')
@@ -195,7 +139,7 @@ def main():
             list_applications(device)
 
         elif options.listappinfo:
-            method = methods[0]
+            method = APP_METHODS['List All Application']
             if os.path.isfile(method):
                 logger.info('[*] List Info of Apps on Itunes: ')
                 process = 'itunesstored'
@@ -205,7 +149,7 @@ def main():
                 logger.error('[?] Script not found!')
         
         elif options.listscripts:
-            path = 'frida-scripts/'
+            path = APP_FRIDA_SCRIPTS
             if os.path.exists(path):
                 logger.info('[*] List All Scripts: ')
                 for file_name in os.listdir(path):
@@ -248,7 +192,7 @@ def main():
 
         #Static Analysis Application
         elif options.name and options.method == "app-static":
-            method = methods[1]
+            method = APP_METHODS['Application Static Analysis']
             if os.path.isfile(method):
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Method: ' + options.method)
@@ -263,7 +207,7 @@ def main():
         
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
-            method = methods[3]
+            method = APP_METHODS['Bypass Jailbreak Detection']
             if os.path.isfile(method):
                 logger.info('[*] Bypass Jailbreak: ')
                 logger.info('[*] Spawning: ' + options.package)
@@ -281,7 +225,7 @@ def main():
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
-            method = methods[2]
+            method = APP_METHODS['Bypass SSL Pinning']
             if os.path.isfile(method):
                 logger.info('[*] Bypass SSL Pinning: ')
                 logger.info('[*] Spawning: ' + options.package)
@@ -293,7 +237,7 @@ def main():
 
         #Intercept url request in app
         elif options.name and options.method == "i-url-req":
-            method = methods[4]
+            method = APP_METHODS['Intercept URL Request']
             if os.path.isfile(method):
                 logger.info('[*] Intercept UrlRequest: ')
                 logger.info('[*] Attaching: ' + options.name)
@@ -309,7 +253,7 @@ def main():
 
         #Intercept Crypto Operations
         elif options.package and options.method == "i-crypto":
-            method = methods[5]
+            method = APP_METHODS['Intercept Crypto']
             if os.path.isfile(method):
                 logger.info('[*] Intercept Crypto Operations: ')
                 logger.info('[*] Spawning: ' + options.package)
@@ -341,8 +285,9 @@ def main():
 
         #dump decrypt application
         elif (options.package or options.name) and options.dumpapp:
+            check.iproxyInstalled()
             logger.info('[*] Dumping...')
-            util = utils[0]
+            util = APP_UTILS['Dump Decrypt Application']
             if options.name is None:
                 if options.output_ipa is None:
                     cmd = shlex.split("python3 " + util + " " + options.package)
@@ -364,6 +309,21 @@ def main():
         elif options.hexscan:
             hexbyte_scan(options.hexscan, options.task)
 
+        #ios system log
+        elif options.logcat:
+            cmd = shlex.split('idevicesyslog')
+            subprocess.call(cmd)
+            sys.exit(0)
+
+        #ios get the shell
+        elif options.shell:
+            # check.iproxyInstalled()
+            SSH_USER = APP_SSH['user']
+            SSH_IP = str(APP_SSH['ip'])
+            SSH_PORT = str(APP_SSH['port'])
+            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + SSH_PORT)
+            subprocess.call(cmd)
+            sys.exit(0)
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
             # sys.exit(0)
@@ -387,6 +347,16 @@ def main():
     except KeyboardInterrupt:
         logger.info("Bye bro!!")
         # sys.exit(0)
+
+def run():
+    #check python version
+    if sys.version_info < (3, 0):
+        logger.error("[x_x] iOS hook requires Python 3.x")
+        sys.exit(0)
+    else:
+        # handle_first_run()
+        deleteLog()
+        main()
 
 if __name__ == '__main__':
     run()
