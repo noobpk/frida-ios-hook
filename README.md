@@ -3,8 +3,10 @@
 # Frida iOS hook
 
 [![CodeQL](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml)
+![python](https://img.shields.io/badge/python-3.x-blue)
+![frida](https://img.shields.io/badge/frida-15.x-orange)
 
-📌 A tool that helps you can easy using frida. It support script for trace classes, functions, and modify the return values of methods on iOS platform.
+📍 A tool that helps you can easy using frida. It support script for trace classes, functions, and modify the return values of methods on iOS platform.
 
 👉 For Android platform: [frida-android-hook](https://github.com/noobpk/frida-android-hook)
 
@@ -60,35 +62,43 @@ Support both spawn & attach script to process.
 	--list-apps       List The Installed apps
 	--list-appinfo    List Info of Apps on Itunes
 	--list-scripts    List All Scripts
+	--logcat          Show system log of device
+    	--shell           Get the shell of connect device
 
 	[*] Quick method:
 
-	-m(--method)			Support commonly used methods
-				- app-static(-n)
-				- bypass-jb(-p)
-				- bypass-ssl(-p)
-				- i-url-req(-n)
-				- i-crypto(-p)
+	-m(--method)	  Support commonly used methods
+				app-static(-n)
+				bypass-jb(-p)
+				bypass-ssl(-p)
+				i-url-req(-n)
+				i-crypto(-p)
 ```
 
-## Update
+## 📜 ChangeLog
 
-Version: 3.5-beta
+Version: 3.6
 ```
-	[+] Change:
+	[+] Add:
 	
-		[-] Update example usage
+		[-] New option Show system log of device `--logcat`
 		
-		[-] Optimize core hook.py
+		[-] New option Get the shell of connect device `--shell`
+		
+		[-] Add CHANGELOG.md
+		
+		
+	[+] Change:
 		
 		[-] Update README.md
 		
+		[-] Using `hook.json` to load configuration for the tool
 		
-	[+] New:
+		[-] Optimize core `hook.py`
 	
-		[-] Add new new option hexbytescan
-	
+	[+] Fix
 ```
+[Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
 ## Install & Usage
 
@@ -109,7 +119,7 @@ Version: 3.5-beta
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
 
-## Demo Feature
+## 📺 Demo Feature
 1. Part 1 [List application, Dump decrypt application, Dump Memory application] : [Demo1](https://youtu.be/7D5OuKAUQ_s)
 2. Part 2 [Static Analysis Application, Intercept URL Request] : [Demo2](https://youtu.be/xd685sCMqSw)
 3. Part 3 [Bypass Jailbreak Detection] : [Demo3](https://youtu.be/DAJywMZ9nHg)
