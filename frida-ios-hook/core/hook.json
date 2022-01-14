@@ -1,6 +1,7 @@
 {
     "name": "frida-ios-hook",
     "version": "3.6",
+    "cliVersion": "1.0",
     "author": "noobpk",
     "license": "LICENSE",
     "requirements": "requirements.txt",
@@ -21,7 +22,7 @@
     },
     "errorLog": "errors.log",
     "methods": {
-        "List All Application": "methods/ios_list-apps.js",
+        "List All Application": "methods/ios_list_apps.js",
         "Application Static Analysis": "methods/static_analysis.js",
         "Bypass Jailbreak Detection": "methods/bypass_jailbreak.js",
         "Bypass SSL Pinning": "methods/bypass_ssl.js",

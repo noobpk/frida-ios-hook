@@ -22,6 +22,7 @@ from utils.listapp import *
 from utils.checkversion import *
 from utils.log import *
 from utils.config import *
+from utils.cli import *
 
 GLOBLA_CONFIG = config.loadConfig()
 
@@ -78,6 +79,7 @@ def main():
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
 
         parser.add_option('-h', "--help", action="help", dest="help", help='''Show basic help message and exit''')
+        parser.add_option("--cli", action="store_true", dest="cli", help='''iOSHook command line interface''')
         #Using options -p(--package) for spawn application and load script
         parser.add_option("-p", "--package", dest="package",
                         help='''Identifier of the target app''', metavar="PACKAGE", action="store", type="string")
@@ -317,13 +319,17 @@ def main():
 
         #ios get the shell
         elif options.shell:
-            # check.iproxyInstalled()
+            check.iproxyInstalled()
             SSH_USER = APP_SSH['user']
             SSH_IP = str(APP_SSH['ip'])
             SSH_PORT = str(APP_SSH['port'])
             cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + SSH_PORT)
             subprocess.call(cmd)
             sys.exit(0)
+        #ioshook cli
+        elif options.cli:
+            logger.info("Welcome to iOSHook CLI! Type ? to list commands")
+            iOSHook_CLI().cmdloop()
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
             # sys.exit(0)

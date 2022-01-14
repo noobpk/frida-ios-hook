@@ -98,7 +98,7 @@ Version: 3.6
 	
 	[+] Fix
 ```
-[Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
+[See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
 ## Install & Usage
 

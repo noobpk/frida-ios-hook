@@ -1,5 +1,15 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2021-01-14
+
+### Added
+- New option CLI `--cli`
+ 
+### Changed
+
+### Fixed
+- Fix method List All Application script not found 
+
 ## [3.6] - 2021-01-11
 
 ### Added

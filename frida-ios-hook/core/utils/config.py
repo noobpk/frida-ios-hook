@@ -30,6 +30,7 @@ class config():
 
                 APP_AUTHOR = obj['author']
                 APP_VERSION = obj['version']
+                APP_CLI_VERSION = obj['cliVersion']
                 APP_METHODS = obj['methods']
                 APP_UTILS = obj['utils']
                 APP_SSH = obj['ssh']
@@ -39,6 +40,7 @@ class config():
                 APP_FRIDA_SCRIPTS = obj['fridaScripts']
                 return {
                     "version" : APP_VERSION,
+                    "cliVersion": APP_CLI_VERSION,
                     "author": APP_AUTHOR,
                     "methods": APP_METHODS,
                     "utils": APP_UTILS,
