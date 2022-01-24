@@ -1,7 +1,12 @@
-/*
-Find All Classes v1.1
-*/
-function show_classes_of_app()
+/* Description: Dump all classes used by the app
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: https://github.com/interference-security/frida-scripts/blob/master/iOS
+ * Author: @interference-security
+ */
+//Twitter: https://twitter.com/xploresec
+//GitHub: https://github.com/interference-security
+function run_show_classes_of_app()
 {
     console.log("[*] Started: Find Classes")
     var count = 0
@@ -17,11 +22,9 @@ function show_classes_of_app()
     console.log("[*] Completed: Find Classes")
 }
 
-if (ObjC.available)
+function show_classes_of_app()
 {
-    setTimeout(show_classes_of_app, 1000);
+	setImmediate(run_show_classes_of_app)
 }
-else
-{
-    console.log("Objective-C Runtime is not available!");
-}
+
+show_classes_of_app()

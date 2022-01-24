@@ -1,8 +1,13 @@
+/* Description: iOS app static analysis
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: Frida CodeShare Projects and MobSF & https://github.com/interference-security/frida-scripts/blob/master/iOS
+ * Author: @interference-security
+ */
 //Script for iOS app's static analysis
 //Author: Interference Security
 //Twitter: xploresec
 //Source: https://github.com/interference-security/frida-scripts/blob/master/iOS/ios-app-static-analysis.js
-//Credits: Frida CodeShare Projects and MobSF
 
 function app_meta_info(DEBUG)
 {
@@ -10,15 +15,15 @@ function app_meta_info(DEBUG)
 	console.warn("--------------------------------")
 	console.warn("|     App Meta Information     |")
 	console.warn("--------------------------------")
-	console.log("Bundle Name: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleName").toString())
+	try { console.log("Bundle Name: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleName").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("Display Name: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleDisplayName").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("Executable Name: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleExecutable").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("Bundle Identifier: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleIdentifier").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
-	try { console.log("Info Dictionary Version: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleInfoDictionaryVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
-	try { console.log("Numeric Version: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleNumericVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
-	try { console.log("Short Version: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleShortVersionString").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
-	try { console.log("Bundle Version: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
-	try { console.log("Minimum OS Version: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("MinimumOSVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
+	try { console.log("Info Dictionary Version : " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleInfoDictionaryVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
+	try { console.log("Numeric Version : " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleNumericVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
+	try { console.log("Short Version : " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleShortVersionString").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
+	try { console.log("Bundle Version : " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
+	try { console.log("Minimum OS Version : " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("MinimumOSVersion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("Bundle Package Type: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundlePackageType").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("BuildMachineOSBuild: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("BuildMachineOSBuild").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
 	try { console.log("Development Region: " + ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleDevelopmentRegion").toString()) } catch(err) { if(DEBUG) { console.error("[!] Error: " + err.message); } }
@@ -92,7 +97,13 @@ function show_url_scheme(DEBUG)
 	console.warn("--------------------------------")
 	console.warn("|         URL Schemes          |")
 	console.warn("--------------------------------")
-	var nsDictionary = ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleURLTypes").objectAtIndex_(0);
+	var nsDictionary = ObjC.classes.NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleURLTypes");
+	if(nsDictionary == null)
+	{
+		console.log("[*] URL scheme not defined by app")
+		return;
+	}
+	nsDictionary = nsDictionary.objectAtIndex_(0);
 	var dictKeys = nsDictionary.allKeys();
 	for(var i = 0; i < dictKeys.count(); i++)
 	{
@@ -267,7 +278,7 @@ function app_transport_security(DEBUG)
 				{
 					console.log("[*] Issue: ATS restrictions dsiabled for all network connections by setting 'NSAllowsArbitraryLoads' to True")
 					console.log("[*] Detail: A Boolean value indicating whether App Transport Security restrictions are disabled for all network connections")
-					console.log("[*] Description: Setting this key's value to YES disables App Transport Security (ATS) restrictions for all domains not specified in the NSExceptionDomains dictionary. Disabling ATS means that unsecured HTTP connections are allowed. HTTPS connections are also allowed, and are still subject to default server trust evaluation. However, extended security checks—like requiring a minimum Transport Layer Security (TLS) protocol version—are disabled. In iOS 10 and later, the value of the NSAllowsArbitraryLoads key is ignored and the default value of NO is used instead — if any of the following keys are present in app's Information Property List file: NSAllowsArbitraryLoadsForMedia, NSAllowsArbitraryLoadsInWebContent, NSAllowsLocalNetworking.")
+					console.log("[**] Description : Setting this key's value to YES disables App Transport Security (ATS) restrictions for all domains not specified in the NSExceptionDomains dictionary. Disabling ATS means that unsecured HTTP connections are allowed. HTTPS connections are also allowed, and are still subject to default server trust evaluation. However, extended security checks—like requiring a minimum Transport Layer Security (TLS) protocol version—are disabled. In iOS 10 and later, the value of the NSAllowsArbitraryLoads key is ignored and the default value of NO is used instead — if any of the following keys are present in app's Information Property List file: NSAllowsArbitraryLoadsForMedia, NSAllowsArbitraryLoadsInWebContent, NSAllowsLocalNetworking.")
 					console.log("")
 				}
 			}
@@ -277,7 +288,7 @@ function app_transport_security(DEBUG)
 				{
 					console.log("[*] Issue: ATS restrictions disabled for requests made using the AV Foundation framework by setting 'NSAllowsArbitraryLoadsForMedia' to True")
 					console.log("[*] Detail: A Boolean value indicating whether all App Transport Security restrictions are disabled for requests made using the AV Foundation framework")
-					console.log("[*] Description: Setting this key's value to disables App Transport Security restrictions for media loaded using the AVFoundation framework, without affecting URLSession connections. Domains specified in the NSExceptionDomains dictionary aren't affected by this key's value. In iOS 10 and later, if this key is included with any value, then App Transport Security ignores the value of the NSAllowsArbitraryLoads key, instead using that key's default value of NO.")
+					console.log("[**] Description : Setting this key's value to disables App Transport Security restrictions for media loaded using the AVFoundation framework, without affecting URLSession connections. Domains specified in the NSExceptionDomains dictionary aren't affected by this key's value. In iOS 10 and later, if this key is included with any value, then App Transport Security ignores the value of the NSAllowsArbitraryLoads key, instead using that key's default value of NO.")
 					console.log("")
 				}
 			}
@@ -287,7 +298,7 @@ function app_transport_security(DEBUG)
 				{
 					console.log("[*] Issue: ATS restrictions disabled for requests made from webviews by setting 'NSAllowsArbitraryLoadsInWebContent' to True")
 					console.log("[*] Detail: A Boolean value indicating whether all App Transport Security restrictions are disabled for requests made from web views")
-					console.log("[*] Description: Setting this key's value to YES to exempt app's web views from App Transport Security restrictions without affecting URLSession connections. Domains specified in the NSExceptionDomains dictionary aren't affected by this key's value. A web view is an instance of any of the following classes: WKWebView and UIWebView. In iOS 10 and later, if this key is included with any value, then App Transport Security ignores the value of the NSAllowsArbitraryLoads key, instead using that key's default value of NO.")
+					console.log("[**] Description : Setting this key's value to YES to exempt app's web views from App Transport Security restrictions without affecting URLSession connections. Domains specified in the NSExceptionDomains dictionary aren't affected by this key's value. A web view is an instance of any of the following classes: WKWebView and UIWebView. In iOS 10 and later, if this key is included with any value, then App Transport Security ignores the value of the NSAllowsArbitraryLoads key, instead using that key's default value of NO.")
 					console.log("")
 				}
 			}
@@ -297,7 +308,7 @@ function app_transport_security(DEBUG)
 				{
 					console.log("[*] Issue: Allowed Loading of Local Resources by setting 'NSAllowsLocalNetworking' to True")
 					console.log("[*] Detail: A Boolean value indicating whether to allow loading of local resources.")
-					console.log("[*] Description: In iOS 9, App Transport Security (ATS) disallows connections to unqualified domains, .local domains, and IP addresses. Exceptions can be added for unqualified domains and .local domains in the NSExceptionDomains dictionary, but can’t add numerical IP addresses. Instead use NSAllowsArbitraryLoads when you want to load directly from an IP address. In iOS 10 later, ATS allows all three of these connections by default, so an exception is no longer needed for any of them. However, if compatibility with older versions of the OS is to be maintained, set both of the NSAllowsArbitraryLoads and NSAllowsLocalNetworking keys to YES.")
+					console.log("[**] Description : In iOS 9, App Transport Security (ATS) disallows connections to unqualified domains, .local domains, and IP addresses. Exceptions can be added for unqualified domains and .local domains in the NSExceptionDomains dictionary, but can’t add numerical IP addresses. Instead use NSAllowsArbitraryLoads when you want to load directly from an IP address. In iOS 10 later, ATS allows all three of these connections by default, so an exception is no longer needed for any of them. However, if compatibility with older versions of the OS is to be maintained, set both of the NSAllowsArbitraryLoads and NSAllowsLocalNetworking keys to YES.")
 					console.log("")
 				}
 			}
@@ -315,7 +326,7 @@ function app_transport_security(DEBUG)
 					{
 						console.log("[*] Issue: ")
 						console.log("[*] Detail: ")
-						console.log("[*] Description: ")
+						console.log("[**] Description : ")
 						console.log("")
 					}
 				}*/

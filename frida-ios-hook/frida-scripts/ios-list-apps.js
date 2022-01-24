@@ -1,3 +1,9 @@
+/* Description: iOS List Application
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: Frida CodeShare
+ * Author: @oleavr
+ */
 /*
  * Usage: frida -U -n itunesstored --codeshare oleavr/ios-list-apps
  *

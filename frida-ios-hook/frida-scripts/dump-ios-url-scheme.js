@@ -1,3 +1,11 @@
+/* Description: Dump iOS url scheme when "openURL" is called
+ * Mode: S
+ * Version: 1.0
+ * Credit: https://github.com/interference-security/frida-scripts/blob/master/iOS
+ * Author: @interference-security
+ */
+//Twitter: https://twitter.com/xploresec
+//GitHub: https://github.com/interference-security
 // Get a reference to the openURL selector
 var openURL = ObjC.classes.UIApplication["- openURL:"];
 

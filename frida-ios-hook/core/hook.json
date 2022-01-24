@@ -46,5 +46,10 @@
         "darwin": "OS X",
         "win32": "Windows"
     },
-    "fridaScripts": "frida-scripts/"
+    "fridaScripts": "frida-scripts/",
+    "credits": {
+        "Frida CodeShare": "https://codeshare.frida.re",
+        "0xdea/frida-scripts": "https://github.com/0xdea/frida-scripts",
+        "interference-security/frida-scripts": "https://github.com/interference-security/frida-scripts"
+    }
 }

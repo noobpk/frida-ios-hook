@@ -1,9 +1,9 @@
-/*************************************************************************************
- * Name: Intercepts Crypto Operations
- * OS: iOS
+/* Description: iOS Intercepts Crypto Operations
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: https://github.com/federicodotta/Brida
  * Author: @federicodotta
- * Source: https://github.com/federicodotta/Brida
- **************************************************************************************/
+ */
 
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCrypt"),
     {
