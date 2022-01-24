@@ -1,3 +1,9 @@
+/* Description: Basic bypass jailbreak detection
+ * Mode: S
+ * Version: 1.0
+ * Credit: https://github.com/noobpk/frida-ios-hook/tree/master/frida-ios-hook/frida-scripts
+ * Author: @noobpk
+ */
 function bypassJailbreakDetection() {
 	try {
 		var className = "JailbreakDetection";

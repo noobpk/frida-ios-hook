@@ -1,6 +1,9 @@
-//IOS FLUTTER BYPASS SSLPINNING
-//
-//
+/* Description: Flutter bypass ssl pinning
+ * Mode: S
+ * Version: 1.0
+ * Credit: https://bhattsameer.github.io/2021/06/23/Intercepting-flutter-iOS-application.html
+ * Author: @noobpk
+ */
 var colors = {
     "resetColor": "\x1b[0m",
     "green": "\x1b[32m",

@@ -1,3 +1,9 @@
+/* Description: iOS URL Scheme Fuzzing
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: Frida CodeShare
+ * Author: @dki
+ */
 /* 
  * iOS URL Scheme Fuzzing
  * Usage: frida -U --codeshare dki/ios-url-scheme-fuzzing SpringBoard

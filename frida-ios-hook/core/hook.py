@@ -85,13 +85,13 @@ def main():
                         help='''Identifier of the target app''', metavar="PACKAGE", action="store", type="string")
         #Using options -n(--name) for attach script to application is running
         parser.add_option("-n", "--name", dest="name",
-                        help="Name of the target app", metavar="NAME", action="store", type="string")
+                        help='''Name of the target app''', metavar="NAME", action="store", type="string")
 
         parser.add_option("-s", "--script", dest="script",
-                        help="Frida Script Hooking", metavar="SCIPRT.JS")
+                        help='''Frida Script Hooking''', metavar="SCIPRT.JS")
 
-        parser.add_option("-c", "--check-version", action="store_true", help="Check iOS hook for the newest version", dest="checkversion")
-        parser.add_option("-u", "--update", action="store_true", help="Update iOS hook to the newest version", dest="update")
+        parser.add_option("-c", "--check-version", action="store_true", help='''Check iOSHook for the newest version''', dest="checkversion")
+        parser.add_option("-u", "--update", action="store_true", help='''Update iOSHook to the newest version''', dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
                         help='''app-static: Static Analysis Application(-n)
@@ -152,11 +152,29 @@ def main():
         
         elif options.listscripts:
             path = APP_FRIDA_SCRIPTS
+            description_pattern = " * Description:"
+            mode_pattern = " * Mode:"
+            version_pattern = " * Version:"
+
             if os.path.exists(path):
                 logger.info('[*] List All Scripts: ')
-                for file_name in os.listdir(path):
+                print("# Frida scripts for iOS app testing")
+                print(" ")
+                files = os.listdir(path)
+                sorted_files =  sorted(files)
+                i = 0
+                for file_name in sorted_files:
                     if fnmatch.fnmatch(file_name, '*.js'):
-                        print('[*] ' + file_name)
+                        i +=1
+                        f = open(path+file_name, "r")
+                        for line in f:
+                            if re.search(description_pattern, line):
+                                description = re.sub(r'\n', '', line[16:])
+                            if re.search(mode_pattern, line):
+                                mode = re.sub('\s+', '', line[9:])
+                            if re.search(version_pattern, line):
+                                version = re.sub('\s+', '', line[12:])  
+                        print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[?] Path frida-script not exists!')
 

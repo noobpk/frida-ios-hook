@@ -1,5 +1,8 @@
-/* Description: iOS 13 SSL Bypass based on https://codeshare.frida.re/@machoreverser/ios12-ssl-bypass/ and https://github.com/nabla-c0d3/ssl-kill-switch2
- *  Author:     @apps3c
+/* Description: iOS 13 bypass ssl pinning
+ * Mode: S
+ * Version: 1.0
+ * Credit: https://codeshare.frida.re/@machoreverser/ios12-ssl-bypass/ and https://github.com/nabla-c0d3/ssl-kill-switch2
+ * Author: @apps3c
  */
 
 try {

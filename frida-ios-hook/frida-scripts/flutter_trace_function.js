@@ -1,3 +1,9 @@
+/* Description: iOS flutter trace function
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: https://gist.github.com/AICDEV/630feed7583561ec9f9421976e836f90
+ * Author: @AICDEV
+ */
 /**
  * run the script to a running app: frida -U "appName" -l flutter_ios.js --no-pause
  * start app direct with the script:  frida -Uf bundleIdentifier -l flutter_ios.js --no-pause

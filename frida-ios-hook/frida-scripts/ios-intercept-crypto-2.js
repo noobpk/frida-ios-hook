@@ -1,3 +1,9 @@
+/* Description: iOS Intercepts Crypto Operations 2
+ * Mode: S+A
+ * Version: 1.0
+ * Credit: 
+ * Author: 
+ */
 // Intercept the CCCrypt call.
 Interceptor.attach(Module.findExportByName('libcommonCrypto.dylib', 'CCCrypt'), {
     onEnter: function (args) {
