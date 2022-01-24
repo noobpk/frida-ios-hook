@@ -1,6 +1,18 @@
 # Frida iOS Hook ChangeLog
 
-## [Unrelease] - 2021-01-14
+## [Unrelease] - 2022-01-24
+
+### Added
+- Add new script to frida-scripts
+- Add info to script
+
+### Changed
+- Update option list-scripts
+- Update README.md
+
+### Fixed
+
+## [Unrelease] - 2022-01-14
 
 ### Added
 - New option CLI `--cli`
@@ -10,7 +22,7 @@
 ### Fixed
 - Fix method List All Application script not found 
 
-## [3.6] - 2021-01-11
+## [3.6] - 2022-01-11
 
 ### Added
 - New option Show system log of device `--logcat`
