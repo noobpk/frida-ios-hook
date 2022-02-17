@@ -1,6 +1,7 @@
-frida-tools
-paramiko
-scp
-tqdm
-colorlog
-pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
+paramiko==2.4.2
+colorlog==4.0.2
+psutil==5.6.7
+requests==2.26.0
+tqdm==4.42.1
+scp==0.13.2
+frida==15.0.18
