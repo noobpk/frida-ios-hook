@@ -53,6 +53,8 @@ Support both spawn & attach script to process.
 	
 	[*] HexByte Scan IPA:
 	--hexbyte-scan		Scan or Patch IPA with byte patterns
+	--pattern=PATTERN   Pattern for hexbytescan
+	--address=ADDRESS   Address for hexbytescan
 	-t TASK, --task=TASK
           			Task for hexbytescan
 	
