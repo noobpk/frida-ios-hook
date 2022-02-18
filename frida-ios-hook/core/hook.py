@@ -43,11 +43,14 @@ def dump_memory(option, process):
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
-def hexbyte_scan(option, task):
+def hexbyte_scan(mode, file, option):
     try:
         util = APP_UTILS['HexByte Scanner']
         if option != "-h":
-            cmd = shlex.split("./"+util + ' ' + option + ' ' + task)
+            if mode == "":
+                cmd = shlex.split("./"+util + ' ' + option + ' ' + file)
+            else:
+                cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option)
         else:
             cmd = shlex.split("./"+util)
         subprocess.call(cmd)
@@ -67,9 +70,11 @@ def main():
         Example dump decrypt ipa with -d(--dump) and -o(--output) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         Example dump memory of application with --dump-memory and -s(--string) options:
-        [+] ./ioshook -n 'App Store' --dump-memory '-s(--string)'
-        Example Scan IPA with file task:
-        [+] ./ioshook --hexbyte-scan 'scan AppStore.ipa' -t /hexbyscan-tasks/openssl_hook.json'''
+        [+] ./ioshook -n 'App Store' --dump-memory --string
+        Example Hexbyte Scan IPA with pattern:
+        [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
+        Example Hexbyte Scan IPA with file task:
+        [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa -t /hexbyscan-tasks/openssl_hook.json'''
 
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
@@ -121,6 +126,9 @@ def main():
 
         #Hexbytescan of application using the code of karek314's repo hexbytescanner - Link: https://github.com/karek314/hexbytescanner
         hexscan.add_option("--hexbyte-scan", action="store", help="Scan or Patch IPA with byte patterns", dest="hexscan")
+        hexscan.add_option("-f", "--file", action="store", help="File for hexbytescan", dest="file")
+        hexscan.add_option("--pattern", action="store", help="Pattern for hexbytescan", dest="pattern")
+        hexscan.add_option("--address", action="store", help="Address for hexbytescan", dest="address")
         hexscan.add_option("-t", "--task", action="store", help="Task for hexbytescan", dest="task")
 
         parser.add_option_group(dump)
@@ -327,7 +335,12 @@ def main():
 
         #hexbytescan ipa
         elif options.hexscan:
-            hexbyte_scan(options.hexscan, options.task)
+            if options.pattern is None and options.address is None:
+                hexbyte_scan('', options.file, options.task)
+            elif options.pattern and options.address is None:
+                hexbyte_scan(options.hexscan, options.file, options.pattern)
+            elif options.pattern is None and options.address:
+                hexbyte_scan(options.hexscan, options.file, options.address)
 
         #ios system log
         elif options.logcat:
