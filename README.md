@@ -102,7 +102,7 @@ Version: 3.6
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
-## Install & Usage
+## Install
 
 ```
 	[+] Latest version
@@ -118,16 +118,20 @@ Version: 3.6
 		5. rebellion :))
 ```
 
+## Usage
+
+
+[See Full Usage as Wiki](https://github.com/noobpk/frida-ios-hook/wiki)
+
 If you run the script but it doesn't work, you can try the following:
 ```frida -U -f package -l script.js```
 
 ## 📺 Demo Feature
 
-|N|Title|Link|
-|:---|:---|:---|
-|1|List application, Dump decrypt application, Dump Memory application|[https://youtu.be/DAJywMZ9nHg](https://youtu.be/7D5OuKAUQ_s)|
-|2|Static Analysis Application, Intercept URL Request|[https://youtu.be/xd685sCMqSw](https://youtu.be/xd685sCMqSw)|
-|3|Bypass Jailbreak Detection|[https://youtu.be/DAJywMZ9nHg](https://youtu.be/DAJywMZ9nHg)|
+|Title|Link|
+|:---|:---|
+|Frida iOS Hook &#124; Basic Usage &#124; Install - List devices - List apps - List scripts - Logcat - Shell|[https://youtu.be/xSndHgTdv4w](https://youtu.be/xSndHgTdv4w)|
+|Frida iOS Hook &#124; Basic Usage &#124; Dump Decrypt IPA - Dump Memory App - Hexbyte-Scan IPA|[https://youtu.be/AUsJ9_gnWAI](https://youtu.be/AUsJ9_gnWAI)|
 
 ## Frida-Script
 
