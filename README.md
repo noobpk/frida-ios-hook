@@ -110,10 +110,12 @@ Version: 3.6
 	[+] Develop version
 	
 		1. git clone -b dev https://github.com/noobpk/frida-ios-hook
-		2. cd frida-ios-hook/frida-ios-hook
-		3. chmod +x ioshook
-		4. ./ioshook --help(-h)
-		5. rebellion :))
+		2. cd frida-ios-hook
+		3. pip3 install -r requirements.txt
+		4. cd frida-ios-hook
+		5. chmod +x ioshook
+		6. ./ioshook --help(-h)
+		7. rebellion :))
 ```
 
 If you run the script but it doesn't work, you can try the following:
