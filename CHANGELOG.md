@@ -1,5 +1,14 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2022-02-18
+
+### Added
+
+### Changed
+- Update option hexbyte-scan
+
+### Fixed
+
 ## [Unrelease] - 2022-01-24
 
 ### Added
