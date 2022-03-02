@@ -132,6 +132,7 @@ If you run the script but it doesn't work, you can try the following:
 |:---|:---|
 |Frida iOS Hook &#124; Basic Usage &#124; Install - List devices - List apps - List scripts - Logcat - Shell|[https://youtu.be/xSndHgTdv4w](https://youtu.be/xSndHgTdv4w)|
 |Frida iOS Hook &#124; Basic Usage &#124; Dump Decrypt IPA - Dump Memory App - Hexbyte-Scan IPA|[https://youtu.be/AUsJ9_gnWAI](https://youtu.be/AUsJ9_gnWAI)|
+|Frida iOS Hook &#124; Basic Usage &#124; App Static - Bypass Jailbreak - Bypass SSL - Intercept URL + Crypto|[https://youtu.be/nWhKDSzArf8](https://youtu.be/nWhKDSzArf8)|
 
 ## Frida-Script
 
