@@ -1,5 +1,12 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2022-03-17
+
+### Added
+
+### Changed
+- Update ioshook. Check python3 command exists
+
 ## [Unrelease] - 2022-02-18
 
 ### Added
