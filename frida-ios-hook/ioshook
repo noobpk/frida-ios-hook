@@ -7,7 +7,16 @@ versions of setuptools happy
 import subprocess
 import shlex
 import sys
+from shutil import which
 
-command = shlex.split("python3 " +"core/hook.py")
-command.extend(sys.argv[1:])
-subprocess.call(command)
+try:
+    if(which('python3') is not None):
+        command = shlex.split("python3 " +"core/hook.py")
+    else:
+        command = shlex.split("python " +"core/hook.py")
+
+    command.extend(sys.argv[1:])
+    subprocess.call(command)
+
+except Exception as e:
+    raise e
