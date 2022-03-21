@@ -1,4 +1,4 @@
-paramiko==2.10.2
+paramiko==2.10.3
 colorlog==6.6.0
 psutil==5.9.0
 requests==2.27.1
