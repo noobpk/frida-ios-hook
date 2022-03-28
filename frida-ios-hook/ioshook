@@ -4,6 +4,7 @@
 We wrap the execution of the binary in a Python3 class to keep the new (Py3)
 versions of setuptools happy
 """
+import os
 import subprocess
 import shlex
 import sys
@@ -16,7 +17,7 @@ try:
         command = shlex.split("python " +"core/hook.py")
 
     command.extend(sys.argv[1:])
-    subprocess.call(command)
+    subprocess.call(command, cwd=os.path.dirname(__file__))
 
 except Exception as e:
     raise e
