@@ -111,17 +111,19 @@ Version: 3.6
 		
 	[+] Develop version
 	
-		1. git clone -b dev https://github.com/noobpk/frida-ios-hook
-		2. cd frida-ios-hook
-		3. pip3 install -r requirements.txt
-		4. cd frida-ios-hook
-		5. chmod +x ioshook
-		6. ./ioshook --help(-h)
-		7. rebellion :))
+		git clone -b dev https://github.com/noobpk/frida-ios-hook
+```
+
+## Build 
+
+```
+1. cd frida-ios-hook/
+2. pip3 install -r requirements.txt
+3. python3 setup.py
+4. cd frida-ios-hook
 ```
 
 ## Usage
-
 
 [See Full Usage as Wiki](https://github.com/noobpk/frida-ios-hook/wiki)
 

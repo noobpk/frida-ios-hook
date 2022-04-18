@@ -1,5 +1,13 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2022-04-18
+
+### Added
+- Add setup.py for build executable
+### Changed
+- Update readme, changelog
+- Remove old file 
+
 ## [Unrelease] - 2022-03-17
 
 ### Added
