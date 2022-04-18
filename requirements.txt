@@ -1,4 +1,4 @@
-colorlog==4.0.2
+colorlog==6.6.0
 frida==15.1.17
 scp==0.13.2
 requests==2.26.0
