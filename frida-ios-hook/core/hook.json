@@ -5,7 +5,7 @@
     "author": "noobpk",
     "license": "LICENSE",
     "requirements": "requirements.txt",
-    "fristRun": true,
+    "firstRun": true,
     "packages": {
         "windows": {
             "libimobiledevice": "",

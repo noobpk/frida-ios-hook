@@ -35,7 +35,7 @@ class config():
                 APP_UTILS = obj['utils']
                 APP_SSH = obj['ssh']
                 APP_PLATFORM_SUPORT = obj['platformSupport']
-                APP_FIRST_RUN = obj['fristRun']
+                APP_FIRST_RUN = obj['firstRun']
                 APP_PACKAGES = obj['packages']
                 APP_FRIDA_SCRIPTS = obj['fridaScripts']
                 return {

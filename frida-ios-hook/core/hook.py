@@ -3,33 +3,23 @@ import time
 import os
 import sys
 import optparse
-import threading
-import codecs
-import shutil
-import tempfile
 import subprocess
 import re
 import fnmatch
 import shlex
-import psutil
 
-import paramiko
-from paramiko import SSHClient
-from scp import SCPClient
-from tqdm import tqdm
-import traceback
 from utils.listapp import *
 from utils.checkversion import *
 from utils.log import *
 from utils.config import *
 from utils.cli import *
 
-GLOBLA_CONFIG = config.loadConfig()
+GLOBAL_CONFIG = config.loadConfig()
 
-APP_FRIDA_SCRIPTS = GLOBLA_CONFIG['fridaScripts']
-APP_METHODS = GLOBLA_CONFIG['methods']
-APP_UTILS = GLOBLA_CONFIG['utils']
-APP_SSH = GLOBLA_CONFIG['ssh']
+APP_FRIDA_SCRIPTS = GLOBAL_CONFIG['fridaScripts']
+APP_METHODS = GLOBAL_CONFIG['methods']
+APP_UTILS = GLOBAL_CONFIG['utils']
+APP_SSH = GLOBAL_CONFIG['ssh']
 
 def dump_memory(option, process):
     try:
