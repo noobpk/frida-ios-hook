@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 
-"""
-We wrap the execution of the binary in a Python3 class to keep the new (Py3)
-versions of setuptools happy
-"""
 import os
 import subprocess
 import shlex

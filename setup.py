@@ -1,58 +1,49 @@
+#!/usr/bin/python3
+import sys
 import os
-from setuptools import setup, find_packages
+setup = """#!/usr/bin/python3
 
-def _package_files(directory: str, suffix: str) -> list:
-    """
-        Get all of the file paths in the directory specified by suffix.
-        :param directory:
-        :return:
-    """
+import os
+import subprocess
+import shlex
+import sys
+from shutil import which
 
-    paths = []
+try:
+    if(which('python3') is not None):
+        command = shlex.split("python3 " +"core/hook.py")
+    else:
+        command = shlex.split("python " +"core/hook.py")
 
-    for (path, directories, filenames) in os.walk(directory):
-        for filename in filenames:
-            if filename.endswith(suffix):
-                paths.append(os.path.join('..', path, filename))
+    command.extend(sys.argv[1:])
+    subprocess.call(command, cwd=os.path.dirname(__file__))
 
-    return paths
+except Exception as e:
+    raise e
+"""""
+    
+def _buildBinary():
+    try:
+        if sys.platform == 'darwin':
+            with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
+                f.write(setup)
+            os.system('chmod +x frida-ios-hook/ioshook')
+            print("[+] Build executable for Darwin success.")
+        elif sys.platform == 'linux':
+            with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
+                f.write(setup)
+            os.system('chmod +x frida-ios-hook/ioshook')
+            print("[+] Build executable for Linux success.")
+        elif sys.platform == 'win32':
+            with open('frida-ios-hook/ioshook.py','w+', encoding="utf-8") as f:
+                f.write(setup)
+            print("[+] Build executable for Windows success.")
+    except Exception as e:
+        raise e
 
-with open ("README.md", "r") as fh:
-    long_description = fh.read()
-
-path = os.path.abspath(os.path.dirname(__file__))
-
-with open(os.path.join(path, 'requirements.txt'), 'r') as f:
-    requirements = f.readlines()
-
-setup(
-    name='Frida-iOS-Hook',
-    version='3.4',
-    description='Trace Class/Function & Modify Return Value',
-    author='noobpk',
-    author_email='ltp.noobpk@gmail.com',
-    long_description =long_description,
-    long_description_content_type="text/markdown",
-    url='https://github.com/noobpk/frida-ios-hook/',
-    packages=find_packages(),
-    # include other files
-    package_data={
-        '': _package_files(os.path.join(path, 'frida-ios-hook'), '.js') +
-            _package_files(os.path.join(path, 'frida-ios-hook/frida-scripts'), '.js') +
-            _package_files(os.path.join(path, 'frida-ios-hook/methods'), '.js')
-    },
-    install_requires=requirements,
-    classifiers=[
-        "Programming Language :: Python :: 3 :: Only",
-        'Natural Language :: English',
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent"
-
-    ],
-    python_requires='>=3.0',
-    entry_points={
-        'console_scripts': [
-            'ioshook=core.hook.run:run',
-        ],
-    },
-)
+if __name__ == '__main__':
+    if sys.version_info < (3, 0):
+        print("[x_x] iOS hook requires Python 3.x")
+        sys.exit(0)
+    else:
+        _buildBinary()
