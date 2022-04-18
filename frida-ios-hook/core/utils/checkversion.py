@@ -3,7 +3,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from utils.log import *
 from utils.config import *
 
-GLOBLA_CONFIG = config.loadConfig()
+GLOBAL_CONFIG = config.loadConfig()
 
 def check_version(speak=True):
     """
@@ -16,7 +16,7 @@ def check_version(speak=True):
         version_identification = content.find('"version": ')
         current_version = content[version_identification:version_identification + 16]
         current_version = str(current_version.strip().split('"')[3])
-        my_version = GLOBLA_CONFIG['version']
+        my_version = GLOBAL_CONFIG['version']
         if not current_version == my_version:
             if speak:
                 logger.info('[*] New version: {} is available'.format(current_version))
