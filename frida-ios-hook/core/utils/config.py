@@ -6,6 +6,7 @@ from shutil import which
 import shlex
 import subprocess
 from utils.log import *
+import psutil
 
 APP_AUTHOR = ''
 APP_VERSION = ''
