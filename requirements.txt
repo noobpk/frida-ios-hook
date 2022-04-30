@@ -4,3 +4,4 @@ scp==0.13.2
 requests==2.26.0
 paramiko==2.4.2
 tqdm==4.42.1
+psutil
