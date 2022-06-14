@@ -99,8 +99,8 @@ function show_url_scheme(DEBUG) {
         if (dictKeys.objectAtIndex_(i) == "CFBundleURLSchemes") {
             var urlSchemesString = "";
             var nsArray = nsDictionary.objectForKey_("CFBundleURLSchemes");
-            for (var i = 0; i < nsArray.count(); i++) {
-                urlSchemesString = urlSchemesString + nsArray.objectAtIndex_(i).toString() + ", ";
+            for (var j = 0; j < nsArray.count(); j++) {
+                urlSchemesString = urlSchemesString + nsArray.objectAtIndex_(j).toString() + ", ";
             }
             urlSchemesString = urlSchemesString.substr(0, urlSchemesString.length - 2)
             console.log("URL Schemes : " + urlSchemesString)
