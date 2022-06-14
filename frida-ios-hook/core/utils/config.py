@@ -95,7 +95,7 @@ class check():
 
                 with open(APP_CONFIG, "r") as f:
                     data = json.load(f)
-                    data['fristRun'] = False
+                    data['firstRun'] = False
 
                 with open(APP_CONFIG, "w") as f:
                     f.write(json.dumps(data, sort_keys=False, indent=4))
