@@ -178,6 +178,8 @@ def main():
 
         #Spawning application and load script
         elif options.package and options.script:
+            if not os.path.isfile(options.script):
+                options.script =  APP_FRIDA_SCRIPTS +'/'+options.script            
             if os.path.isfile(options.script):
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + options.script)
@@ -196,6 +198,8 @@ def main():
         
         #Attaching script to application
         elif options.name and options.script:
+            if not os.path.isfile(options.script):
+                options.script =  APP_FRIDA_SCRIPTS + '/'+options.script
             if os.path.isfile(options.script):
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
