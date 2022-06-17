@@ -11,7 +11,7 @@ import psutil
 APP_AUTHOR = ''
 APP_VERSION = ''
 APP_SSH = ''
-APP_PLATFORM_SUPORT = ''
+APP_PLATFORM_SUPPORT = ''
 APP_FIRST_RUN = ''
 APP_PACKAGES = ''
 APP_CONFIG = 'core/hook.json'
@@ -20,7 +20,7 @@ class config():
 
     def loadConfig():
 
-        global APP_VERSION, APP_AUTHOR, APP_SSH, APP_PLATFORM_SUPORT, APP_FIRST_RUN, APP_PACKAGES
+        global APP_VERSION, APP_AUTHOR, APP_SSH, APP_PLATFORM_SUPPORT, APP_FIRST_RUN, APP_PACKAGES
 
         try:
             if os.path.isfile(APP_CONFIG):
@@ -35,7 +35,7 @@ class config():
                 APP_METHODS = obj['methods']
                 APP_UTILS = obj['utils']
                 APP_SSH = obj['ssh']
-                APP_PLATFORM_SUPORT = obj['platformSupport']
+                APP_PLATFORM_SUPPORT = obj['platformSupport']
                 APP_FIRST_RUN = obj['firstRun']
                 APP_PACKAGES = obj['packages']
                 APP_FRIDA_SCRIPTS = obj['fridaScripts']
@@ -46,7 +46,7 @@ class config():
                     "methods": APP_METHODS,
                     "utils": APP_UTILS,
                     "ssh": APP_SSH,
-                    'platformSupport': APP_PLATFORM_SUPORT,
+                    'platformSupport': APP_PLATFORM_SUPPORT,
                     'firstRun': APP_FIRST_RUN,
                     'packages': APP_PACKAGES,
                     'fridaScripts': APP_FRIDA_SCRIPTS
@@ -105,7 +105,7 @@ class check():
 
     def platform():
         try:
-            if sys.platform not in APP_PLATFORM_SUPORT:
+            if sys.platform not in APP_PLATFORM_SUPPORT:
                 sys.exit(logger.error("[x_x] Your platform currently does not support."))
         except Exception as e:
             logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))

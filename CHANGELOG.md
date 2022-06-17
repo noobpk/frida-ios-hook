@@ -1,5 +1,19 @@
 # Frida iOS Hook ChangeLog
 
+## [Release 3.7] - 2022-06-17
+
+### Added
+- Add setup.py for build executable
+- Add --ssh to option Get the shell of connect device
+- Add suggestion script for option -s (--script)
+### Changed
+- Update readme, changelog
+- Update frida-script
+- Update hook.py
+### Fixed
+- Fix syntax in hook.json
+- Fix psutil not found
+
 ## [Unrelease] - 2022-04-18
 
 ### Added
