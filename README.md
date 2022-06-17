@@ -65,7 +65,7 @@ Support both spawn & attach script to process.
 	--list-appinfo    List Info of Apps on Itunes
 	--list-scripts    List All Scripts
 	--logcat          Show system log of device
-    	--shell           Get the shell of connect device
+    --shell, --ssh      Get the shell of connect device
 
 	[*] Quick method:
 
@@ -79,26 +79,30 @@ Support both spawn & attach script to process.
 
 ## 📜 ChangeLog
 
-Version: 3.6
+Version: 3.7
 ```
 	[+] Add:
 	
-		[-] New option Show system log of device `--logcat`
+		[-] Add setup.py for build executable
 		
-		[-] New option Get the shell of connect device `--shell`
+		[-] Add `--ssh` to option Get the shell of connect device
 		
-		[-] Add CHANGELOG.md
+		[-] Add suggestion script for option `-s (--script)`
 		
 		
 	[+] Change:
 		
-		[-] Update README.md
+		[-] Update readme, changelog
 		
-		[-] Using `hook.json` to load configuration for the tool
+		[-] Update frida-script
 		
-		[-] Optimize core `hook.py`
+		[-] Update hook.py
 	
 	[+] Fix
+		
+		[-] Fix syntax in hook.json
+
+		[-] Fix psutil not found
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 

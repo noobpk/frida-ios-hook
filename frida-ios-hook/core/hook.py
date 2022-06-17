@@ -13,6 +13,7 @@ from utils.checkversion import *
 from utils.log import *
 from utils.config import *
 from utils.cli import *
+from utils.suggestion import *
 
 GLOBAL_CONFIG = config.loadConfig()
 
@@ -146,7 +147,7 @@ def main():
                 os.system('frida -U -n '+ process + ' -l ' + method)
                 #sys.stdin.read()
             else:
-                logger.error('[?] Script not found!')
+                logger.error('[x_x] Script not found!')
         
         elif options.listscripts:
             path = APP_FRIDA_SCRIPTS
@@ -174,12 +175,25 @@ def main():
                                 version = re.sub('\s+', '', line[12:])  
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
-                logger.error('[?] Path frida-script not exists!')
+                logger.error('[x_x] Path frida-script not exists!')
 
         #Spawning application and load script
         elif options.package and options.script:
             if not os.path.isfile(options.script):
-                options.script =  APP_FRIDA_SCRIPTS +'/'+options.script            
+                logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
+                findingScript = suggestion_script(options.script)
+                if (findingScript == False):
+                    logger.error('[x_x] No matching suggestions!')
+                    sys.exit(0)
+                logger.info('[*] iOSHook suggestion use '+findingScript)
+                answer = input('[?] Do you want continue? (y/n): ') or "y"
+                if answer == "y": 
+                    options.script =  APP_FRIDA_SCRIPTS + findingScript
+                elif answer == "n": 
+                    sys.exit(0)
+                else: 
+                    logger.error('[x_x] Nothing done. Please try again!')
+                    sys.exit(0)
             if os.path.isfile(options.script):
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + options.script)
@@ -192,14 +206,27 @@ def main():
                 frida.get_usb_device().resume(pid)
                 sys.stdin.read()
             else:
-                logger.error('[?] Script not found!')
+                logger.error('[x_x] Script not found!')
 
         #Spawning application and load script with output
         
         #Attaching script to application
         elif options.name and options.script:
             if not os.path.isfile(options.script):
-                options.script =  APP_FRIDA_SCRIPTS + '/'+options.script
+                logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
+                findingScript = suggestion_script(options.script)
+                if (findingScript == False):
+                    logger.error('[x_x] No matching suggestions!')
+                    sys.exit(0)
+                logger.info('[*] iOSHook suggestion use '+findingScript)
+                answer = input('[?] Do you want continue? (y/n): ') or "y"
+                if answer == "y": 
+                    options.script =  APP_FRIDA_SCRIPTS + findingScript
+                elif answer == "n": 
+                    sys.exit(0)
+                else: 
+                    logger.error('[x_x] Nothing done. Please try again!')
+                    sys.exit(0)
             if os.path.isfile(options.script):
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
@@ -210,7 +237,7 @@ def main():
                 script.load()
                 sys.stdin.read()
             else:
-                logger.error('[?] Script not found!')
+                logger.error('[x_x] Script not found!')
 
         #Static Analysis Application
         elif options.name and options.method == "app-static":
@@ -225,7 +252,7 @@ def main():
                 script.load()
                 sys.stdin.read()
             else:
-                logger.error('[?] Script not found!')
+                logger.error('[x_x] Script not found!')
         
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
@@ -243,7 +270,7 @@ def main():
                 frida.get_usb_device().resume(pid)
                 sys.stdin.read()
             else:
-                logger.error('[?] Script for method not found!')
+                logger.error('[x_x] Script for method not found!')
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
@@ -255,7 +282,7 @@ def main():
                 os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
                 #sys.stdin.read()
             else:
-                logger.error('[?] Script for method not found!')
+                logger.error('[x_x] Script for method not found!')
 
         #Intercept url request in app
         elif options.name and options.method == "i-url-req":
@@ -271,7 +298,7 @@ def main():
                 script.load()
                 sys.stdin.read()
             else:
-                logger.error('[?] Script for method not found!')
+                logger.error('[x_x] Script for method not found!')
 
         #Intercept Crypto Operations
         elif options.package and options.method == "i-crypto":
@@ -289,7 +316,7 @@ def main():
                 frida.get_usb_device().resume(pid)
                 sys.stdin.read()
             else:
-                logger.error('[?] Script for method not found!')
+                logger.error('[x_x] Script for method not found!')
 
         #check newversion
         elif options.checkversion:
@@ -361,9 +388,9 @@ def main():
 
     #EXCEPTION FOR FRIDA
     except frida.ServerNotRunningError:
-        logger.error("Frida server is not running.")
+        logger.error("[x_x] Frida server is not running.")
     except frida.TimedOutError:
-        logger.error("Timed out while waiting for device to appear.")
+        logger.error("[x_x] Timed out while waiting for device to appear.")
     except frida.TransportError:
         logger.error("[x_x] The application may crash or lose connection.")
     except (frida.ProcessNotFoundError,
@@ -391,4 +418,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-
