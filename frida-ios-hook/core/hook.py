@@ -106,7 +106,7 @@ def main():
         info.add_option("--list-scripts",
                         action="store_true", help="List All Scripts", dest="listscripts")
         info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
-        info.add_option("--shell", action="store_true", help="Get the shell of connect device", dest="shell")
+        info.add_option("--shell", "--ssh", action="store_true", help="Get the shell of connect device", dest="shell")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
         dump.add_option("-d", "--dump", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
         dump.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
