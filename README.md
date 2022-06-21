@@ -65,7 +65,7 @@ Support both spawn & attach script to process.
 	--list-appinfo    List Info of Apps on Itunes
 	--list-scripts    List All Scripts
 	--logcat          Show system log of device
-    --shell, --ssh      Get the shell of connect device
+    	--shell, --ssh      Get the shell of connect device
 
 	[*] Quick method:
 
