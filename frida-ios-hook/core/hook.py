@@ -253,7 +253,21 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-        
+        elif options.package and options.method == "app-static":
+            method = APP_METHODS['Application Static Analysis']
+            if os.path.isfile(method):
+                logger.info('[*] Spawning: ' + options.package)
+                logger.info('[*] Method: ' + options.method)
+                time.sleep(2)
+                pid = frida.get_usb_device().spawn(options.package)
+                process = frida.get_usb_device().attach(pid)
+                method = open(method, 'r')
+                script = process.create_script(method.read())
+                script.load()
+                frida.get_usb_device().resume(pid)
+                sys.stdin.read()
+            else:
+                logger.error('[?] Script not found!')
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
             method = APP_METHODS['Bypass Jailbreak Detection']
