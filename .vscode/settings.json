@@ -1,11 +1,22 @@
 {
     "cSpell.words": [
+        "appinfo",
+        "binarycookies",
         "frida",
         "fridump",
+        "hexbyte",
+        "hexbytescan",
         "hexbytescanner",
         "ideviceinstaller",
         "libimobiledevice",
-        "noobpk"
+        "logcat",
+        "lowlevel",
+        "noobpk",
+        "nslog",
+        "nsuserdefaults",
+        "pentest",
+        "psutil",
+        "touchid"
     ],
     "python.testing.unittestArgs": [
         "-v",

@@ -10,7 +10,7 @@
 
 👉 For Android platform: [frida-android-hook](https://github.com/noobpk/frida-android-hook)
 
-👉 For Intercept Api was encrypted on iOS application: [frida-ios-interceprt-api](https://github.com/noobpk/frida-ios-intercept-api)
+👉 For Intercept Api was encrypted on iOS application: [frida-ios-intercept-api](https://github.com/noobpk/frida-ios-intercept-api)
 
 ## Env OS Support
 | OS      | Supported          | Noted   |
@@ -39,7 +39,7 @@ Support both spawn & attach script to process.
 	-n(--name) 			Name of application ex: AppStore
 	-s(--script) 			Using script format script.js
 	-c(--check-version) 		Check for the newest version
-	-u(--upadte) 			Update to the newest version
+	-u(--update) 			Update to the newest version
 	
 	[*] Dump decrypt IPA:
 	
@@ -196,8 +196,8 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |N|Task Name| Task Description|
 |:---|:---|:---|
 |1|openssl_hook.json|OpenSSL 1.0.2 certificate pinning hook on arm64|
-|2|openssl_1_1_0_hook.json|OpenSSL 1.1.0 certifiate pinning hook for arm64, it modifies cmp instruction in tls_process_server_certificate method|
-|3|openssl_hook_v2.json|OpenSSL 1.0.2 certificate pinning hook on arm64, improved pattern, possibly for different compiler version or slighlty updated OpenSSL, use if first version does not find patch location. These hooks patch call to ssl_verify_cert_chain in ssl3_get_server_certificate.|
+|2|openssl_1_1_0_hook.json|OpenSSL 1.1.0 certificate pinning hook for arm64, it modifies cmp instruction in tls_process_server_certificate method|
+|3|openssl_hook_v2.json|OpenSSL 1.0.2 certificate pinning hook on arm64, improved pattern, possibly for different compiler version or slightly updated OpenSSL, use if first version does not find patch location. These hooks patch call to ssl_verify_cert_chain in ssl3_get_server_certificate.|
 
 ## Disclaimer
 Because I am not a developer, so my coding skills might not be the best. Therefore, if this tool have any issue or not working for you, create an issue and i will try to fix it.
