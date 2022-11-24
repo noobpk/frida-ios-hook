@@ -1,5 +1,5 @@
 colorlog==6.7.0
-frida==15.1.17
+frida==16.0.3
 scp==0.14.4
 requests==2.28.1
 paramiko==2.11.0
