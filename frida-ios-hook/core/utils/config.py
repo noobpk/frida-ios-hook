@@ -7,6 +7,7 @@ import shlex
 import subprocess
 from utils.log import *
 import psutil
+import time
 
 APP_AUTHOR = ''
 APP_VERSION = ''
@@ -132,12 +133,45 @@ class check():
                 result = sock.connect_ex((APP_SSH['ip'], APP_SSH['port']))
                 if result == 0:
                    logger.info("[*] Iproxy process for port " + str(APP_SSH['port']) + " is alive.")
-                   return True
                 else:
                     logger.error("[*] Iproxy process for port " + str(APP_SSH['port']) + " is dead.")
-                    return False
+                    while True:
+                        iproxy_start = input('[?] Do you want start iproxy 2222 22 (yes/no): ')
+                        yes_choices = ['yes', 'y']
+                        no_choices = ['no', 'n']
+
+                        if iproxy_start.lower() in yes_choices:
+                            logger.info("[*] Start iproxy ")
+                            cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " 22")
+                            subprocess.Popen(cmd)
+                            time.sleep(2)
+                            break
+                        elif iproxy_start.lower() in no_choices:
+                            logger.info("Bye bro!!") 
+                            sys.exit(0)
+                            break
+                        else:
+                            logger.info("[*] Type yes or no")
+                            continue
             else:
                 logger.info('[*] iproxy not install. try \"brew install usbmuxd\"')
+                sys.exit(0)
+        except Exception as e:
+            logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
+
+    def deviceConnected():
+        try:
+            if(which('idevice_id') is not None):
+                cmd = shlex.split("idevice_id -l")
+                result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                result.wait()
+                out, err = result.communicate()
+                deviceId = str(out, 'UTF-8')
+                if (len(deviceId) == 0):
+                    logger.info('[*] Please connect device then run again.')
+                    sys.exit(0)                    
+            else:
+                logger.info('[*] ideviceinstaller not install. try \"brew install ideviceinstaller\"')
                 sys.exit(0)
         except Exception as e:
             logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))

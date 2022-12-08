@@ -50,23 +50,6 @@ def hexbyte_scan(mode, file, option):
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
-def start_iproxy():
-    try:
-        cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " 22")
-        subprocess.call(cmd)
-    except Exception as e:
-        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
-
-def connect_ssh():
-    try:
-        SSH_USER = APP_SSH['user']
-        SSH_IP = APP_SSH['ip']
-        SSH_PORT = APP_SSH['port']
-        cmd = shlex.split("ssh " + "root" + "@" + "127.0.0.1" + " -p " + "2222")
-        subprocess.call(cmd)
-    except Exception as e:
-        logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
-
 def main():
     try:
         
@@ -389,32 +372,15 @@ def main():
 
         #ios get the shell
         elif options.shell:
-            isStart = check.iproxyInstalled()
-            if(isStart == False):
-                while True:
-                    iproxy_start = input('[?] Do you want start iproxy 2222 22 (yes/no): ')
-                    yes_choices = ['yes', 'y']
-                    no_choices = ['no', 'n']
-
-                    if iproxy_start.lower() in yes_choices:
-                        # event = Event()
-                        intThread_1 = Process(target=connect_ssh)
-                        intThread_2 = Process(target=start_iproxy)
-                        intThread_2.start()
-                        intThread_1.start()
-                        # start_iproxy(event)
-                        # intThread.join()
-                        # sys.exit(0)
-                        break
-                    elif iproxy_start.lower() in no_choices:
-                        logger.info("Bye bro!!") 
-                        sys.exit(0)
-                        break
-                    else:
-                        logger.info("[*] Type yes or no")
-                        continue
+            check.deviceConnected()
+            check.iproxyInstalled()
+            SSH_USER = APP_SSH['user']
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
+            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+            subprocess.call(cmd)
             
-            # sys.exit(0)
         #ioshook cli
         elif options.cli:
             logger.info("Welcome to iOSHook CLI! Type ? to list commands")
