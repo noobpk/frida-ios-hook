@@ -129,15 +129,16 @@ class check():
             if(which('iproxy') is not None):
                 # iproxyPortOpen
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                result = sock.connect_ex((APP_SSH['ip'],APP_SSH['port']))
+                result = sock.connect_ex((APP_SSH['ip'], APP_SSH['port']))
                 if result == 0:
-                   logger.info("[*] Iproxy process for" + APP_SSH['port'] + "port alive.")
+                   logger.info("[*] Iproxy process for port " + str(APP_SSH['port']) + " is alive.")
+                   return True
                 else:
-                    logger.error("[*] Iproxy process for" + APP_SSH['port'] + "port dead.")
-                    sock.close()
-                    sys.exit(0)
+                    logger.error("[*] Iproxy process for port " + str(APP_SSH['port']) + " is dead.")
+                    return False
             else:
                 logger.info('[*] iproxy not install. try \"brew install usbmuxd\"')
+                sys.exit(0)
         except Exception as e:
             logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
