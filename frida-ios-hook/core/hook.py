@@ -38,14 +38,27 @@ def dump_memory(option, process):
 def hexbyte_scan(mode, file, option):
     try:
         util = APP_UTILS['HexByte Scanner']
-        if option != "-h":
-            if mode == "":
-                cmd = shlex.split("./"+util + ' ' + option + ' ' + file)
+        if mode != "help":
+            #check file
+            if(os.path.isfile(file)):
+                if mode == "json":
+                    if(os.path.isfile(option)):
+                        cmd = shlex.split("./"+util + ' ' + option + ' ' + file)
+                        subprocess.call(cmd)
+                    else:
+                        logger.error("[x_x] File "+option+" not found!")
+                elif mode == "patch":
+                    cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option.replace(',', ' '))
+                    subprocess.call(cmd)
+                elif mode == "scan":
+                    cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option)
+                    subprocess.call(cmd)
             else:
-                cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option)
+                logger.error("[x_x] File "+file+" not found!")
+                sys.exit(0)
         else:
             cmd = shlex.split("./"+util)
-        subprocess.call(cmd)
+            subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
@@ -65,8 +78,8 @@ def main():
         [+] ./ioshook -n 'App Store' --dump-memory --string
         Example Hexbyte Scan IPA with pattern:
         [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
-        Example Hexbyte Scan IPA with file task:
-        [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa -t /hexbyscan-tasks/openssl_hook.json'''
+        Example Hexbyte Scan and Patch IPA with file task:
+        [+] ./ioshook --hexbyte-scan json --file AppStore.ipa -t /hexbytescan-tasks/openssl_hook.json'''
 
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
@@ -117,11 +130,11 @@ def main():
         dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
 
         #Hexbytescan of application using the code of karek314's repo hexbytescanner - Link: https://github.com/karek314/hexbytescanner
-        hexscan.add_option("--hexbyte-scan", action="store", help="Scan or Patch IPA with byte patterns", dest="hexscan")
-        hexscan.add_option("-f", "--file", action="store", help="File for hexbytescan", dest="file")
+        hexscan.add_option("--hexbyte-scan", type="choice", choices=['help', 'scan', 'patch', 'json'], help="Choose help - scan - patch - json", dest="hexscan")
+        hexscan.add_option("--file", action="store", help="File for hexbytescan", dest="file")
         hexscan.add_option("--pattern", action="store", help="Pattern for hexbytescan", dest="pattern")
         hexscan.add_option("--address", action="store", help="Address for hexbytescan", dest="address")
-        hexscan.add_option("-t", "--task", action="store", help="Task for hexbytescan", dest="task")
+        hexscan.add_option("--task", action="store", help="Json File task for hexbytescan", dest="task")
 
         parser.add_option_group(dump)
         parser.add_option_group(dumpmemory)
@@ -136,11 +149,13 @@ def main():
             os.system('frida-ls-devices')
 
         elif options.listapps:
+            check.deviceConnected()
             logger.info('[*] List All Apps on Devies: ')
             device = get_usb_iphone()
             list_applications(device)
 
         elif options.listappinfo:
+            check.deviceConnected()
             method = APP_METHODS['List All Application']
             if os.path.isfile(method):
                 logger.info('[*] List Info of Apps on Itunes: ')
@@ -180,6 +195,7 @@ def main():
 
         #Spawning application and load script
         elif options.package and options.script:
+            check.deviceConnected()
             if not os.path.isfile(options.script):
                 logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
                 findingScript = suggestion_script(options.script)
@@ -213,6 +229,7 @@ def main():
 
         #Attaching script to application
         elif options.name and options.script:
+            check.deviceConnected()
             if not os.path.isfile(options.script):
                 logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
                 findingScript = suggestion_script(options.script)
@@ -242,6 +259,7 @@ def main():
 
         #Static Analysis Application
         elif options.name and options.method == "app-static":
+            check.deviceConnected()
             method = APP_METHODS['Application Static Analysis']
             if os.path.isfile(method):
                 logger.info('[*] Attaching: ' + options.name)
@@ -257,6 +275,7 @@ def main():
 
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
+            check.deviceConnected()
             method = APP_METHODS['Bypass Jailbreak Detection']
             if os.path.isfile(method):
                 logger.info('[*] Bypass Jailbreak: ')
@@ -275,6 +294,7 @@ def main():
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
+            check.deviceConnected()
             method = APP_METHODS['Bypass SSL Pinning']
             if os.path.isfile(method):
                 logger.info('[*] Bypass SSL Pinning: ')
@@ -287,6 +307,7 @@ def main():
 
         #Intercept url request in app
         elif options.name and options.method == "i-url-req":
+            check.deviceConnected()
             method = APP_METHODS['Intercept URL Request']
             if os.path.isfile(method):
                 logger.info('[*] Intercept UrlRequest: ')
@@ -303,6 +324,7 @@ def main():
 
         #Intercept Crypto Operations
         elif options.package and options.method == "i-crypto":
+            check.deviceConnected()
             method = APP_METHODS['Intercept Crypto']
             if os.path.isfile(method):
                 logger.info('[*] Intercept Crypto Operations: ')
@@ -354,19 +376,31 @@ def main():
 
         #dump memory application
         elif options.name and options.dumpmemory:
+            check.deviceConnected()
             dump_memory(options.dumpmemory, options.name)
 
         #hexbytescan ipa
         elif options.hexscan:
-            if options.pattern is None and options.address is None:
-                hexbyte_scan('', options.file, options.task)
-            elif options.pattern and options.address is None:
-                hexbyte_scan(options.hexscan, options.file, options.pattern)
-            elif options.pattern is None and options.address:
+            if(options.hexscan == 'help' and options.file is None and options.task is None):
+                hexbyte_scan(options.hexscan, '', '')
+            #Read json file task
+            elif options.hexscan == 'json' and options.file and options.task:
+                hexbyte_scan(options.hexscan, options.file, options.task)
+            #patch ipa file with address
+            elif options.hexscan == 'patch' and options.file and options.address:
                 hexbyte_scan(options.hexscan, options.file, options.address)
-
+            #scan ipa file with pattern
+            elif options.hexscan == 'scan' and options.file and options.pattern:
+                hexbyte_scan(options.hexscan, options.file, options.pattern)
+            elif(options.file and options.task):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan json --file " + options.file + " --task " + options.task)
+            elif(options.file and options.address):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan patch --file " + options.file + " --address patchAddress,patchBytes,patchDistance")
+            elif(options.file and options.pattern):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan scan --file " + options.file + " --address " + options.addpatternress)
         #ios system log
         elif options.logcat:
+            check.deviceConnected()
             cmd = shlex.split('idevicesyslog')
             subprocess.call(cmd)
             sys.exit(0)
