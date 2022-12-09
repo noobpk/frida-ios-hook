@@ -178,8 +178,8 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorFinal")
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Init"),
 {
     onEnter: function(args) {
-    console.log("*** CC_SHA1_Init ENTER ****");        
-    console.log("Context address: " + args[0]);       
+    console.log("*** CC_SHA1_Init ENTER ****");
+    console.log("Context address: " + args[0]);
     }
 });
 
@@ -214,7 +214,7 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Final"),
 
     } else {
         console.log("Hash: null");
-    }   
+    }
     }
 });
 
@@ -268,7 +268,7 @@ function base64ArrayBuffer(arrayBuffer) {
 
     base64 += encodings[a] + encodings[b] + encodings[c] + '='
     }
-    
+
     return base64
 }
 
@@ -298,7 +298,7 @@ function base64_charIndex(c) {
 function base64_decode(data) {
     var dst = ""
     var i, a, b, c, d, z
-    
+
     for (i = 0; i < data.length - 3; i += 4) {
         a = base64_charIndex(data.charAt(i+0))
         b = base64_charIndex(data.charAt(i+1))

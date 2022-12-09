@@ -52,7 +52,7 @@ def hexbyte_scan(mode, file, option):
 
 def main():
     try:
-        
+
         usage = '''
         [>] ./ioshook %prog [options] arg
         Example for spawn or attach app with -s(--script) options:
@@ -149,7 +149,7 @@ def main():
                 #sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-        
+
         elif options.listscripts:
             path = APP_FRIDA_SCRIPTS
             description_pattern = " * Description:"
@@ -173,7 +173,7 @@ def main():
                             if re.search(mode_pattern, line):
                                 mode = re.sub('\s+', '', line[9:])
                             if re.search(version_pattern, line):
-                                version = re.sub('\s+', '', line[12:])  
+                                version = re.sub('\s+', '', line[12:])
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[x_x] Path frida-script not exists!')
@@ -188,11 +188,11 @@ def main():
                     sys.exit(0)
                 logger.info('[*] iOSHook suggestion use '+findingScript)
                 answer = input('[?] Do you want continue? (y/n): ') or "y"
-                if answer == "y": 
+                if answer == "y":
                     options.script =  APP_FRIDA_SCRIPTS + findingScript
-                elif answer == "n": 
+                elif answer == "n":
                     sys.exit(0)
-                else: 
+                else:
                     logger.error('[x_x] Nothing done. Please try again!')
                     sys.exit(0)
             if os.path.isfile(options.script):
@@ -210,7 +210,7 @@ def main():
                 logger.error('[x_x] Script not found!')
 
         #Spawning application and load script with output
-        
+
         #Attaching script to application
         elif options.name and options.script:
             if not os.path.isfile(options.script):
@@ -221,18 +221,18 @@ def main():
                     sys.exit(0)
                 logger.info('[*] iOSHook suggestion use '+findingScript)
                 answer = input('[?] Do you want continue? (y/n): ') or "y"
-                if answer == "y": 
+                if answer == "y":
                     options.script =  APP_FRIDA_SCRIPTS + findingScript
-                elif answer == "n": 
+                elif answer == "n":
                     sys.exit(0)
-                else: 
+                else:
                     logger.error('[x_x] Nothing done. Please try again!')
                     sys.exit(0)
             if os.path.isfile(options.script):
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(options.name)
+                process = frida.get_usb_device().attach("Calculator")
                 hook = open(options.script, 'r')
                 script = process.create_script(hook.read())
                 script.load()
@@ -254,7 +254,7 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-        
+
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
             method = APP_METHODS['Bypass Jailbreak Detection']
@@ -335,6 +335,7 @@ def main():
 
         #dump decrypt application
         elif (options.package or options.name) and options.dumpapp:
+            check.deviceConnected()
             check.iproxyInstalled()
             logger.info('[*] Dumping...')
             util = APP_UTILS['Dump Decrypt Application']
@@ -380,7 +381,7 @@ def main():
             logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
             cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
             subprocess.call(cmd)
-            
+
         #ioshook cli
         elif options.cli:
             logger.info("Welcome to iOSHook CLI! Type ? to list commands")

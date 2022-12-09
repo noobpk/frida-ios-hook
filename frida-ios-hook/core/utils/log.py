@@ -28,7 +28,7 @@ def setup_logging():
     file_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_format)
     logger.addHandler(file_handler)
-    
+
 # setup logging for script
 setup_logging()
 logger = logging.getLogger(__name__)

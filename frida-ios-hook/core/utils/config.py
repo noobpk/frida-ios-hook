@@ -59,13 +59,13 @@ class config():
 
     def loadBanner():
         print ('''\033[1;31m \n
-        _|    _|_|      _|_|_|      _|    _|                      _|        
-            _|    _|  _|            _|    _|    _|_|      _|_|    _|  _|    
-        _|  _|    _|    _|_|        _|_|_|_|  _|    _|  _|    _|  _|_|      
-        _|  _|    _|        _|      _|    _|  _|    _|  _|    _|  _|  _|    
-        _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|  
-                        https://noobpk.github.io          #noobboy      
-                    Trace Class/Func & Modify Return Value  
+        _|    _|_|      _|_|_|      _|    _|                      _|
+            _|    _|  _|            _|    _|    _|_|      _|_|    _|  _|
+        _|  _|    _|    _|_|        _|_|_|_|  _|    _|  _|    _|  _|_|
+        _|  _|    _|        _|      _|    _|  _|    _|  _|    _|  _|  _|
+        _|    _|_|    _|_|_|        _|    _|    _|_|      _|_|    _|    _|
+                        https://noobpk.github.io          #noobboy
+                    Trace Class/Func & Modify Return Value
         ''')
 
         print ("\033[1;34m[*]___author___: @" + APP_AUTHOR + "\033[1;37m")
@@ -121,7 +121,7 @@ class check():
                             return True
                     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
                         pass
-                return sys.exit(logger.error("[x_x] Please install iTunes on MicrosoftStore or run iTunes first."))              
+                return sys.exit(logger.error("[x_x] Please install iTunes on MicrosoftStore or run iTunes first."))
         except Exception as e:
             logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
@@ -147,7 +147,7 @@ class check():
                             time.sleep(2)
                             break
                         elif iproxy_start.lower() in no_choices:
-                            logger.info("Bye bro!!") 
+                            logger.info("Bye bro!!")
                             sys.exit(0)
                             break
                         else:
@@ -169,7 +169,7 @@ class check():
                 deviceId = str(out, 'UTF-8')
                 if (len(deviceId) == 0):
                     logger.info('[*] Please connect device then run again.')
-                    sys.exit(0)                    
+                    sys.exit(0)
             else:
                 logger.info('[*] ideviceinstaller not install. try \"brew install ideviceinstaller\"')
                 sys.exit(0)

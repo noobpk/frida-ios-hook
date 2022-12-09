@@ -13,7 +13,7 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCrypt"),
         send("CCOperation: " + parseInt(args[0]));
         send("CCAlgorithm: " + parseInt(args[1]));
         send("CCOptions: " + parseInt(args[2]));
-        
+
         if(ptr(args[3]) != 0 ) {
             send("Key:");
             send(base64ArrayBuffer(Memory.readByteArray(ptr(args[3]),parseInt(args[4]))));
@@ -55,7 +55,7 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCrypt"),
         }
 
         send("*** EXIT CCCrypt ****");
-        
+
     }
 
 });
@@ -149,8 +149,8 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CCCryptorFinal")
 Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Init"),
 {
     onEnter: function(args) {
-    send("*** CC_SHA1_Init ENTER ****");        
-    send("Context address: " + args[0]);       
+    send("*** CC_SHA1_Init ENTER ****");
+    send("Context address: " + args[0]);
     }
 });
 
@@ -185,7 +185,7 @@ Interceptor.attach(Module.findExportByName("libSystem.B.dylib","CC_SHA1_Final"),
 
     } else {
         send("Hash: null");
-    }   
+    }
     }
 });
 
@@ -239,6 +239,6 @@ function base64ArrayBuffer(arrayBuffer) {
 
     base64 += encodings[a] + encodings[b] + encodings[c] + '='
     }
-    
+
     return base64
 }

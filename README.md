@@ -20,11 +20,9 @@
 | Windows | :white_check_mark: | sub	 |
 
 ## Compatible with
-| iOS      |   Frida  | Supported         |
-| -------- | -------- | ----------------- |
-|  13.2.3  | 14.2.13  | :white_check_mark:|
-|  14.4.2  | 14.2.13  | :white_check_mark:|
-|  14.4.2  | 15.0.18  | :white_check_mark:|
+| iOS      |  Frida   | Frida-tools | Supported        |
+| -------- | -------  | ----------- |----------------- |
+|  15.7.1  | 16.0.7   | 12.0.4      | :white_check_mark:|
 
 ## Feature
 
@@ -40,24 +38,24 @@ Support both spawn & attach script to process.
 	-s(--script) 			Using script format script.js
 	-c(--check-version) 		Check for the newest version
 	-u(--update) 			Update to the newest version
-	
+
 	[*] Dump decrypt IPA:
-	
+
     	-d, --dump         Dump decrypt application.ipa
     	-o OUTPUT_IPA, --output=OUTPUT_IPA
                            Specify name of the decrypted IPA
-	
+
 	[*] Dump memory of Application:
-	
+
 	--dump-memory		Dump memory of application
-	
+
 	[*] HexByte Scan IPA:
 	--hexbyte-scan		Scan or Patch IPA with byte patterns
 	--pattern=PATTERN   Pattern for hexbytescan
 	--address=ADDRESS   Address for hexbytescan
 	-t TASK, --task=TASK
           			Task for hexbytescan
-	
+
 	[*] Information:
 
 	--list-devices    List All Devices
@@ -79,30 +77,17 @@ Support both spawn & attach script to process.
 
 ## 📜 ChangeLog
 
-Version: 3.7
+Version: 3.8
 ```
 	[+] Add:
-	
-		[-] Add setup.py for build executable
-		
-		[-] Add `--ssh` to option Get the shell of connect device
-		
-		[-] Add suggestion script for option `-s (--script)`
-		
-		
-	[+] Change:
-		
-		[-] Update readme, changelog
-		
-		[-] Update frida-script
-		
-		[-] Update hook.py
-	
-	[+] Fix
-		
-		[-] Fix syntax in hook.json
 
-		[-] Fix psutil not found
+
+	[+] Change:
+
+
+	[+] Fix
+
+
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
@@ -110,15 +95,15 @@ Version: 3.7
 
 ```
 	[+] Latest version
-	
+
 		https://github.com/noobpk/frida-ios-hook/releases
-		
+
 	[+] Develop version
-	
+
 		git clone -b dev https://github.com/noobpk/frida-ios-hook
 ```
 
-## Build 
+## Build
 
 ```
 1. cd frida-ios-hook/
@@ -144,7 +129,7 @@ If you run the script but it doesn't work, you can try the following:
 
 ## Frida-Script
 
-Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A) 
+Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A)
 
 |N|Spawn/Attach|Script Name| Script Description| Script Version|
 |:---|:---|:---|:---|:---|

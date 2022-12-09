@@ -1,5 +1,5 @@
 /*
-Description: 
+Description:
 Replace methods return values
 * Given an especific class, method and value it replaces the return value of the method.
 * Method format: for example:  "- isJailbroken:"
@@ -23,11 +23,11 @@ function replace_value(value,typeValue,returnValue) {
 	else {
 		newReturnValue = ptr(value);
 	}
-	/* 
+	/*
 	If return value is not an Object
-	
+
 	if (typeValue.includes('Object')) {
-		newReturnValue = ptr(value); 
+		newReturnValue = ptr(value);
 	}
 	else if (typeValue.includes('Array')) {
 		console.log('array');
@@ -55,13 +55,13 @@ function getIndex(method) {
 
 function print_arguments(args) {
 /*
-Frida's Interceptor has no information about the number of arguments, because there is no such 
+Frida's Interceptor has no information about the number of arguments, because there is no such
 information available at the ABI level (and we don't rely on debug symbols).
 
 I have implemented this function in order to try to determine how many arguments a method is using.
 It stops when:
 	- The object is not nil
-	- The argument is not the same as the one before	
+	- The argument is not the same as the one before
  */
 	var n = 100;
 	var last_arg = '';
@@ -93,7 +93,7 @@ if (ObjC.available)
 				console.log('   ' + this._className + ' --> ' + this._methodName);
 
 				//print_arguments(args);
-				
+
 			},
 			onLeave: function(returnValue) {
 				console.log('Return value of:');

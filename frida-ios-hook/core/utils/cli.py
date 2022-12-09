@@ -70,7 +70,7 @@ class iOSHook_CLI(Cmd):
         def do_exit(self, arg):
             logger.info("Bye bro!!")
             return True
-        
+
         #HELP DOCUMENT
         def help_version(self):
             logger.info('Show Version')

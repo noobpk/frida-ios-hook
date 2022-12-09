@@ -1,4 +1,4 @@
-/* Description: Backtrace 
+/* Description: Backtrace
  * Mode: S
  * Version: 1.0
  * Credit: github.com/iddoeldor/frida-snippets & https://github.com/interference-security/frida-scripts/blob/master/iOS

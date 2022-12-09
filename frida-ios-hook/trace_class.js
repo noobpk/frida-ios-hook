@@ -1,5 +1,5 @@
 /*
-Description: 
+Description:
 Search for classes
 * If no strings are specified in "search_class" array, the script will print all the classes.
 * If one or more strings are specified in "search_class array", the script will only print classes which contains the strings in their name.

@@ -38,7 +38,7 @@ if (ObjC.available) {
 			this.flag = 0;
 			//if (ObjC.Object(args[2]).toString() == "1234567890abcdef1234567890abcdef12345678")
 				this.flag = 1;
-			
+
 			if (this.flag) {
 				console.log("info: entered method");
 

@@ -4,7 +4,7 @@
  * Credit: Frida CodeShare
  * Author: @dki
  */
-/* 
+/*
  * iOS URL Scheme Fuzzing
  * Usage: frida -U --codeshare dki/ios-url-scheme-fuzzing SpringBoard
  *
@@ -131,7 +131,7 @@ function bundleExecutableForScheme(scheme) {
         return null;
     }
 
-    var appProxy = apps.objectAtIndex_(0); // LSApplicationProxy    
+    var appProxy = apps.objectAtIndex_(0); // LSApplicationProxy
     var bundleExecutable = appProxy.bundleExecutable();
     if (bundleExecutable !== null) {
         return bundleExecutable.toString();
