@@ -7,9 +7,12 @@
 - Add function check.deviceConnected
 ### Changed
 - Update function check.iproxyInstalled
-- Update readme, changelog
+- Update dumpDecryptIPA option
+- Update readme, changelog, requirement
 ### Fixed
 - Fix issue in --shell option [issue 57](https://github.com/noobpk/frida-ios-hook/issues/57)
+- Fix issue in --dump option [issue 67](https://github.com/noobpk/frida-ios-hook/issues/67)
+- Fix and optimize hexbytescan option
 
 ## [Release 3.7] - 2022-06-17
 
