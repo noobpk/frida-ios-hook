@@ -2,13 +2,15 @@
 
 ## [Release 3.8] - 2022-12-
 
-
 ### Added
 - Add function check.deviceConnected
+- Add reFlutter
 ### Changed
 - Update function check.iproxyInstalled
 - Update dumpDecryptIPA option
 - Update readme, changelog, requirement
+- Remove --list-appinfo option
+- Update --cli option
 ### Fixed
 - Fix issue in --shell option [issue 57](https://github.com/noobpk/frida-ios-hook/issues/57)
 - Fix issue in --dump option [issue 67](https://github.com/noobpk/frida-ios-hook/issues/67)
