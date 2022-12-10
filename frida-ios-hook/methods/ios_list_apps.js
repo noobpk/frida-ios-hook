@@ -18,7 +18,7 @@ function list() {
 
 function parseSoftwareLibraryItem(item) {
     var result = {};
-    nsDictionaryForEach(item.$ivars._propertyValues, function(key, value) {
+    nsDictionaryForEach(item.$ivars._propertyValues, function (key, value) {
         var parsedValue;
         if (value.isKindOfClass_(NSNumber)) {
             parsedValue = value.doubleValue();
