@@ -26,23 +26,14 @@ class iOSHook_CLI(Cmd):
 
         def do_listdevices(self, arg):
             logger.info('[*] List All Devices: ')
-            print(arg)
-            os.system('frida-ls-devices')
+            cmd = shlex.split("frida-ls-devices")
+            completed_process = subprocess.run(cmd)
 
         def do_listapps(self, arg):
+            check.deviceConnected()
             logger.info('[*] List All Apps on Devies: ')
             device = get_usb_iphone()
             list_applications(device)
-
-        def do_listappinfo(self, arg):
-            method = APP_METHODS['List All Application']
-            if os.path.isfile(method):
-                logger.info('[*] List Info of Apps on Itunes: ')
-                process = 'itunesstored'
-                os.system('frida -U -n '+ process + ' -l ' + method)
-                #sys.stdin.read()
-            else:
-                logger.error('[?] Script not found!')
 
         def do_listscripts(self, arg):
             path = APP_FRIDA_SCRIPTS
@@ -55,17 +46,21 @@ class iOSHook_CLI(Cmd):
                 logger.error('[?] Path frida-script not exists!')
 
         def do_logcat(self, arg):
+            check.deviceConnected()
             logger.info('[*] Device System Log: ')
             cmd = shlex.split('idevicesyslog')
-            subprocess.call(cmd)
+            completed_process = subprocess.call(cmd)
 
         def do_shell(self, arg):
+            check.deviceConnected()
+            check.iproxyInstalled()
             logger.info('[*] Get Device Shell: ')
             SSH_USER = APP_SSH['user']
-            SSH_IP = str(APP_SSH['ip'])
-            SSH_PORT = str(APP_SSH['port'])
-            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + SSH_PORT)
-            subprocess.call(cmd)
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
+            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+            completed_process = subprocess.call(cmd)
 
         def do_exit(self, arg):
             logger.info("Bye bro!!")
@@ -81,8 +76,6 @@ class iOSHook_CLI(Cmd):
         def help_listapps(self):
             logger.info('List The Installed Apps')
 
-        def help_listappinfo(self):
-            logger.info('List Info of Apps on Itunes. When script was loaded, input list() excute')
         def help_listscripts(self):
             logger.info('List All Scripts')
 
@@ -108,9 +101,9 @@ class iOSHook_CLI(Cmd):
         logger.error("Timed out while waiting for device to appear.")
     except frida.TransportError:
         logger.error("[x_x] The application may crash or lose connection.")
-    except (frida.ProcessNotFoundError,
-            frida.InvalidOperationError):
-        logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
+    # except (frida.ProcessNotFoundError,
+    #         frida.InvalidOperationError):
+    #     logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
     #EXCEPTION FOR OPTIONPARSING
 
     #EXCEPTION FOR SYSTEM
