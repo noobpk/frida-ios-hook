@@ -322,8 +322,8 @@ function dumpModule(name) {
 
 function loadAllDynamicLibrary(app_path) {
     var defaultManager = ObjC.classes.NSFileManager.defaultManager();
-    var errorPtr = Memory.alloc(Process.pointerSize); 
-    Memory.writePointer(errorPtr, NULL); 
+    var errorPtr = Memory.alloc(Process.pointerSize);
+    Memory.writePointer(errorPtr, NULL);
     var filenames = defaultManager.contentsOfDirectoryAtPath_error_(app_path, errorPtr);
     for (var i = 0, l = filenames.count(); i < l; i++) {
         var file_name = filenames.objectAtIndex_(i);
@@ -339,7 +339,7 @@ function loadAllDynamicLibrary(app_path) {
                     console.log(colors.red,"[frida-ios-dump]: Load ",colors.resetColor + file_name + " failed. ");
                 }
             }
-        } else if (file_name.hasSuffix_(".bundle") || 
+        } else if (file_name.hasSuffix_(".bundle") ||
                    file_name.hasSuffix_(".momd") ||
                    file_name.hasSuffix_(".strings") ||
                    file_name.hasSuffix_(".appex") ||
@@ -362,7 +362,7 @@ function loadAllDynamicLibrary(app_path) {
                             console.log(colors.green,"[frida-ios-dump]: ",colors.resetColor + file_name + " has been dlopen.");
                             break;
                         }
-                    } 
+                    }
 
                     if (!is_loaded) {
                         if (dlopen(allocStr(file_path.UTF8String()), 9)) {

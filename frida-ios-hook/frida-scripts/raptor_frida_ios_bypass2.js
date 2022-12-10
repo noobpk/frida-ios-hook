@@ -42,7 +42,7 @@ if (ObjC.available) {
 			var retnew = ObjC.classes.NSString.stringWithString_("false");
 			retval.replace(retnew);
 			console.log("new retval value:", obj.toString());
-		} 
+		}
 	});
 
 } else {

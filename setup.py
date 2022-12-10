@@ -21,7 +21,7 @@ try:
 except Exception as e:
     raise e
 """""
-    
+
 def _buildBinary():
     try:
         if sys.platform == 'darwin':

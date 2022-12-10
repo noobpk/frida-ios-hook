@@ -9,25 +9,25 @@ var colors = {
 if (ObjC.available) {
     console.log(colors.green,"[*] Started: Listening For Requests...",colors.resetColor);
 
-    try {  
-    
-        var className = "NSURLSession"; 
-        var funcName = "- dataTaskWithRequest:completionHandler:"; 
+    try {
+
+        var className = "NSURLSession";
+        var funcName = "- dataTaskWithRequest:completionHandler:";
 
         var hook = eval('ObjC.classes.' + className + '["' + funcName + '"]');
         var OGCompletionHandler_DTWRM = null;
 
-        Interceptor.attach(hook.implementation, {  
-            
-            onEnter: function(args) 
+        Interceptor.attach(hook.implementation, {
+
+            onEnter: function(args)
             {
                 console.log("-".repeat(20));
                 console.log(colors.green,"[+] HTTPMethod: ",colors.resetColor + ObjC.Object(args[2]).HTTPMethod() );
                 console.log(colors.green,"[+] URL: ",colors.resetColor + ObjC.Object(args[2]).URL().absoluteString() );
-                
+
                 var httpbody_nsdata = ObjC.Object(args[2]).HTTPBody();
                 var httpbody_nsstring = ObjC.classes.NSString.alloc().initWithData_encoding_(httpbody_nsdata, 4);
-                
+
                 console.log(colors.green,"[+] HTTPBody (NSData): ",colors.resetColor + httpbody_nsdata);
 
                 if (httpbody_nsstring += null) {
@@ -56,15 +56,15 @@ if (ObjC.available) {
                             return OGCompletionHandler_DTWRM(data_nsdata, response_nsurlresponse, error_nserror);
                     }
                 console.log("-".repeat(20));
-            }  
+            }
         });
-         
-    } 
-    catch(error) 
-    {
-        console.log(colors.red,"[!] Exception: ",colors.resetColor + error.message); 
+
     }
-    //NSURLRequest 
+    catch(error)
+    {
+        console.log(colors.red,"[!] Exception: ",colors.resetColor + error.message);
+    }
+    //NSURLRequest
     try {
 
         var className = "NSURLRequest";
@@ -99,10 +99,10 @@ if (ObjC.available) {
             onEnter: function(args) {
                 var socketURL = ObjC.Object(args[0]).url().absoluteString().toString();
                 var data = ObjC.Object(args[2]);
-                
+
                 console.log('LGSRWebSocket (' + ObjC.Object(args[0]) + ') ---> ' + socketURL);
                 console.log('Data: ' + data);
-                
+
                 for (var i = 0; i < data.length(); i++) {
                     console.log(data.characterAtIndex_(i).toString(16) + ' --> ' + data.characterAtIndex_(i).toString());
                 }
@@ -153,10 +153,10 @@ if (ObjC.available) {
     } catch (error) {
         console.log(colors.red,"[!] Exception: ",colors.resetColor + error.message);
     }
-}  
+}
 
-else { 
+else {
 
-console.log(colors.red,"Objective-C Runtime is not available!",colors.resetColor); 
+console.log(colors.red,"Objective-C Runtime is not available!",colors.resetColor);
 
 }

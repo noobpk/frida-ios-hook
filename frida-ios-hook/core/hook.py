@@ -7,6 +7,7 @@ import subprocess
 import re
 import fnmatch
 import shlex
+from multiprocessing import Process, Event
 
 from utils.listapp import *
 from utils.checkversion import *
@@ -29,7 +30,7 @@ def dump_memory(option, process):
             cmd = shlex.split("python3 " + util + ' ' + "-u" + ' ' + option + ' ' + '"' + process + '"')
         else:
             cmd = shlex.split("python3 " + util + ' ' + option)
-        subprocess.call(cmd)
+        completed_process = subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
@@ -37,21 +38,34 @@ def dump_memory(option, process):
 def hexbyte_scan(mode, file, option):
     try:
         util = APP_UTILS['HexByte Scanner']
-        if option != "-h":
-            if mode == "":
-                cmd = shlex.split("./"+util + ' ' + option + ' ' + file)
+        if mode != "help":
+            #check file
+            if(os.path.isfile(file)):
+                if mode == "json":
+                    if(os.path.isfile(option)):
+                        cmd = shlex.split("./"+util + ' ' + option + ' ' + file)
+                        completed_process = subprocess.call(cmd)
+                    else:
+                        logger.error("[x_x] File "+option+" not found!")
+                elif mode == "patch":
+                    cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option.replace(',', ' '))
+                    completed_process = subprocess.call(cmd)
+                elif mode == "scan":
+                    cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option)
+                    completed_process = subprocess.call(cmd)
             else:
-                cmd = shlex.split("./"+util + ' ' + mode + ' ' + file + ' ' + option)
+                logger.error("[x_x] File "+file+" not found!")
+                sys.exit(0)
         else:
             cmd = shlex.split("./"+util)
-        subprocess.call(cmd)
+            completed_process = subprocess.call(cmd)
         sys.exit(0)
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
 def main():
     try:
-        
+
         usage = '''
         [>] ./ioshook %prog [options] arg
         Example for spawn or attach app with -s(--script) options:
@@ -64,8 +78,8 @@ def main():
         [+] ./ioshook -n 'App Store' --dump-memory --string
         Example Hexbyte Scan IPA with pattern:
         [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
-        Example Hexbyte Scan IPA with file task:
-        [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa -t /hexbyscan-tasks/openssl_hook.json'''
+        Example Hexbyte Scan and Patch IPA with file task:
+        [+] ./ioshook --hexbyte-scan json --file AppStore.ipa -t /hexbytescan-tasks/openssl_hook.json'''
 
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
@@ -73,6 +87,7 @@ def main():
         dump = optparse.OptionGroup(parser,"Dump decrypt IPA")
         hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
+        reflutter = optparse.OptionGroup(parser,"reFlutter")
 
         parser.add_option('-h', "--help", action="help", dest="help", help='''Show basic help message and exit''')
         parser.add_option("--cli", action="store_true", dest="cli", help='''iOSHook command line interface''')
@@ -101,8 +116,6 @@ def main():
         #Listapp option using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
         info.add_option("--list-apps",
                         action="store_true", help="List The Installed apps", dest="listapps")
-        info.add_option("--list-appinfo",
-                        action="store_true", help="List Info of Apps on Itunes", dest="listappinfo")
         #The script list referenced from the repo of interference-security - Link: https://github.com/interference-security/frida-scripts/
         info.add_option("--list-scripts",
                         action="store_true", help="List All Scripts", dest="listscripts")
@@ -116,39 +129,34 @@ def main():
         dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
 
         #Hexbytescan of application using the code of karek314's repo hexbytescanner - Link: https://github.com/karek314/hexbytescanner
-        hexscan.add_option("--hexbyte-scan", action="store", help="Scan or Patch IPA with byte patterns", dest="hexscan")
-        hexscan.add_option("-f", "--file", action="store", help="File for hexbytescan", dest="file")
+        hexscan.add_option("--hexbyte-scan", type="choice", choices=['help', 'scan', 'patch', 'json'], help="Choose help - scan - patch - json", dest="hexscan")
+        hexscan.add_option("--file", action="store", help="File App.ipa", dest="scanfile")
         hexscan.add_option("--pattern", action="store", help="Pattern for hexbytescan", dest="pattern")
         hexscan.add_option("--address", action="store", help="Address for hexbytescan", dest="address")
-        hexscan.add_option("-t", "--task", action="store", help="Task for hexbytescan", dest="task")
+        hexscan.add_option("--task", action="store", help="Json File task for hexbytescan", dest="task")
+        #reFlutter of application using the code of ptswarm's repo reFlutter - Link: https://github.com/ptswarm/reFlutter
+        reflutter.add_option("--reflutter", action="store", help="File Flutter.ipa", dest="flutterfile")
 
         parser.add_option_group(dump)
         parser.add_option_group(dumpmemory)
         parser.add_option_group(hexscan)
         parser.add_option_group(info)
         parser.add_option_group(quick)
+        parser.add_option_group(reflutter)
 
         options, args = parser.parse_args()
 
         if options.listdevices:
             logger.info('[*] List All Devices: ')
-            os.system('frida-ls-devices')
+            cmd = shlex.split("frida-ls-devices")
+            completed_process = subprocess.run(cmd)
 
         elif options.listapps:
+            check.deviceConnected()
             logger.info('[*] List All Apps on Devies: ')
             device = get_usb_iphone()
             list_applications(device)
 
-        elif options.listappinfo:
-            method = APP_METHODS['List All Application']
-            if os.path.isfile(method):
-                logger.info('[*] List Info of Apps on Itunes: ')
-                process = 'itunesstored'
-                os.system('frida -U -n '+ process + ' -l ' + method)
-                #sys.stdin.read()
-            else:
-                logger.error('[x_x] Script not found!')
-        
         elif options.listscripts:
             path = APP_FRIDA_SCRIPTS
             description_pattern = " * Description:"
@@ -172,13 +180,14 @@ def main():
                             if re.search(mode_pattern, line):
                                 mode = re.sub('\s+', '', line[9:])
                             if re.search(version_pattern, line):
-                                version = re.sub('\s+', '', line[12:])  
+                                version = re.sub('\s+', '', line[12:])
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[x_x] Path frida-script not exists!')
 
         #Spawning application and load script
         elif options.package and options.script:
+            check.deviceConnected()
             if not os.path.isfile(options.script):
                 logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
                 findingScript = suggestion_script(options.script)
@@ -187,11 +196,11 @@ def main():
                     sys.exit(0)
                 logger.info('[*] iOSHook suggestion use '+findingScript)
                 answer = input('[?] Do you want continue? (y/n): ') or "y"
-                if answer == "y": 
+                if answer == "y":
                     options.script =  APP_FRIDA_SCRIPTS + findingScript
-                elif answer == "n": 
+                elif answer == "n":
                     sys.exit(0)
-                else: 
+                else:
                     logger.error('[x_x] Nothing done. Please try again!')
                     sys.exit(0)
             if os.path.isfile(options.script):
@@ -209,9 +218,10 @@ def main():
                 logger.error('[x_x] Script not found!')
 
         #Spawning application and load script with output
-        
+
         #Attaching script to application
         elif options.name and options.script:
+            check.deviceConnected()
             if not os.path.isfile(options.script):
                 logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
                 findingScript = suggestion_script(options.script)
@@ -220,18 +230,18 @@ def main():
                     sys.exit(0)
                 logger.info('[*] iOSHook suggestion use '+findingScript)
                 answer = input('[?] Do you want continue? (y/n): ') or "y"
-                if answer == "y": 
+                if answer == "y":
                     options.script =  APP_FRIDA_SCRIPTS + findingScript
-                elif answer == "n": 
+                elif answer == "n":
                     sys.exit(0)
-                else: 
+                else:
                     logger.error('[x_x] Nothing done. Please try again!')
                     sys.exit(0)
             if os.path.isfile(options.script):
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(options.name)
+                process = frida.get_usb_device().attach("Calculator")
                 hook = open(options.script, 'r')
                 script = process.create_script(hook.read())
                 script.load()
@@ -241,6 +251,7 @@ def main():
 
         #Static Analysis Application
         elif options.name and options.method == "app-static":
+            check.deviceConnected()
             method = APP_METHODS['Application Static Analysis']
             if os.path.isfile(method):
                 logger.info('[*] Attaching: ' + options.name)
@@ -253,9 +264,10 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-        
+
         #Bypass jailbreak
         elif options.package and options.method == "bypass-jb":
+            check.deviceConnected()
             method = APP_METHODS['Bypass Jailbreak Detection']
             if os.path.isfile(method):
                 logger.info('[*] Bypass Jailbreak: ')
@@ -274,18 +286,27 @@ def main():
 
         #Bypass SSL Pinning
         elif options.package and options.method == "bypass-ssl":
+            check.deviceConnected()
             method = APP_METHODS['Bypass SSL Pinning']
             if os.path.isfile(method):
                 logger.info('[*] Bypass SSL Pinning: ')
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
-                os.system('frida -U -f '+ options.package + ' -l ' + method + ' --no-pause')
-                #sys.stdin.read()
+                time.sleep(2)
+                pid = frida.get_usb_device().spawn(options.package)
+                session = frida.get_usb_device().attach(pid)
+                hook = open(method, 'r')
+                script = session.create_script(hook.read())
+                script.load()
+                frida.get_usb_device().resume(pid)
+                sys.stdin.read()
+                # os.system('frida -U -f '+ options.package + ' -l ' + method)
             else:
                 logger.error('[x_x] Script for method not found!')
 
         #Intercept url request in app
         elif options.name and options.method == "i-url-req":
+            check.deviceConnected()
             method = APP_METHODS['Intercept URL Request']
             if os.path.isfile(method):
                 logger.info('[*] Intercept UrlRequest: ')
@@ -302,6 +323,7 @@ def main():
 
         #Intercept Crypto Operations
         elif options.package and options.method == "i-crypto":
+            check.deviceConnected()
             method = APP_METHODS['Intercept Crypto']
             if os.path.isfile(method):
                 logger.info('[*] Intercept Crypto Operations: ')
@@ -329,11 +351,12 @@ def main():
         elif options.update:
             logger.info('[*] Update in progress...')
             cmd = shlex.split("git reset --hard & git pull origin master")
-            subprocess.call(cmd)
+            completed_process = subprocess.call(cmd)
             sys.exit(0)
 
         #dump decrypt application
         elif (options.package or options.name) and options.dumpapp:
+            check.deviceConnected()
             check.iproxyInstalled()
             logger.info('[*] Dumping...')
             util = APP_UTILS['Dump Decrypt Application']
@@ -347,44 +370,72 @@ def main():
                     cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'")
                 else:
                     cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
-            subprocess.call(cmd)
+            completed_process = subprocess.call(cmd)
             sys.exit(0)
 
         #dump memory application
         elif options.name and options.dumpmemory:
+            check.deviceConnected()
             dump_memory(options.dumpmemory, options.name)
 
         #hexbytescan ipa
         elif options.hexscan:
-            if options.pattern is None and options.address is None:
-                hexbyte_scan('', options.file, options.task)
-            elif options.pattern and options.address is None:
-                hexbyte_scan(options.hexscan, options.file, options.pattern)
-            elif options.pattern is None and options.address:
-                hexbyte_scan(options.hexscan, options.file, options.address)
+            if(options.hexscan == 'help' and options.scanfile is None and options.task is None):
+                hexbyte_scan(options.hexscan, '', '')
+            #Read json file task
+            elif options.hexscan == 'json' and options.scanfile and options.task:
+                hexbyte_scan(options.hexscan, options.scanfile, options.task)
+            #patch ipa file with address
+            elif options.hexscan == 'patch' and options.scanfile and options.address:
+                hexbyte_scan(options.hexscan, options.scanfile, options.address)
+            #scan ipa file with pattern
+            elif options.hexscan == 'scan' and options.scanfile and options.pattern:
+                hexbyte_scan(options.hexscan, options.scanfile, options.pattern)
+            elif(options.scanfile and options.task):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan json --file " + options.scanfile + " --task " + options.task)
+            elif(options.scanfile and options.address):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan patch --file " + options.scanfile + " --address patchAddress,patchBytes,patchDistance")
+            elif(options.scanfile and options.pattern):
+                logger.info("[*] Please use with command: ./ioshook --hexbyte-scan scan --file " + options.scanfile + " --address " + options.addpatternress)
+        #refluter ipa
+        elif options.flutterfile:
+            if(os.path.isfile(options.flutterfile)):
+                logger.info("[*] Rename " + options.flutterfile + " to " + options.flutterfile.replace(' ', '_'))
+                os.rename(options.flutterfile, options.flutterfile.replace(' ', '_'))
+                file = options.flutterfile.replace(' ', '_')
+                cmd = shlex.split("reflutter " + file)
+                subprocess.call(cmd)
+                sys.exit(0)
 
+            else:
+                logger.error("[x_x] File "+options.flutterfile+" not found!")
+                sys.exit(0)
         #ios system log
         elif options.logcat:
+            check.deviceConnected()
             cmd = shlex.split('idevicesyslog')
-            subprocess.call(cmd)
+            completed_process = subprocess.call(cmd)
             sys.exit(0)
 
         #ios get the shell
         elif options.shell:
+            check.deviceConnected()
             check.iproxyInstalled()
             SSH_USER = APP_SSH['user']
-            SSH_IP = str(APP_SSH['ip'])
-            SSH_PORT = str(APP_SSH['port'])
-            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + SSH_PORT)
-            subprocess.call(cmd)
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
+            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+            completed_process = subprocess.call(cmd)
             sys.exit(0)
+
         #ioshook cli
         elif options.cli:
             logger.info("Welcome to iOSHook CLI! Type ? to list commands")
             iOSHook_CLI().cmdloop()
         else:
             logger.warning("[!] Specify the options. use (-h) for more help!")
-            # sys.exit(0)
+            sys.exit(0)
 
     #EXCEPTION FOR FRIDA
     except frida.ServerNotRunningError:

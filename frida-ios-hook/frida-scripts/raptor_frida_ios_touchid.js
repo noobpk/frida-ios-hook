@@ -27,8 +27,8 @@ if (ObjC.available) {
 
 	/*
 	 * method to hook:
-	 * - (void)evaluatePolicy:(LAPolicy)policy 
-       	 *        localizedReason:(NSString *)localizedReason 
+	 * - (void)evaluatePolicy:(LAPolicy)policy
+       	 *        localizedReason:(NSString *)localizedReason
 	 *                  reply:(void (^)(BOOL success, NSError *error))reply;
 	 */
 	var hook = ObjC.classes.LAContext["- evaluatePolicy:localizedReason:reply:"];

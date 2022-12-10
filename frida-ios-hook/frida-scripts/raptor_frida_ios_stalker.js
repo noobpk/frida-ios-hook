@@ -39,7 +39,7 @@ function stalk(pattern)
 }
 
 // remove duplicates from array
-function uniqBy(array, key) 
+function uniqBy(array, key)
 {
 	var seen = {};
 	return array.filter(function(item) {
@@ -123,7 +123,7 @@ if (ObjC.available) {
 	// stalk("*[* *Password:*]");
 	// stalk("exports:libSystem.B.dylib!open");
 	// stalk("exports:*!open*");
-	
+
 } else {
  	send("error: Objective-C Runtime is not available!");
 }

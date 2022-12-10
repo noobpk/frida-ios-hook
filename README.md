@@ -10,7 +10,7 @@
 
 👉 For Android platform: [frida-android-hook](https://github.com/noobpk/frida-android-hook)
 
-👉 For Intercept Api was encrypted on iOS application: [frida-ios-interceprt-api](https://github.com/noobpk/frida-ios-intercept-api)
+👉 For Intercept Api was encrypted on iOS application: [frida-ios-intercept-api](https://github.com/noobpk/frida-ios-intercept-api)
 
 ## Env OS Support
 | OS      | Supported          | Noted   |
@@ -20,11 +20,9 @@
 | Windows | :white_check_mark: | sub	 |
 
 ## Compatible with
-| iOS      |   Frida  | Supported         |
-| -------- | -------- | ----------------- |
-|  13.2.3  | 14.2.13  | :white_check_mark:|
-|  14.4.2  | 14.2.13  | :white_check_mark:|
-|  14.4.2  | 15.0.18  | :white_check_mark:|
+| iOS      |  Frida   | Frida-tools | Supported        |
+| -------- | -------  | ----------- |----------------- |
+|  15.7.1  | 16.0.7   | 12.0.4      | :white_check_mark:|
 
 ## Feature
 
@@ -39,30 +37,29 @@ Support both spawn & attach script to process.
 	-n(--name) 			Name of application ex: AppStore
 	-s(--script) 			Using script format script.js
 	-c(--check-version) 		Check for the newest version
-	-u(--upadte) 			Update to the newest version
-	
+	-u(--update) 			Update to the newest version
+
 	[*] Dump decrypt IPA:
-	
+
     	-d, --dump         Dump decrypt application.ipa
     	-o OUTPUT_IPA, --output=OUTPUT_IPA
                            Specify name of the decrypted IPA
-	
+
 	[*] Dump memory of Application:
-	
+
 	--dump-memory		Dump memory of application
-	
+
 	[*] HexByte Scan IPA:
 	--hexbyte-scan		Scan or Patch IPA with byte patterns
 	--pattern=PATTERN   Pattern for hexbytescan
 	--address=ADDRESS   Address for hexbytescan
 	-t TASK, --task=TASK
           			Task for hexbytescan
-	
+
 	[*] Information:
 
 	--list-devices    List All Devices
 	--list-apps       List The Installed apps
-	--list-appinfo    List Info of Apps on Itunes
 	--list-scripts    List All Scripts
 	--logcat          Show system log of device
     	--shell, --ssh      Get the shell of connect device
@@ -75,34 +72,30 @@ Support both spawn & attach script to process.
 				bypass-ssl(-p)
 				i-url-req(-n)
 				i-crypto(-p)
+	[*] reFlutter:
+
+	--reflutter=FLUTTERFILE
+                        File Flutter.ipa
 ```
 
 ## 📜 ChangeLog
 
-Version: 3.7
+Version: 3.8
 ```
 	[+] Add:
-	
-		[-] Add setup.py for build executable
-		
-		[-] Add `--ssh` to option Get the shell of connect device
-		
-		[-] Add suggestion script for option `-s (--script)`
-		
-		
+		- Add function check.deviceConnected
+		- Add reFlutter
 	[+] Change:
-		
-		[-] Update readme, changelog
-		
-		[-] Update frida-script
-		
-		[-] Update hook.py
-	
+		- Update function check.iproxyInstalled
+		- Update dumpDecryptIPA option
+		- Update readme, changelog, requirement
+		- Remove --list-appinfo option
+		- Update --cli option
 	[+] Fix
-		
-		[-] Fix syntax in hook.json
+		- Fix issue in --shell option [issue 57](https://github.com/noobpk/frida-ios-hook/issues/57)
+		- Fix issue in --dump option [issue 67](https://github.com/noobpk/frida-ios-hook/issues/67)
+		- Fix and optimize hexbytescan option
 
-		[-] Fix psutil not found
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
@@ -110,15 +103,15 @@ Version: 3.7
 
 ```
 	[+] Latest version
-	
+
 		https://github.com/noobpk/frida-ios-hook/releases
-		
+
 	[+] Develop version
-	
+
 		git clone -b dev https://github.com/noobpk/frida-ios-hook
 ```
 
-## Build 
+## Build
 
 ```
 1. cd frida-ios-hook/
@@ -144,7 +137,7 @@ If you run the script but it doesn't work, you can try the following:
 
 ## Frida-Script
 
-Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A) 
+Updated some frida scripts to help you with the pentest ios app. Filter script using spawn(S) or attach(A)
 
 |N|Spawn/Attach|Script Name| Script Description| Script Version|
 |:---|:---|:---|:---|:---|
@@ -196,8 +189,8 @@ Updated some frida scripts to help you with the pentest ios app. Filter script u
 |N|Task Name| Task Description|
 |:---|:---|:---|
 |1|openssl_hook.json|OpenSSL 1.0.2 certificate pinning hook on arm64|
-|2|openssl_1_1_0_hook.json|OpenSSL 1.1.0 certifiate pinning hook for arm64, it modifies cmp instruction in tls_process_server_certificate method|
-|3|openssl_hook_v2.json|OpenSSL 1.0.2 certificate pinning hook on arm64, improved pattern, possibly for different compiler version or slighlty updated OpenSSL, use if first version does not find patch location. These hooks patch call to ssl_verify_cert_chain in ssl3_get_server_certificate.|
+|2|openssl_1_1_0_hook.json|OpenSSL 1.1.0 certificate pinning hook for arm64, it modifies cmp instruction in tls_process_server_certificate method|
+|3|openssl_hook_v2.json|OpenSSL 1.0.2 certificate pinning hook on arm64, improved pattern, possibly for different compiler version or slightly updated OpenSSL, use if first version does not find patch location. These hooks patch call to ssl_verify_cert_chain in ssl3_get_server_certificate.|
 
 ## Disclaimer
 Because I am not a developer, so my coding skills might not be the best. Therefore, if this tool have any issue or not working for you, create an issue and i will try to fix it.

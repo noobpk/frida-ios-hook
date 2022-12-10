@@ -48,7 +48,7 @@ function printValue(desc, arg)
 function autoIntercept(target)
 {
 	var className = target.match(/^[-+]\[(.*)\s/)[1];
-	var methodType = target.match(/^([-+])/)[1];	
+	var methodType = target.match(/^([-+])/)[1];
 	var methodName = target.match(/^[-+]\[.*\s(.*)\]/)[1];
 	var argCount = (methodName.match(/:/g) || []).length;
 
@@ -94,7 +94,7 @@ function autoIntercept(target)
 if (ObjC.available) {
 
 	// autoIntercept("-[CredManager setPassword:]");
-	
+
 } else {
  	send("error: Objective-C Runtime is not available!");
 }

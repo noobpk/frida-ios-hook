@@ -9,8 +9,8 @@
  * Copyright (c) 2017 Marco Ivaldi <raptor@0xdeadbeef.info>
  *
  * Frida.re JS functions to enumerate ObjC classes and
- * methods declared in an iOS app. See https://www.frida.re/ 
- * and https://codeshare.frida.re/ for further information on 
+ * methods declared in an iOS app. See https://www.frida.re/
+ * and https://codeshare.frida.re/ for further information on
  * this powerful tool.
  *
  * "We want to help others achieve interop through reverse
@@ -64,7 +64,7 @@ function enumMethods(targetClass)
 function enumAllMethods()
 {
 	var allClasses = enumAllClasses();
-	var allMethods = {}; 
+	var allMethods = {};
 
 	allClasses.forEach(function(aClass) {
 		enumMethods(aClass).forEach(function(method) {
@@ -100,24 +100,24 @@ if (ObjC.available) {
 	// enumerate all classes
 	/*
 	var a = enumAllClasses();
-	a.forEach(function(s) { 
-		console.log(s); 
+	a.forEach(function(s) {
+		console.log(s);
 	});
 	*/
 
 	// find classes that match a pattern
 	/*
 	var a = findClasses(/password/i);
-	a.forEach(function(s) { 
-		console.log(s); 
+	a.forEach(function(s) {
+		console.log(s);
 	});
 	*/
 
 	// enumerate all methods in a class
 	/*
 	var a = enumMethods("PasswordManager")
-	a.forEach(function(s) { 
-		console.log(s); 
+	a.forEach(function(s) {
+		console.log(s);
 	});
 	*/
 

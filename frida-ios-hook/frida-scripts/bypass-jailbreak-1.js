@@ -20,7 +20,7 @@ function bypassJailbreakDetection() {
             console.log("\t[-] Return Value: " + retval);
           }
         });
-        
+
 	} catch(err) {
 		console.log("[-] Error: " + err.message);
 	}

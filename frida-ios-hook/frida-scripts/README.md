@@ -53,4 +53,3 @@
 ➡️ [0xdea/frida-scripts](https://github.com/0xdea/frida-scripts/tree/master/android-snippets)
 
 ➡️ [Frida CodeShare](https://codeshare.frida.re/browse)
-

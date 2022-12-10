@@ -4,7 +4,7 @@
  * Credit: https://github.com/0xdea/frida-scripts/tree/master/ios-snippets
  * Author: @0xdea
  */
-/* 
+/*
  * raptor_frida_ios_*.js - Frida script snippets for iOS
  * Copyright (c) 2017 Marco Ivaldi <raptor@0xdeadbeef.info>
  *
@@ -14,7 +14,7 @@
  *
  * "We want to help others achieve interop through reverse
  * engineering" -- @oleavr
- * 
+ *
  * Many thanks to Maurizio Agazzini <inode@wayreth.eu.org>
  * and Federico Dotta <federico.dotta@mediaservice.net>.
  *

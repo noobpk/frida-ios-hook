@@ -1,5 +1,5 @@
 /*
-Description: 
+Description:
 Search for methods
 * If no strings are specified in "search_class" nor "search_method" arrays, the script will print the methods of all the classes (frida server might stop running if there are a lot of classes).
 * If one or more strings are specified in "search_class array", the script will print the methods of the classes which contains the strings in their name.

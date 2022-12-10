@@ -208,7 +208,7 @@ def open_target_app(device, name_or_bundleid):
         else:
             session = device.attach(pid)
     except Exception as e:
-        print(e) 
+        print(e)
 
     return session, display_name, bundle_identifier
 
@@ -261,10 +261,10 @@ if __name__ == '__main__':
             if session:
                 start_dump(session, output_ipa)
         except paramiko.ssh_exception.NoValidConnectionsError as e:
-            print(e) 
+            print(e)
             exit_code = 1
         except paramiko.AuthenticationException as e:
-            print(e) 
+            print(e)
             exit_code = 1
         except Exception as e:
             print('*** Caught exception: %s: %s' % (e.__class__, e))

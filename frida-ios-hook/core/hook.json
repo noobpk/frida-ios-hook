@@ -1,7 +1,7 @@
 {
     "name": "frida-ios-hook",
-    "version": "3.7",
-    "cliVersion": "1.0",
+    "version": "3.8",
+    "cliVersion": "1.1",
     "author": "noobpk",
     "license": "LICENSE",
     "requirements": "requirements.txt",

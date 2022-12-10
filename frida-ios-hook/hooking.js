@@ -1,5 +1,5 @@
 /*
-Description: 
+Description:
 Hooks into methods
 * Given one or more classes in "search_class", it hooks into all their methods.
 * Given one or more methods in "search_method", it hooks into all methods of any classes that meet with the search criteria.
@@ -45,7 +45,7 @@ function search_classes(){
     for (var className in ObjC.classes) {
         if (Array.isArray(search_class) && search_class.length) {
             for (var i = 0; i < search_class.length; i++) {
-                if (className.toLowerCase().includes(search_class[i].toLowerCase())) {  
+                if (className.toLowerCase().includes(search_class[i].toLowerCase())) {
                     classes_found.push(className);
                 }
             }
@@ -56,13 +56,13 @@ function search_classes(){
 
 function print_arguments(args) {
 /*
-Frida's Interceptor has no information about the number of arguments, because there is no such 
+Frida's Interceptor has no information about the number of arguments, because there is no such
 information available at the ABI level (and we don't rely on debug symbols).
 
 I have implemented this function in order to try to determine how many arguments a method is using.
 It stops when:
     - The object is not nil
-    - The argument is not the same as the one before    
+    - The argument is not the same as the one before
  */
     var n = 100;
     var last_arg = '';
@@ -119,7 +119,7 @@ if (ObjC.available)
                     console.log(colors.green,"Return value of: ",colors.resetColor);
                     console.log('   ' + this._className + ' --> ' + this._methodName);
                     console.log(colors.green,"\t[-] Type of return value: ",colors.resetColor + Object.prototype.toString.call(returnValues));
-                    console.log(colors.green,"\t[-] Return Value: ",colors.resetColor + returnValues); 
+                    console.log(colors.green,"\t[-] Return Value: ",colors.resetColor + returnValues);
                 }
             });
         }

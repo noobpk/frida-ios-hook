@@ -24,7 +24,7 @@
 
 if (ObjC.available) {
 
-	// Low-level intercept and backtrace example 
+	// Low-level intercept and backtrace example
 
 	Interceptor.attach(Module.findExportByName("libSystem.B.dylib", "open"), {
 
@@ -37,10 +37,10 @@ if (ObjC.available) {
 			//if (filename.indexOf("Bundle") == -1 && filename.indexOf("Cache") == -1) // exclusion list
 			if (filename.indexOf("my.interesting.file") != -1) // inclusion list
 				this.flag = 1;
-			
+
 			if (this.flag) {
  				console.log("\nopen called from:\n",
-            				Thread.backtrace(this.context, Backtracer.ACCURATE).map(DebugSymbol.fromAddress).join("\n"), 
+            				Thread.backtrace(this.context, Backtracer.ACCURATE).map(DebugSymbol.fromAddress).join("\n"),
 						"\n");
 				//console.log(filename); // DEBUG
 			}
