@@ -146,7 +146,10 @@ def main():
 
         if options.listdevices:
             logger.info('[*] List All Devices: ')
-            os.system('frida-ls-devices')
+            cmd = shlex.split("frida-ls-devicesq")
+            completed_process = subprocess.run(cmd, shell=False)
+            #print(completed_process.returncode)
+            #os.system('frida-ls-devices')
 
         elif options.listapps:
             check.deviceConnected()
