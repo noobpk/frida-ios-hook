@@ -1,6 +1,6 @@
 # Frida iOS Hook ChangeLog
 
-## [Release 3.8] - 2022-12-
+## [Release 3.8] - 2022-12-11
 
 ### Added
 - Add function check.deviceConnected
