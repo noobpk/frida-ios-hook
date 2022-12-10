@@ -60,7 +60,6 @@ Support both spawn & attach script to process.
 
 	--list-devices    List All Devices
 	--list-apps       List The Installed apps
-	--list-appinfo    List Info of Apps on Itunes
 	--list-scripts    List All Scripts
 	--logcat          Show system log of device
     	--shell, --ssh      Get the shell of connect device
@@ -73,6 +72,10 @@ Support both spawn & attach script to process.
 				bypass-ssl(-p)
 				i-url-req(-n)
 				i-crypto(-p)
+	[*] reFlutter:
+
+	--reflutter=FLUTTERFILE
+                        File Flutter.ipa
 ```
 
 ## 📜 ChangeLog
@@ -80,13 +83,18 @@ Support both spawn & attach script to process.
 Version: 3.8
 ```
 	[+] Add:
-
-
+		- Add function check.deviceConnected
+		- Add reFlutter
 	[+] Change:
-
-
+		- Update function check.iproxyInstalled
+		- Update dumpDecryptIPA option
+		- Update readme, changelog, requirement
+		- Remove --list-appinfo option
+		- Update --cli option
 	[+] Fix
-
+		- Fix issue in --shell option [issue 57](https://github.com/noobpk/frida-ios-hook/issues/57)
+		- Fix issue in --dump option [issue 67](https://github.com/noobpk/frida-ios-hook/issues/67)
+		- Fix and optimize hexbytescan option
 
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
