@@ -1,6 +1,6 @@
 colorlog==6.7.0
 frida==16.0.7
-frida-tools==12.0.4
+frida-tools==12.1.0
 scp==0.14.4
 requests==2.28.1
 paramiko==2.11.0
