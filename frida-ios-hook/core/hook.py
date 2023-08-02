@@ -241,7 +241,7 @@ def main():
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
-                process = frida.get_usb_device().attach("Calculator")
+                process = frida.get_usb_device().attach(options.name)
                 hook = open(options.script, 'r')
                 script = process.create_script(hook.read())
                 script.load()
