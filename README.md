@@ -111,13 +111,23 @@ Version: 3.8
 		git clone -b dev https://github.com/noobpk/frida-ios-hook
 ```
 
+## Environment
+
+```
+[+] Python >= v3.0 (Recommend to use pyenv or virtualenv)
+
+1. cd frida-ios-hook/
+2. python3 -m venv py-env
+3. source py-env/bin/active
+```
+
 ## Build
 
 ```
-1. cd frida-ios-hook/
-2. pip3 install -r requirements.txt
+1. pip3 install -r requirements.txt
 3. python3 setup.py
 4. cd frida-ios-hook
+5. ./ioshook -h (--help)
 ```
 
 ## Usage
