@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import sys
 import os
+from tqdm import tqdm
+
 setup = """#!/usr/bin/python3
 
 import os
@@ -25,19 +27,25 @@ except Exception as e:
 def _buildBinary():
     try:
         if sys.platform == 'darwin':
-            with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
-                f.write(setup)
-            os.system('chmod +x frida-ios-hook/ioshook')
+            for i in tqdm(range(100), colour="red"):
+                with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
+                    f.write(setup)
+                os.system('chmod +x frida-ios-hook/ioshook')
             print("[+] Build executable for Darwin success.")
+            print("[+] Try ./frida-ios-hook/ioshook -h (--help)")
         elif sys.platform == 'linux':
-            with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
-                f.write(setup)
-            os.system('chmod +x frida-ios-hook/ioshook')
+            for i in tqdm(range(100), colour="red"):
+                with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
+                    f.write(setup)
+                os.system('chmod +x frida-ios-hook/ioshook')
             print("[+] Build executable for Linux success.")
+            print("[+] ./frida-ios-hook/ioshook -h (-help)")
         elif sys.platform == 'win32':
-            with open('frida-ios-hook/ioshook.py','w+', encoding="utf-8") as f:
-                f.write(setup)
+            for i in tqdm(range(100), colour="red"):
+                with open('frida-ios-hook/ioshook.py','w+', encoding="utf-8") as f:
+                    f.write(setup)
             print("[+] Build executable for Windows success.")
+            print("[+] ./frida-ios-hook/ioshook -h (-help)")
     except Exception as e:
         raise e
 
