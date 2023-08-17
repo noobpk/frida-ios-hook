@@ -1,5 +1,18 @@
 # Frida iOS Hook ChangeLog
 
+## [Release 3.9] - 2023-08-17
+
+### Added
+- Add backtrace to hooking.js
+
+### Changed
+- Update frida version
+- Update readme, changelog, requirement
+
+### Fixed
+- Fix issue #85
+
+
 ## [Release 3.8] - 2022-12-11
 
 ### Added
