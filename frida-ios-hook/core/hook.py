@@ -99,7 +99,7 @@ def main():
                         help='''Name of the target app''', metavar="NAME", action="store", type="string")
 
         parser.add_option("-s", "--script", dest="script",
-                        help='''Frida Script Hooking''', metavar="SCIPRT.JS")
+                        help='''Frida Script Hooking''', metavar="SCRIPT.JS")
 
         parser.add_option("-c", "--check-version", action="store_true", help='''Check iOSHook for the newest version''', dest="checkversion")
         parser.add_option("-u", "--update", action="store_true", help='''Update iOSHook to the newest version''', dest="update")
