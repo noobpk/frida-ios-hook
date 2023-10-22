@@ -4,6 +4,6 @@ frida-tools==12.2.1
 scp==0.14.4
 requests==2.31.0
 paramiko==3.3.1
-tqdm==4.64.1
+tqdm==4.66.1
 psutil
 reflutter
