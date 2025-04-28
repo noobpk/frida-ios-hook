@@ -97,7 +97,9 @@ def main():
         #Using options -n(--name) for attach script to application is running
         parser.add_option("-n", "--name", dest="name",
                         help='''Name of the target app''', metavar="NAME", action="store", type="string")
-
+        parser.add_option("--pid", dest="pid",
+                        help='''PID of the target app''', metavar="PID", action="store", type="string")
+        #Using options -s(--script) for load script to application
         parser.add_option("-s", "--script", dest="script",
                         help='''Frida Script Hooking''', metavar="SCRIPT.JS")
 
@@ -221,7 +223,7 @@ def main():
 
         #Spawning application and load script with output
 
-        #Attaching script to application
+        #Attaching script to application with name
         elif options.name and options.script:
             check.deviceConnected()
             if not os.path.isfile(options.script):
@@ -250,7 +252,36 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-
+        #Attaching script to application with pid
+        elif options.pid and options.script:
+            check.deviceConnected()
+            if not os.path.isfile(options.script):
+                logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
+                findingScript = suggestion_script(options.script)
+                if (findingScript == False):
+                    logger.error('[x_x] No matching suggestions!')
+                    sys.exit(0)
+                logger.info('[*] iOSHook suggestion use '+findingScript)
+                answer = input('[?] Do you want continue? (y/n): ') or "y"
+                if answer == "y":
+                    options.script =  APP_FRIDA_SCRIPTS + findingScript
+                elif answer == "n":
+                    sys.exit(0)
+                else:
+                    logger.error('[x_x] Nothing done. Please try again!')
+                    sys.exit(0)
+            if os.path.isfile(options.script):
+                logger.info('[*] Attaching PID: ' + options.pid)
+                logger.info('[*] Script: ' + options.script)
+                time.sleep(2)
+                process = frida.get_usb_device().attach(int(options.pid))
+                hook = open(options.script, 'r')
+                script = process.create_script(hook.read())
+                script.load()
+                sys.stdin.read()
+            else:
+                logger.error('[x_x] Script not found!')
+        
         #Static Analysis Application
         elif options.name and options.method == "app-static":
             check.deviceConnected()
@@ -453,9 +484,10 @@ def main():
         logger.error("[x_x] Timed out while waiting for device to appear.")
     except frida.TransportError:
         logger.error("[x_x] The application may crash or lose connection.")
-    except (frida.ProcessNotFoundError,
-            frida.InvalidOperationError):
-        logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
+    except frida.ProcessNotFoundError:
+        logger.error("[x_x] Unable to find process with PID " + str(options.pid) + " or with name " + str(options.name) + ". You need run app first.!!")
+    except frida.InvalidOperationError:
+        logger.error("[x_x] Invalid operation. Please check your command.")
     #EXCEPTION FOR OPTIONPARSING
 
     #EXCEPTION FOR SYSTEM
