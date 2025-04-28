@@ -528,20 +528,6 @@ def main():
             else:
                 logger.error("[x_x] Please use with command: ./ioshook --ssh-port-forward LOCAL_PORT:DEVICE_PORT")
                 sys.exit(0)
-            ARRAY_SSH_USER = APP_SSH['user']
-            SSH_IP = APP_SSH['ip']
-            SSH_PORT = APP_SSH['port']
-            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
-            if choose_ssh_user in ARRAY_SSH_USER:
-                SSH_USER = choose_ssh_user
-            else:
-                logger.error("[x_x] SSH user not found in list!")
-                input_ssh_user = input('[?] Input your SSH user: ')
-                SSH_USER = input_ssh_user
-            logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
-            cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
-            completed_process = subprocess.call(cmd)
-            sys.exit(0)
 
         #ioshook cli
         elif options.cli:
