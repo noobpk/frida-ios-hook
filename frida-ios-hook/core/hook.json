@@ -35,7 +35,10 @@
         "HexByte Scanner": "core/utils/hexbytescanner/hexbytescanner"
     },
     "ssh": {
-        "user": ["root", "mobile"],
+        "user": [
+            "root",
+            "mobile"
+        ],
         "ip": "127.0.0.1",
         "port": 2222
     },
