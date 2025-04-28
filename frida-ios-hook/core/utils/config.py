@@ -132,14 +132,24 @@ class check():
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 result = sock.connect_ex((APP_SSH['ip'], APP_SSH['port']))
                 if result == 0:
-                   logger.info("[*] Iproxy process for port " + str(APP_SSH['port']) + " is alive.")
+                    logger.info("[*] Iproxy process for port " + str(APP_SSH['port']) + " is alive.")
+                    sock.close()
+                    is_kill_iproxy = input('[?] Do you want kill iproxy (yes/no): ')
+                    yes_choices = ['yes', 'y']
+                    no_choices = ['no', 'n']
+                    if is_kill_iproxy.lower() in yes_choices:
+                        logger.info("[*] Kill iproxy process")
+                        cmd = shlex.split("killall iproxy")
+                        subprocess.Popen(cmd)
+                        time.sleep(2) 
+                        logger.info("Bye bro!!")
+                        sys.exit(0)
                 else:
                     logger.error("[*] Iproxy process for port " + str(APP_SSH['port']) + " is dead.")
                     while True:
                         iproxy_start = input('[?] Do you want start iproxy 2222 22 (yes/no): ')
                         yes_choices = ['yes', 'y']
                         no_choices = ['no', 'n']
-
                         if iproxy_start.lower() in yes_choices:
                             logger.info("[*] Start iproxy ")
                             cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " 22")
@@ -147,7 +157,20 @@ class check():
                             time.sleep(2)
                             break
                         elif iproxy_start.lower() in no_choices:
-                            logger.info("Bye bro!!")
+                            iproxy_device_port = input('[?] Input your device port (default 22): ')
+                            if iproxy_device_port == '':
+                                iproxy_device_port = 22
+                                logger.info("[*] Start iproxy ")
+                                cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
+                                subprocess.Popen(cmd)
+                                time.sleep(2)
+                                break
+                            else:
+                                logger.info("[*] Start iproxy ")
+                                cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
+                                subprocess.Popen(cmd)
+                                time.sleep(2)
+                                break
                             sys.exit(0)
                             break
                         else:

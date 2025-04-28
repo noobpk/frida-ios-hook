@@ -178,9 +178,9 @@ def main():
                             if re.search(description_pattern, line):
                                 description = re.sub(r'\n', '', line[16:])
                             if re.search(mode_pattern, line):
-                                mode = re.sub('\s+', '', line[9:])
+                                mode = re.sub(r'\s+', '', line[9:])
                             if re.search(version_pattern, line):
-                                version = re.sub('\s+', '', line[12:])
+                                version = re.sub(r'\s+', '', line[12:])
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[x_x] Path frida-script not exists!')
@@ -423,9 +423,16 @@ def main():
         elif options.shell:
             check.deviceConnected()
             check.iproxyInstalled()
-            SSH_USER = APP_SSH['user']
+            ARRAY_SSH_USER = APP_SSH['user']
             SSH_IP = APP_SSH['ip']
             SSH_PORT = APP_SSH['port']
+            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+            if choose_ssh_user in ARRAY_SSH_USER:
+                SSH_USER = choose_ssh_user
+            else:
+                logger.error("[x_x] SSH user not found in list!")
+                input_ssh_user = input('[?] Input your SSH user: ')
+                SSH_USER = input_ssh_user
             logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
             cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
             completed_process = subprocess.call(cmd)
