@@ -1,5 +1,19 @@
 # Frida iOS Hook ChangeLog
 
+## [Release 3.10] - 2025-29-04
+
+### Added
+- Add --pid for attach to target app with PID
+
+### Changed
+- Update option --shell / --ssh 
+- Update option -d / --dump-app
+- Update frida version
+- Update readme, changelog, requirement
+
+### Fixed
+- Fix issue #84
+
 ## [Release 3.9] - 2023-08-17
 
 ### Added
