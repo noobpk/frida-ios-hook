@@ -27,11 +27,6 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 DUMP_JS = os.path.join(script_dir, '../../methods/dump.js')
 
-User = 'root'
-Password = 'alpine'
-Host = 'localhost'
-Port = 2222
-
 TEMP_DIR = tempfile.gettempdir()
 PAYLOAD_DIR = 'Payload'
 PAYLOAD_PATH = os.path.join(TEMP_DIR, PAYLOAD_DIR)
@@ -228,7 +223,10 @@ def start_dump(session, ipa_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='frida-ios-dump (by AloneMonkey v2.0)')
-    parser.add_argument('-l', '--list', dest='list_applications', action='store_true', help='List the installed apps')
+    parser.add_argument('-u', '--user', dest='ssh_user', help='SSH username')
+    parser.add_argument('-p', '--password', dest='ssh_password', help='SSH password')
+    parser.add_argument('-H', '--host', dest='ssh_host', help='SSH host')
+    parser.add_argument('-P', '--port', dest='ssh_port', type=int, help='SSH port')
     parser.add_argument('-o', '--output', dest='output_ipa', help='Specify name of the decrypted IPA')
     parser.add_argument('target', nargs='?', help='Bundle identifier or display name of the target app')
     args = parser.parse_args()
@@ -242,34 +240,34 @@ if __name__ == '__main__':
 
     device = get_usb_iphone()
 
-    if args.list_applications:
-        list_applications(device)
-    else:
-        name_or_bundleid = args.target
-        output_ipa = args.output_ipa
+    ssh_user = args.ssh_user
+    ssh_password = args.ssh_password
+    ssh_host = args.ssh_host
+    ssh_port = args.ssh_port
+    name_or_bundleid = args.target
+    output_ipa = args.output_ipa
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ssh_host, port=ssh_port, username=ssh_user, password=ssh_password, timeout=5)
 
-        try:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(Host, port=Port, username=User, password=Password)
-
-            create_dir(PAYLOAD_PATH)
-            (session, display_name, bundle_identifier) = open_target_app(device, name_or_bundleid)
-            if output_ipa is None:
-                output_ipa = display_name
-            output_ipa = re.sub('\.ipa$', '', output_ipa)
-            if session:
-                start_dump(session, output_ipa)
-        except paramiko.ssh_exception.NoValidConnectionsError as e:
-            print(e)
-            exit_code = 1
-        except paramiko.AuthenticationException as e:
-            print(e)
-            exit_code = 1
-        except Exception as e:
-            print('*** Caught exception: %s: %s' % (e.__class__, e))
-            traceback.print_exc()
-            exit_code = 1
+        create_dir(PAYLOAD_PATH)
+        (session, display_name, bundle_identifier) = open_target_app(device, name_or_bundleid)
+        if output_ipa == "None":
+            output_ipa = display_name
+        output_ipa = re.sub(r'\.ipa$', '', output_ipa)
+        if session:
+            start_dump(session, output_ipa)
+    except paramiko.ssh_exception.NoValidConnectionsError as e:
+        print(e)
+        exit_code = 1
+    except paramiko.AuthenticationException as e:
+        print(e)
+        exit_code = 1
+    except Exception as e:
+        print('*** Caught exception: %s: %s' % (e.__class__, e))
+        traceback.print_exc()
+        exit_code = 1
 
     if ssh:
         ssh.close()

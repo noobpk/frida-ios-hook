@@ -39,6 +39,10 @@
             "root",
             "mobile"
         ],
+        "password": [
+            "alpine",
+            "root"
+        ],
         "ip": "127.0.0.1",
         "port": 2222
     },

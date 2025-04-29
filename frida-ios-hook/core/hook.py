@@ -72,7 +72,7 @@ def main():
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
         Example for spawn or attach app with -m(--method) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
-        Example dump decrypt ipa with -d(--dump) and -o(--output) options:
+        Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         Example dump memory of application with --dump-memory and -s(--string) options:
         [+] ./ioshook -n 'App Store' --dump-memory --string
@@ -84,7 +84,7 @@ def main():
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
         quick = optparse.OptionGroup(parser,"Quick Method")
-        dump = optparse.OptionGroup(parser,"Dump decrypt IPA")
+        dumpapp = optparse.OptionGroup(parser,"Dump decrypt IPA")
         hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
         reflutter = optparse.OptionGroup(parser,"reFlutter")
@@ -124,8 +124,8 @@ def main():
         info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
         info.add_option("--shell", "--ssh", action="store_true", help="Get the shell of connect device", dest="shell")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
-        dump.add_option("-d", "--dump", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
-        dump.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
+        dumpapp.add_option("-d", "--dump-app", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
+        dumpapp.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
 
         #Dump memory of application using the code of Nightbringer21's repo fridump - Link: https://github.com/Nightbringer21/fridump
         dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
@@ -139,7 +139,7 @@ def main():
         #reFlutter of application using the code of ptswarm's repo reFlutter - Link: https://github.com/ptswarm/reFlutter
         reflutter.add_option("--reflutter", action="store", help="File Flutter.ipa", dest="flutterfile")
 
-        parser.add_option_group(dump)
+        parser.add_option_group(dumpapp)
         parser.add_option_group(dumpmemory)
         parser.add_option_group(hexscan)
         parser.add_option_group(info)
@@ -391,18 +391,31 @@ def main():
         elif (options.package or options.name) and options.dumpapp:
             check.deviceConnected()
             check.iproxyInstalled()
+            ARRAY_SSH_USER = APP_SSH['user']
+            ARRAY_SSH_PWD = APP_SSH['password']
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+            if choose_ssh_user in ARRAY_SSH_USER:
+                SSH_USER = choose_ssh_user
+            else:
+                logger.error("[x_x] SSH user not found in list!")
+                input_ssh_user = input('[?] Input your SSH user: ')
+                SSH_USER = input_ssh_user
+            choose_ssh_pwd = input('[?] Choose SSH password ({0} / {1}): '.format(ARRAY_SSH_PWD[0], ARRAY_SSH_PWD[1]))
+            if choose_ssh_pwd in ARRAY_SSH_PWD:
+                SSH_PWD = choose_ssh_pwd
+            else:
+                logger.error("[x_x] SSH password not found in list!")
+                input_ssh_pwd = input('[?] Input your SSH password: ')
+                SSH_PWD = input_ssh_pwd
+
             logger.info('[*] Dumping...')
             util = APP_UTILS['Dump Decrypt Application']
             if options.name is None:
-                if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + util + " " + options.package)
-                else:
-                    cmd = shlex.split("python3 " + util + " " + options.package + " -o " + options.output_ipa)
+                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.package + " -o " + str(options.output_ipa))
             else:
-                if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'")
-                else:
-                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
+                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.name + " -o " + str(options.output_ipa))
             completed_process = subprocess.call(cmd)
             sys.exit(0)
 
@@ -430,6 +443,7 @@ def main():
                 logger.info("[*] Please use with command: ./ioshook --hexbyte-scan patch --file " + options.scanfile + " --address patchAddress,patchBytes,patchDistance")
             elif(options.scanfile and options.pattern):
                 logger.info("[*] Please use with command: ./ioshook --hexbyte-scan scan --file " + options.scanfile + " --address " + options.addpatternress)
+        
         #refluter ipa
         elif options.flutterfile:
             if(os.path.isfile(options.flutterfile)):
@@ -443,6 +457,7 @@ def main():
             else:
                 logger.error("[x_x] File "+options.flutterfile+" not found!")
                 sys.exit(0)
+        
         #ios system log
         elif options.logcat:
             check.deviceConnected()
