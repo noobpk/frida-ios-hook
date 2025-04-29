@@ -72,7 +72,7 @@ def main():
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
         Example for spawn or attach app with -m(--method) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
-        Example dump decrypt ipa with -d(--dump) and -o(--output) options:
+        Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         Example dump memory of application with --dump-memory and -s(--string) options:
         [+] ./ioshook -n 'App Store' --dump-memory --string
@@ -84,7 +84,7 @@ def main():
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
         quick = optparse.OptionGroup(parser,"Quick Method")
-        dump = optparse.OptionGroup(parser,"Dump decrypt IPA")
+        dumpapp = optparse.OptionGroup(parser,"Dump decrypt IPA")
         hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
         dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
         reflutter = optparse.OptionGroup(parser,"reFlutter")
@@ -97,9 +97,11 @@ def main():
         #Using options -n(--name) for attach script to application is running
         parser.add_option("-n", "--name", dest="name",
                         help='''Name of the target app''', metavar="NAME", action="store", type="string")
-
+        parser.add_option("--pid", dest="pid",
+                        help='''PID of the target app''', metavar="PID", action="store", type="string")
+        #Using options -s(--script) for load script to application
         parser.add_option("-s", "--script", dest="script",
-                        help='''Frida Script Hooking''', metavar="SCIPRT.JS")
+                        help='''Frida Script Hooking''', metavar="SCRIPT.JS")
 
         parser.add_option("-c", "--check-version", action="store_true", help='''Check iOSHook for the newest version''', dest="checkversion")
         parser.add_option("-u", "--update", action="store_true", help='''Update iOSHook to the newest version''', dest="update")
@@ -122,8 +124,8 @@ def main():
         info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
         info.add_option("--shell", "--ssh", action="store_true", help="Get the shell of connect device", dest="shell")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
-        dump.add_option("-d", "--dump", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
-        dump.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
+        dumpapp.add_option("-d", "--dump-app", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
+        dumpapp.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
 
         #Dump memory of application using the code of Nightbringer21's repo fridump - Link: https://github.com/Nightbringer21/fridump
         dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
@@ -137,7 +139,7 @@ def main():
         #reFlutter of application using the code of ptswarm's repo reFlutter - Link: https://github.com/ptswarm/reFlutter
         reflutter.add_option("--reflutter", action="store", help="File Flutter.ipa", dest="flutterfile")
 
-        parser.add_option_group(dump)
+        parser.add_option_group(dumpapp)
         parser.add_option_group(dumpmemory)
         parser.add_option_group(hexscan)
         parser.add_option_group(info)
@@ -178,9 +180,9 @@ def main():
                             if re.search(description_pattern, line):
                                 description = re.sub(r'\n', '', line[16:])
                             if re.search(mode_pattern, line):
-                                mode = re.sub('\s+', '', line[9:])
+                                mode = re.sub(r'\s+', '', line[9:])
                             if re.search(version_pattern, line):
-                                version = re.sub('\s+', '', line[12:])
+                                version = re.sub(r'\s+', '', line[12:])
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[x_x] Path frida-script not exists!')
@@ -221,7 +223,7 @@ def main():
 
         #Spawning application and load script with output
 
-        #Attaching script to application
+        #Attaching script to application with name
         elif options.name and options.script:
             check.deviceConnected()
             if not os.path.isfile(options.script):
@@ -250,7 +252,36 @@ def main():
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-
+        #Attaching script to application with pid
+        elif options.pid and options.script:
+            check.deviceConnected()
+            if not os.path.isfile(options.script):
+                logger.warning('[!] Script '+options.script+' not found. Try suggestion in frida-script!')
+                findingScript = suggestion_script(options.script)
+                if (findingScript == False):
+                    logger.error('[x_x] No matching suggestions!')
+                    sys.exit(0)
+                logger.info('[*] iOSHook suggestion use '+findingScript)
+                answer = input('[?] Do you want continue? (y/n): ') or "y"
+                if answer == "y":
+                    options.script =  APP_FRIDA_SCRIPTS + findingScript
+                elif answer == "n":
+                    sys.exit(0)
+                else:
+                    logger.error('[x_x] Nothing done. Please try again!')
+                    sys.exit(0)
+            if os.path.isfile(options.script):
+                logger.info('[*] Attaching PID: ' + options.pid)
+                logger.info('[*] Script: ' + options.script)
+                time.sleep(2)
+                process = frida.get_usb_device().attach(int(options.pid))
+                hook = open(options.script, 'r')
+                script = process.create_script(hook.read())
+                script.load()
+                sys.stdin.read()
+            else:
+                logger.error('[x_x] Script not found!')
+        
         #Static Analysis Application
         elif options.name and options.method == "app-static":
             check.deviceConnected()
@@ -360,18 +391,31 @@ def main():
         elif (options.package or options.name) and options.dumpapp:
             check.deviceConnected()
             check.iproxyInstalled()
+            ARRAY_SSH_USER = APP_SSH['user']
+            ARRAY_SSH_PWD = APP_SSH['password']
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+            if choose_ssh_user in ARRAY_SSH_USER:
+                SSH_USER = choose_ssh_user
+            else:
+                logger.error("[x_x] SSH user not found in list!")
+                input_ssh_user = input('[?] Input your SSH user: ')
+                SSH_USER = input_ssh_user
+            choose_ssh_pwd = input('[?] Choose SSH password ({0} / {1}): '.format(ARRAY_SSH_PWD[0], ARRAY_SSH_PWD[1]))
+            if choose_ssh_pwd in ARRAY_SSH_PWD:
+                SSH_PWD = choose_ssh_pwd
+            else:
+                logger.error("[x_x] SSH password not found in list!")
+                input_ssh_pwd = input('[?] Input your SSH password: ')
+                SSH_PWD = input_ssh_pwd
+
             logger.info('[*] Dumping...')
             util = APP_UTILS['Dump Decrypt Application']
             if options.name is None:
-                if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + util + " " + options.package)
-                else:
-                    cmd = shlex.split("python3 " + util + " " + options.package + " -o " + options.output_ipa)
+                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.package + " -o " + str(options.output_ipa))
             else:
-                if options.output_ipa is None:
-                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'")
-                else:
-                    cmd = shlex.split("python3 " + util + " " + "'" + options.name + "'" + " -o " + options.output_ipa)
+                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.name + " -o " + str(options.output_ipa))
             completed_process = subprocess.call(cmd)
             sys.exit(0)
 
@@ -399,6 +443,7 @@ def main():
                 logger.info("[*] Please use with command: ./ioshook --hexbyte-scan patch --file " + options.scanfile + " --address patchAddress,patchBytes,patchDistance")
             elif(options.scanfile and options.pattern):
                 logger.info("[*] Please use with command: ./ioshook --hexbyte-scan scan --file " + options.scanfile + " --address " + options.addpatternress)
+        
         #refluter ipa
         elif options.flutterfile:
             if(os.path.isfile(options.flutterfile)):
@@ -412,6 +457,7 @@ def main():
             else:
                 logger.error("[x_x] File "+options.flutterfile+" not found!")
                 sys.exit(0)
+        
         #ios system log
         elif options.logcat:
             check.deviceConnected()
@@ -423,9 +469,16 @@ def main():
         elif options.shell:
             check.deviceConnected()
             check.iproxyInstalled()
-            SSH_USER = APP_SSH['user']
+            ARRAY_SSH_USER = APP_SSH['user']
             SSH_IP = APP_SSH['ip']
             SSH_PORT = APP_SSH['port']
+            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+            if choose_ssh_user in ARRAY_SSH_USER:
+                SSH_USER = choose_ssh_user
+            else:
+                logger.error("[x_x] SSH user not found in list!")
+                input_ssh_user = input('[?] Input your SSH user: ')
+                SSH_USER = input_ssh_user
             logger.info("[*] Open SSH Shell on device - Default password is `alpine` ")
             cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
             completed_process = subprocess.call(cmd)
@@ -446,9 +499,10 @@ def main():
         logger.error("[x_x] Timed out while waiting for device to appear.")
     except frida.TransportError:
         logger.error("[x_x] The application may crash or lose connection.")
-    except (frida.ProcessNotFoundError,
-            frida.InvalidOperationError):
-        logger.error("[x_x] Unable to find process with name " + options.name + ". You need run app first.!!")
+    except frida.ProcessNotFoundError:
+        logger.error("[x_x] Unable to find process with PID " + str(options.pid) + " or with name " + str(options.name) + ". You need run app first.!!")
+    except frida.InvalidOperationError:
+        logger.error("[x_x] Invalid operation. Please check your command.")
     #EXCEPTION FOR OPTIONPARSING
 
     #EXCEPTION FOR SYSTEM

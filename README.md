@@ -15,14 +15,14 @@
 ## Env OS Support
 | OS      | Supported          | Noted   |
 | ------- | ------------------ | ------- |
-| MacOS   | :white_check_mark: | main	 |
-| Linux   | :white_check_mark: | sub  	 |
-| Windows | :white_check_mark: | sub	 |
+| MacOS   | :white_check_mark: | Stable	 |
+| Linux   | :white_check_mark: | Stable  |
+| Windows | :white_check_mark: | Unstable|
 
 ## Compatible with
 | iOS      |  Frida   | Frida-tools | Supported        |
 | -------- | -------  | ----------- |----------------- |
-|  15.7.4  | 16.1.3   | 12.2.1      | :white_check_mark:|
+|  16.7.11  | 16.7.14   | 13.7.1      | :white_check_mark:|
 
 ## Feature
 
@@ -32,64 +32,67 @@ Support both spawn & attach script to process.
 
 ```
 [+] Options:
+  -h, --help            Show basic help message and exit
+  --cli                 iOSHook command line interface
+  -p PACKAGE, --package=PACKAGE
+                        Identifier of the target app
+  -n NAME, --name=NAME  Name of the target app
+  --pid=PID             PID of the target app
+  -s SCRIPT.JS, --script=SCRIPT.JS
+                        Frida Script Hooking
+  -c, --check-version   Check iOSHook for the newest version
+  -u, --update          Update iOSHook to the newest version
 
-	-p(--package)			Identifier of application ex: com.apple.AppStore
-	-n(--name) 			Name of application ex: AppStore
-	-s(--script) 			Using script format script.js
-	-c(--check-version) 		Check for the newest version
-	-u(--update) 			Update to the newest version
+  Dump decrypt IPA:
+    -d, --dump-app      Dump decrypt application.ipa
+    -o OUTPUT_IPA, --output=OUTPUT_IPA
+                        Specify name of the decrypted IPA
 
-	[*] Dump decrypt IPA:
+  Dump memory of Application:
+    --dump-memory=DUMPMEMORY
+                        Dump memory of application
 
-    	-d, --dump         Dump decrypt application.ipa
-    	-o OUTPUT_IPA, --output=OUTPUT_IPA
-                           Specify name of the decrypted IPA
+  HexByte Scan IPA:
+    --hexbyte-scan=HEXSCAN
+                        Choose help - scan - patch - json
+    --file=SCANFILE     File App.ipa
+    --pattern=PATTERN   Pattern for hexbytescan
+    --address=ADDRESS   Address for hexbytescan
+    --task=TASK         Json File task for hexbytescan
 
-	[*] Dump memory of Application:
+  Information:
+    --list-devices      List All Devices
+    --list-apps         List The Installed apps
+    --list-scripts      List All Scripts
+    --logcat            Show system log of device
+    --shell, --ssh      Get the shell of connect device
 
-	--dump-memory		Dump memory of application
+  Quick Method:
+    -m METHOD, --method=METHOD
+                        app-static: Static Analysis Application(-n)
+                        bypass-jb: Bypass Jailbreak Detection(-p)
+                        bypass-ssl: Bypass SSL Pinning(-p)
+                        i-url-req: Intercept URLRequest in App(-n)
+                        i-crypto: Intercept Crypto in App(-p)
 
-	[*] HexByte Scan IPA:
-	--hexbyte-scan		Scan or Patch IPA with byte patterns
-	--pattern=PATTERN   Pattern for hexbytescan
-	--address=ADDRESS   Address for hexbytescan
-	-t TASK, --task=TASK
-          			Task for hexbytescan
-
-	[*] Information:
-
-	--list-devices    List All Devices
-	--list-apps       List The Installed apps
-	--list-scripts    List All Scripts
-	--logcat          Show system log of device
-    	--shell, --ssh      Get the shell of connect device
-
-	[*] Quick method:
-
-	-m(--method)	  Support commonly used methods
-				app-static(-n)
-				bypass-jb(-p)
-				bypass-ssl(-p)
-				i-url-req(-n)
-				i-crypto(-p)
-	[*] reFlutter:
-
-	--reflutter=FLUTTERFILE
+  reFlutter:
+    --reflutter=FLUTTERFILE
                         File Flutter.ipa
 ```
 
 ## 📜 ChangeLog
 
-Version: 3.9
+Version: 3.10
 ```
 	[+] Add:
-		- Add backtrace to hooking.js
+		- Add --pid for attach to target app with PID
 	[+] Change:
-		- Update frida version
-		- Update readme, changelog, requirement
+		- Update option --shell / --ssh 
+    - Update option -d / --dump-app
+    - Update frida version
+    - Update readme, changelog, requirement
 	[+] Fix
-		- Fix issue #85
-
+		- Fix issue #84
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
