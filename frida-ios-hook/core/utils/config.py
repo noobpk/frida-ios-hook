@@ -86,7 +86,7 @@ class check():
                         logger.info("[*] Install " + name)
                         cmd = shlex.split("brew install " + cmd)
                         subprocess.call(cmd)
-                elif sys.platform == 'linux':
+                elif sys.platform.startswith('linux'):
                     for name, cmd in APP_PACKAGES['linux'].items():
                         logger.info("[*] Install " + name)
                         cmd = shlex.split("sudo apt-get install " + cmd)
