@@ -82,7 +82,7 @@ Support both spawn & attach script to process.
 
 ## 📜 ChangeLog
 
-Version: 3.9
+Version: 3.10
 ```
 	[+] Add:
 		- Add --pid for attach to target app with PID
@@ -93,7 +93,6 @@ Version: 3.9
     - Update readme, changelog, requirement
 	[+] Fix
 		- Fix issue #84
-
 ```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
