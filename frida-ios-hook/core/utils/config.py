@@ -147,35 +147,23 @@ class check():
                 else:
                     logger.error("[*] Iproxy process for port " + str(APP_SSH['port']) + " is dead.")
                     while True:
-                        iproxy_start = input('[?] Do you want start iproxy 2222 22 (yes/no): ')
-                        yes_choices = ['yes', 'y']
-                        no_choices = ['no', 'n']
-                        if iproxy_start.lower() in yes_choices:
-                            logger.info("[*] Start iproxy ")
-                            cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " 22")
+                        iproxy_device_port = input('[?] Input your device port (default 22): ')
+                        if iproxy_device_port == '':
+                            iproxy_device_port = 22
+                            logger.info("[*] Start iproxy: iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
+                            cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
                             subprocess.Popen(cmd)
                             time.sleep(2)
                             break
-                        elif iproxy_start.lower() in no_choices:
-                            iproxy_device_port = input('[?] Input your device port (default 22): ')
-                            if iproxy_device_port == '':
-                                iproxy_device_port = 22
-                                logger.info("[*] Start iproxy ")
-                                cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
-                                subprocess.Popen(cmd)
-                                time.sleep(2)
-                                break
-                            else:
-                                logger.info("[*] Start iproxy ")
-                                cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
-                                subprocess.Popen(cmd)
-                                time.sleep(2)
-                                break
-                            sys.exit(0)
-                            break
+                        elif not iproxy_device_port.isdigit():
+                            logger.error("[x_x] Please enter valid port number.")
                         else:
-                            logger.info("[*] Type yes or no")
-                            continue
+                            logger.info("[*] Start iproxy: iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
+                            cmd = shlex.split("iproxy " + str(APP_SSH['port']) + " " + str(iproxy_device_port))
+                            subprocess.Popen(cmd)
+                            time.sleep(2)
+                            break
+                        
             else:
                 logger.info('[*] iproxy not install. try \"brew install usbmuxd\"')
                 sys.exit(0)
