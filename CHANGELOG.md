@@ -1,5 +1,16 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2025-10-06
+
+### Added
+
+- Add --ssh-port-forward for Forward the port from local to device
+- Add using sshpass for auto input ssh password
+
+### Changed
+- Enhance option --shell / --ssh 
+- Update config hook.json
+
 ## [Release 3.10] - 2025-29-04
 
 ### Added
