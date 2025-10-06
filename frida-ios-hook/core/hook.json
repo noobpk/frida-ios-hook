@@ -13,11 +13,13 @@
         },
         "linux": {
             "libimobiledevice": "libimobiledevice",
-            "ideviceinstaller": "ideviceinstaller"
+            "ideviceinstaller": "ideviceinstaller",
+            "sshpass": "sshpass"
         },
         "darwin": {
             "libimobiledevice": "libimobiledevice",
-            "ideviceinstaller": "ideviceinstaller"
+            "ideviceinstaller": "ideviceinstaller",
+            "sshpass": "sshpass"
         }
     },
     "errorLog": "errors.log",
@@ -45,6 +47,10 @@
         ],
         "ip": "127.0.0.1",
         "port": 2222
+    },
+    "sshCredential": {
+        "user": "mobile",
+        "password": "root"
     },
     "platformSupport": {
         "linux": "Linux",
