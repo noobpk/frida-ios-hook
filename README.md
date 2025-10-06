@@ -68,6 +68,7 @@ Support both spawn & attach script to process.
     --shell, --ssh      Get the shell of connect device
     --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
                         Forward the port from local to device
+
   Quick Method:
     -m METHOD, --method=METHOD
                         app-static: Static Analysis Application(-n)
