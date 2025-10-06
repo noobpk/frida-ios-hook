@@ -75,9 +75,6 @@ def main():
         [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
         Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
         [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
-        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
-        Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
-        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         Example dump memory of application with --dump-memory and -s(--string) options:
         [>] ./ioshook -n 'App Store' --dump-memory --string
         Example Hexbyte Scan IPA with pattern:
