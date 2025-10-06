@@ -22,6 +22,7 @@ APP_FRIDA_SCRIPTS = GLOBAL_CONFIG['fridaScripts']
 APP_METHODS = GLOBAL_CONFIG['methods']
 APP_UTILS = GLOBAL_CONFIG['utils']
 APP_SSH = GLOBAL_CONFIG['ssh']
+APP_SSH_CRED = GLOBAL_CONFIG['sshCredential']
 
 def dump_memory(option, process):
     try:
@@ -69,17 +70,20 @@ def main():
         usage = '''
         [>] ./ioshook %prog [options] arg
         Example for spawn or attach app with -s(--script) options:
-        [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
+        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
         Example for spawn or attach app with -m(--method) options:
+        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
+        Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
+        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
         Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
         [+] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
         Example dump memory of application with --dump-memory and -s(--string) options:
-        [+] ./ioshook -n 'App Store' --dump-memory --string
+        [>] ./ioshook -n 'App Store' --dump-memory --string
         Example Hexbyte Scan IPA with pattern:
-        [+] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
+        [>] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
         Example Hexbyte Scan and Patch IPA with file task:
-        [+] ./ioshook --hexbyte-scan json --file AppStore.ipa -t /hexbytescan-tasks/openssl_hook.json'''
+        [>] ./ioshook --hexbyte-scan json --file AppStore.ipa -t /hexbytescan-tasks/openssl_hook.json'''
 
         parser = optparse.OptionParser(usage, add_help_option=False)
         info = optparse.OptionGroup(parser,"Information")
@@ -123,6 +127,7 @@ def main():
                         action="store_true", help="List All Scripts", dest="listscripts")
         info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
         info.add_option("--shell", "--ssh", action="store_true", help="Get the shell of connect device", dest="shell")
+        info.add_option("--ssh-port-forward", action="store", help="Forward the port from local to device", dest="sshportforward", metavar="LOCAL_PORT:DEVICE_PORT")
         #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
         dumpapp.add_option("-d", "--dump-app", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
         dumpapp.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
@@ -469,6 +474,60 @@ def main():
         elif options.shell:
             check.deviceConnected()
             check.iproxyInstalled()
+            isExist = check.existSSHCred()
+            ARRAY_SSH_USER = APP_SSH['user']
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            if not isExist:
+                choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+                if choose_ssh_user in ARRAY_SSH_USER:
+                    SSH_USER = choose_ssh_user
+                else:
+                    logger.error("[x_x] SSH user not found in list!")
+                    input_ssh_user = input('[?] Input your SSH user: ')
+                    SSH_USER = input_ssh_user
+                    logger.info("[*] Open SSH Shell on device")
+                    cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                    completed_process = subprocess.call(cmd)
+                    sys.exit(0)
+            else:
+                SSH_USER = APP_SSH_CRED['user']
+                SSH_PWD = APP_SSH_CRED['password']
+                logger.info("[*] Open SSH Shell on device")
+                cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                completed_process = subprocess.call(cmd)
+                sys.exit(0)
+
+        #ssh port forward
+        elif options.sshportforward:
+            check.deviceConnected()
+            check.iproxyInstalled()
+            isExist = check.existSSHCred()
+            ARRAY_SSH_USER = APP_SSH['user']
+            SSH_IP = APP_SSH['ip']
+            SSH_PORT = APP_SSH['port']
+            if not isExist:
+                choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+                if choose_ssh_user in ARRAY_SSH_USER:
+                    SSH_USER = choose_ssh_user
+                else:
+                    logger.error("[x_x] SSH user not found in list!")
+                    input_ssh_user = input('[?] Input your SSH user: ')
+                    SSH_USER = input_ssh_user
+            else:
+                SSH_USER = APP_SSH_CRED['user']
+                SSH_PWD = APP_SSH_CRED['password']
+
+            if re.match(r'^\d+:\d+$', options.sshportforward):
+                LOCAL_PORT = options.sshportforward.split(':')[0]
+                DEVICE_PORT = options.sshportforward.split(':')[1]
+                logger.info("[*] Forward port " + LOCAL_PORT + " to device port " + DEVICE_PORT)
+                cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh -R " + DEVICE_PORT + ":" + SSH_IP+ ":" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                completed_process = subprocess.call(cmd)
+                sys.exit(0)
+            else:
+                logger.error("[x_x] Please use with command: ./ioshook --ssh-port-forward LOCAL_PORT:DEVICE_PORT")
+                sys.exit(0)
             ARRAY_SSH_USER = APP_SSH['user']
             SSH_IP = APP_SSH['ip']
             SSH_PORT = APP_SSH['port']

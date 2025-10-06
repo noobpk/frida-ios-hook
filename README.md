@@ -66,6 +66,8 @@ Support both spawn & attach script to process.
     --list-scripts      List All Scripts
     --logcat            Show system log of device
     --shell, --ssh      Get the shell of connect device
+    --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
+                        Forward the port from local to device
 
   Quick Method:
     -m METHOD, --method=METHOD
