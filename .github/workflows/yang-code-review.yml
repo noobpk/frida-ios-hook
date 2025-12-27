@@ -1,0 +1,18 @@
+name: YangYang Code Review (YCR)
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yang-org/yang-code-review@v1
+        with:
+          CLIENT_ID: ${{ secrets.YANG_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.YANG_CLIENT_SECRET }}
+          AGENT_NAME: 'yang-code-review'
+          MODEL_NAME: 'anthropic_claude_sonet_4_5'
+          MODEL_TEMPERATURE: 0.7
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
