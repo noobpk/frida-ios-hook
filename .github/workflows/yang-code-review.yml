@@ -8,7 +8,7 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - uses: yang-org/yang-code-review@v1
+      - uses: YangYang-Research/yang-code-review@v1.0
         with:
           CLIENT_ID: ${{ secrets.YANG_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.YANG_CLIENT_SECRET }}
