@@ -15,4 +15,4 @@ jobs:
           AGENT_NAME: 'yang-code-review'
           MODEL_NAME: 'anthropic_claude_sonet_4_5'
           MODEL_TEMPERATURE: 0.7
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
