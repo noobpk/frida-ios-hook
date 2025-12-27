@@ -5,11 +5,11 @@ on:
     branches: [ master ]
 
 jobs:
-  code-review:
+  review:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+      - uses: actions/checkout@v2
 
       - name: yang-code-review
       - uses: YangYang-Research/yang-code-review@v1.0.1
