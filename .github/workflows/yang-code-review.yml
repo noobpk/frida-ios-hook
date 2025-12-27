@@ -2,10 +2,10 @@ name: YangYang Code Review (YCR)
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    branches: [ master ]
 
 jobs:
-  review:
+  code-review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
