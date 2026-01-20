@@ -68,78 +68,137 @@ def main():
     try:
 
         usage = '''
-        [>] ./ioshook %prog [options] arg
-        Example for spawn or attach app with -s(--script) options:
-        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -s trace_class.js
-        Example for spawn or attach app with -m(--method) options:
-        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -m app-static
-        Example dump decrypt ipa with -d(--dump-app) and -o(--output) options:
-        [>] ./ioshook -p com.apple.AppStore / [-n 'App Store'] -d -o App_dump_name
-        Example dump memory of application with --dump-memory and -s(--string) options:
-        [>] ./ioshook -n 'App Store' --dump-memory --string
-        Example Hexbyte Scan IPA with pattern:
-        [>] ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
-        Example Hexbyte Scan and Patch IPA with file task:
-        [>] ./ioshook --hexbyte-scan json --file AppStore.ipa -t /hexbytescan-tasks/openssl_hook.json'''
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          iOSHook Usage Examples                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📱 Spawn/Attach App with Script:
+   ./ioshook -p com.apple.AppStore -s trace_class.js
+   ./ioshook -n 'App Store' -s trace_class.js
+
+🔧 Quick Methods:
+   ./ioshook -n 'App Store' -m app-static
+   ./ioshook -p com.apple.AppStore -m bypass-jb
+   ./ioshook -p com.apple.AppStore -m bypass-ssl
+   ./ioshook -n 'App Store' -m i-url-req
+   ./ioshook -p com.apple.AppStore -m i-crypto
+
+💾 Dump Decrypt IPA:
+   ./ioshook -p com.apple.AppStore -d -o App_dump_name
+   ./ioshook -n 'App Store' -d -o App_dump_name
+   ./ioshook -p com.apple.AppStore -d --network 192.168.1.100:22
+   ./ioshook -n 'App Store' -d --local
+
+🧠 Dump Memory:
+   ./ioshook -n 'App Store' --dump-memory --string
+
+🔍 HexByte Scan IPA:
+   ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
+   ./ioshook --hexbyte-scan json --file AppStore.ipa --task /hexbytescan-tasks/openssl_hook.json
+
+🌐 SSH Shell (Network):
+   ./ioshook --shell --network 192.168.1.100:22
+   ./ioshook --ssh --network 192.168.1.100
+
+🔌 SSH Shell (USB - Default):
+   ./ioshook --shell
+   ./ioshook --shell --local
+
+🔀 SSH Port Forward (Network):
+   ./ioshook --ssh-port-forward 8080:8080 --network 192.168.1.100
+
+🔀 SSH Port Forward (USB):
+   ./ioshook --ssh-port-forward 8080:8080 --local
+   ./ioshook --ssh-port-forward 8080:8080
+
+📋 Information:
+   ./ioshook --list-devices
+   ./ioshook --list-apps
+   ./ioshook --list-scripts
+   ./ioshook --logcat
+
+💡 For more help: ./ioshook -h'''
 
         parser = optparse.OptionParser(usage, add_help_option=False)
-        info = optparse.OptionGroup(parser,"Information")
-        quick = optparse.OptionGroup(parser,"Quick Method")
-        dumpapp = optparse.OptionGroup(parser,"Dump decrypt IPA")
-        hexscan = optparse.OptionGroup(parser,"HexByte Scan IPA")
-        dumpmemory = optparse.OptionGroup(parser,"Dump memory of Application")
-        reflutter = optparse.OptionGroup(parser,"reFlutter")
+        info = optparse.OptionGroup(parser, "📋 Information")
+        quick = optparse.OptionGroup(parser, "🔧 Quick Method")
+        dumpapp = optparse.OptionGroup(parser, "💾 Dump decrypt IPA")
+        hexscan = optparse.OptionGroup(parser, "🔍 HexByte Scan IPA")
+        dumpmemory = optparse.OptionGroup(parser, "🧠 Dump memory of Application")
+        reflutter = optparse.OptionGroup(parser, "🦋 reFlutter")
 
-        parser.add_option('-h', "--help", action="help", dest="help", help='''Show basic help message and exit''')
-        parser.add_option("--cli", action="store_true", dest="cli", help='''iOSHook command line interface''')
-        #Using options -p(--package) for spawn application and load script
+        parser.add_option('-h', "--help", action="help", dest="help", help='Show help message and exit')
+        parser.add_option("--cli", action="store_true", dest="cli", help='Launch iOSHook interactive CLI')
+        
+        # App targeting options
         parser.add_option("-p", "--package", dest="package",
-                        help='''Identifier of the target app''', metavar="PACKAGE", action="store", type="string")
-        #Using options -n(--name) for attach script to application is running
+                        help='Bundle identifier of target app (for spawn)', metavar="PACKAGE", action="store", type="string")
         parser.add_option("-n", "--name", dest="name",
-                        help='''Name of the target app''', metavar="NAME", action="store", type="string")
+                        help='Display name of target app (for attach)', metavar="NAME", action="store", type="string")
         parser.add_option("--pid", dest="pid",
-                        help='''PID of the target app''', metavar="PID", action="store", type="string")
-        #Using options -s(--script) for load script to application
+                        help='Process ID of target app (for attach)', metavar="PID", action="store", type="string")
         parser.add_option("-s", "--script", dest="script",
-                        help='''Frida Script Hooking''', metavar="SCRIPT.JS")
+                        help='Path to Frida JavaScript hooking script', metavar="SCRIPT.JS")
 
-        parser.add_option("-c", "--check-version", action="store_true", help='''Check iOSHook for the newest version''', dest="checkversion")
-        parser.add_option("-u", "--update", action="store_true", help='''Update iOSHook to the newest version''', dest="update")
+        parser.add_option("-c", "--check-version", action="store_true", help='Check for iOSHook updates', dest="checkversion")
+        parser.add_option("-u", "--update", action="store_true", help='Update iOSHook to latest version', dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
-                        help='''app-static: Static Analysis Application(-n)
-                        bypass-jb: Bypass Jailbreak Detection(-p)
-                        bypass-ssl: Bypass SSL Pinning(-p)
-                        i-url-req: Intercept URLRequest in App(-n)
-                        i-crypto: Intercept Crypto in App(-p)''', metavar="METHOD")
-        #Some options to get info from device and applications
-        info.add_option("--list-devices",
-                        action="store_true", help="List All Devices", dest="listdevices")
-        #Listapp option using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
-        info.add_option("--list-apps",
-                        action="store_true", help="List The Installed apps", dest="listapps")
-        #The script list referenced from the repo of interference-security - Link: https://github.com/interference-security/frida-scripts/
-        info.add_option("--list-scripts",
-                        action="store_true", help="List All Scripts", dest="listscripts")
-        info.add_option("--logcat", action="store_true", help="Show system log of device", dest="logcat")
-        info.add_option("--shell", "--ssh", action="store_true", help="Get the shell of connect device", dest="shell")
-        info.add_option("--ssh-port-forward", action="store", help="Forward the port from local to device", dest="sshportforward", metavar="LOCAL_PORT:DEVICE_PORT")
-        #Dump decrypt IPA using the code of the AloneMonkey's repo frida-ios-dump - Link: https://github.com/AloneMonkey/frida-ios-dump
-        dumpapp.add_option("-d", "--dump-app", action="store_true", help="Dump decrypt application.ipa", dest="dumpapp")
-        dumpapp.add_option("-o", "--output", action="store" , dest="output_ipa", help="Specify name of the decrypted IPA", metavar="OUTPUT_IPA", type="string")
+                        help='''Quick method shortcuts:
+  app-static  - Static analysis of application (use with -n)
+  bypass-jb   - Bypass jailbreak detection (use with -p)
+  bypass-ssl  - Bypass SSL pinning (use with -p)
+  i-url-req   - Intercept URL requests (use with -n)
+  i-crypto    - Intercept crypto operations (use with -p)''', metavar="METHOD")
+        
+        # Information options
+        info.add_option("--list-devices", action="store_true", 
+                        help="List all connected Frida devices", dest="listdevices")
+        info.add_option("--list-apps", action="store_true", 
+                        help="List all installed applications on device", dest="listapps")
+        info.add_option("--list-scripts", action="store_true", 
+                        help="List all available Frida scripts", dest="listscripts")
+        info.add_option("--logcat", action="store_true", 
+                        help="Show system log of device (idevicesyslog)", dest="logcat")
+        info.add_option("--shell", "--ssh", action="store_true", 
+                        help="Open SSH shell to device (default: USB via iproxy)", dest="shell")
+        info.add_option("--ssh-port-forward", action="store", 
+                        help="Forward port: LOCAL_PORT:DEVICE_PORT (forwards laptop service to device)", 
+                        dest="sshportforward", metavar="LOCAL_PORT:DEVICE_PORT")
+        info.add_option("--network", action="store", 
+                        help="Connect via network SSH (format: HOST:PORT or HOST, default port 22)", 
+                        dest="network", metavar="HOST:PORT")
+        info.add_option("--local", action="store_true", 
+                        help="Connect via USB using iproxy (default if not specified)", dest="local")
+        
+        # Dump decrypt IPA options
+        dumpapp.add_option("-d", "--dump-app", action="store_true", 
+                        help="Dump and decrypt application IPA file", dest="dumpapp")
+        dumpapp.add_option("-o", "--output", action="store", 
+                        help="Output filename for decrypted IPA (without .ipa extension)", 
+                        dest="output_ipa", metavar="OUTPUT_IPA", type="string")
 
-        #Dump memory of application using the code of Nightbringer21's repo fridump - Link: https://github.com/Nightbringer21/fridump
-        dumpmemory.add_option("--dump-memory", action="store", help="Dump memory of application", dest="dumpmemory")
+        # Dump memory options
+        dumpmemory.add_option("--dump-memory", action="store", 
+                        help="Dump memory of running application (options: --string, --read-only, etc.)", 
+                        dest="dumpmemory")
 
-        #Hexbytescan of application using the code of karek314's repo hexbytescanner - Link: https://github.com/karek314/hexbytescanner
-        hexscan.add_option("--hexbyte-scan", type="choice", choices=['help', 'scan', 'patch', 'json'], help="Choose help - scan - patch - json", dest="hexscan")
-        hexscan.add_option("--file", action="store", help="File App.ipa", dest="scanfile")
-        hexscan.add_option("--pattern", action="store", help="Pattern for hexbytescan", dest="pattern")
-        hexscan.add_option("--address", action="store", help="Address for hexbytescan", dest="address")
-        hexscan.add_option("--task", action="store", help="Json File task for hexbytescan", dest="task")
-        #reFlutter of application using the code of ptswarm's repo reFlutter - Link: https://github.com/ptswarm/reFlutter
-        reflutter.add_option("--reflutter", action="store", help="File Flutter.ipa", dest="flutterfile")
+        # HexByte Scan options
+        hexscan.add_option("--hexbyte-scan", type="choice", choices=['help', 'scan', 'patch', 'json'], 
+                        help="HexByte scan mode: help, scan, patch, or json", dest="hexscan")
+        hexscan.add_option("--file", action="store", 
+                        help="IPA file to scan/patch", dest="scanfile", metavar="FILE.IPA")
+        hexscan.add_option("--pattern", action="store", 
+                        help="Hex pattern to search for (e.g., E103??AA????E0)", dest="pattern")
+        hexscan.add_option("--address", action="store", 
+                        help="Address for patching (format: address,bytes,distance)", dest="address")
+        hexscan.add_option("--task", action="store", 
+                        help="JSON task file for hexbyte scan", dest="task", metavar="TASK.json")
+        
+        # reFlutter options
+        reflutter.add_option("--reflutter", action="store", 
+                        help="Path to Flutter IPA file for reFlutter analysis", 
+                        dest="flutterfile", metavar="FLUTTER.IPA")
 
         parser.add_option_group(dumpapp)
         parser.add_option_group(dumpmemory)
@@ -212,13 +271,15 @@ def main():
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
                 device = frida.get_usb_device()
-                pid = device.spawn(options.package)
+                pid = device.spawn([options.package])
                 time.sleep(1)
                 session = device.attach(pid)
-                hook = open(options.script, 'r')
-                script = session.create_script(hook.read())
-                script.load()
+                with open(options.script, 'r') as hook: 
+                    script = session.create_script(hook.read()) 
+                    script.on('message', lambda message, data: logger.info(message)) 
+                    script.load()
                 device.resume(pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
@@ -309,12 +370,16 @@ def main():
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
-                pid = frida.get_usb_device().spawn(options.package)
-                session = frida.get_usb_device().attach(pid)
-                hook = open(method, 'r')
-                script = session.create_script(hook.read())
-                script.load()
-                frida.get_usb_device().resume(pid)
+                device = frida.get_usb_device()
+                pid = device.spawn([options.package])
+                time.sleep(1)
+                session = device.attach(pid)
+                with open(method, 'r') as hook:
+                    script = session.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script for method not found!')
@@ -328,12 +393,16 @@ def main():
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
-                pid = frida.get_usb_device().spawn(options.package)
-                session = frida.get_usb_device().attach(pid)
-                hook = open(method, 'r')
-                script = session.create_script(hook.read())
-                script.load()
-                frida.get_usb_device().resume(pid)
+                device = frida.get_usb_device()
+                pid = device.spawn([options.package])
+                time.sleep(1)
+                session = device.attach(pid)
+                with open(method, 'r') as hook:
+                    script = session.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
                 # os.system('frida -U -f '+ options.package + ' -l ' + method)
             else:
@@ -349,9 +418,11 @@ def main():
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
                 process = frida.get_usb_device().attach(options.name)
-                method = open(method, 'r')
-                script = process.create_script(method.read())
-                script.load()
+                with open(method, 'r') as hook:
+                    script = process.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script for method not found!')
@@ -365,12 +436,16 @@ def main():
                 logger.info('[*] Spawning: ' + options.package)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
-                pid = frida.get_usb_device().spawn(options.package)
-                session = frida.get_usb_device().attach(pid)
-                hook = open(method, 'r')
-                script = session.create_script(hook.read())
-                script.load()
-                frida.get_usb_device().resume(pid)
+                device = frida.get_usb_device()
+                pid = device.spawn([options.package])
+                time.sleep(1)
+                session = device.attach(pid)
+                with open(method, 'r') as hook:
+                    script = session.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script for method not found!')
@@ -391,33 +466,72 @@ def main():
 
         #dump decrypt application
         elif (options.package or options.name) and options.dumpapp:
-            check.deviceConnected()
-            check.iproxyInstalled()
-            ARRAY_SSH_USER = APP_SSH['user']
-            ARRAY_SSH_PWD = APP_SSH['password']
-            SSH_IP = APP_SSH['ip']
-            SSH_PORT = APP_SSH['port']
-            choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
-            if choose_ssh_user in ARRAY_SSH_USER:
-                SSH_USER = choose_ssh_user
+            # Determine connection method: network or local (USB/iproxy)
+            if options.network:
+                # Network SSH connection
+                if ':' in options.network:
+                    ssh_host, ssh_port = options.network.split(':', 1)
+                    try:
+                        ssh_port = int(ssh_port)
+                    except ValueError:
+                        logger.error("[x_x] Invalid port number: {}".format(ssh_port))
+                        sys.exit(1)
+                else:
+                    ssh_host = options.network
+                    ssh_port = 22  # Default SSH port
+                SSH_IP = ssh_host
+                SSH_PORT = ssh_port
+                logger.info('[*] Connecting via network: {}:{}'.format(SSH_IP, SSH_PORT))
+            elif options.local:
+                check.deviceConnected()
+                # USB connection via iproxy (explicit)
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy): {}:{}'.format(SSH_IP, SSH_PORT))
             else:
-                logger.error("[x_x] SSH user not found in list!")
-                input_ssh_user = input('[?] Input your SSH user: ')
-                SSH_USER = input_ssh_user
-            choose_ssh_pwd = input('[?] Choose SSH password ({0} / {1}): '.format(ARRAY_SSH_PWD[0], ARRAY_SSH_PWD[1]))
-            if choose_ssh_pwd in ARRAY_SSH_PWD:
-                SSH_PWD = choose_ssh_pwd
+                check.deviceConnected()
+                # Default: USB connection via iproxy
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy - default): {}:{}'.format(SSH_IP, SSH_PORT))
+            
+            # Load credentials from APP_SSH_CRED
+            isExist = check.existSSHCred()
+            if isExist:
+                SSH_USER = APP_SSH_CRED['user']
+                SSH_PWD = APP_SSH_CRED['password']
+                logger.info('[*] Using SSH credentials from config: {}@{}'.format(SSH_USER, SSH_IP))
             else:
-                logger.error("[x_x] SSH password not found in list!")
-                input_ssh_pwd = input('[?] Input your SSH password: ')
-                SSH_PWD = input_ssh_pwd
+                # Fallback to interactive prompt if credentials not in config
+                ARRAY_SSH_USER = APP_SSH['user']
+                ARRAY_SSH_PWD = APP_SSH['password']
+                choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
+                if choose_ssh_user in ARRAY_SSH_USER:
+                    SSH_USER = choose_ssh_user
+                else:
+                    logger.error("[x_x] SSH user not found in list!")
+                    input_ssh_user = input('[?] Input your SSH user: ')
+                    SSH_USER = input_ssh_user
+                choose_ssh_pwd = input('[?] Choose SSH password ({0} / {1}): '.format(ARRAY_SSH_PWD[0], ARRAY_SSH_PWD[1]))
+                if choose_ssh_pwd in ARRAY_SSH_PWD:
+                    SSH_PWD = choose_ssh_pwd
+                else:
+                    logger.error("[x_x] SSH password not found in list!")
+                    input_ssh_pwd = input('[?] Input your SSH password: ')
+                    SSH_PWD = input_ssh_pwd
 
             logger.info('[*] Dumping...')
             util = APP_UTILS['Dump Decrypt Application']
+            # Build command as list to properly handle app names with spaces
+            cmd = ["python3", util, "-u", SSH_USER, "-p", SSH_PWD, "-H", SSH_IP, "-P", str(SSH_PORT)]
             if options.name is None:
-                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.package + " -o " + str(options.output_ipa))
+                cmd.append(options.package)
             else:
-                cmd = shlex.split("python3 " + util + " -u " + SSH_USER + " -p " + SSH_PWD + " -H " + SSH_IP + " -P " + str(SSH_PORT) + " " + options.name + " -o " + str(options.output_ipa))
+                cmd.append(options.name)  # App name with spaces will be properly handled
+            if options.output_ipa:
+                cmd.extend(["-o", str(options.output_ipa)])
             completed_process = subprocess.call(cmd)
             sys.exit(0)
 
@@ -469,12 +583,39 @@ def main():
 
         #ios get the shell
         elif options.shell:
-            check.deviceConnected()
-            check.iproxyInstalled()
+            # Determine connection method: network or local (USB/iproxy)
+            if options.network:
+                # Network SSH connection
+                if ':' in options.network:
+                    ssh_host, ssh_port = options.network.split(':', 1)
+                    try:
+                        ssh_port = int(ssh_port)
+                    except ValueError:
+                        logger.error("[x_x] Invalid port number: {}".format(ssh_port))
+                        sys.exit(1)
+                else:
+                    ssh_host = options.network
+                    ssh_port = 22  # Default SSH port
+                SSH_IP = ssh_host
+                SSH_PORT = ssh_port
+                logger.info('[*] Connecting via network: {}:{}'.format(SSH_IP, SSH_PORT))
+            elif options.local:
+                check.deviceConnected()
+                # USB connection via iproxy (explicit)
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy): {}:{}'.format(SSH_IP, SSH_PORT))
+            else:
+                check.deviceConnected()
+                # Default: USB connection via iproxy
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy - default): {}:{}'.format(SSH_IP, SSH_PORT))
+            
             isExist = check.existSSHCred()
             ARRAY_SSH_USER = APP_SSH['user']
-            SSH_IP = APP_SSH['ip']
-            SSH_PORT = APP_SSH['port']
             if not isExist:
                 choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
                 if choose_ssh_user in ARRAY_SSH_USER:
@@ -496,13 +637,40 @@ def main():
                 sys.exit(0)
 
         #ssh port forward
-        elif options.sshportforward:
-            check.deviceConnected()
-            check.iproxyInstalled()
+        elif options.sshportforward:            
+            # Determine connection method: network or local (USB/iproxy)
+            if options.network:
+                # Network SSH connection
+                if ':' in options.network:
+                    ssh_host, ssh_port = options.network.split(':', 1)
+                    try:
+                        ssh_port = int(ssh_port)
+                    except ValueError:
+                        logger.error("[x_x] Invalid port number: {}".format(ssh_port))
+                        sys.exit(1)
+                else:
+                    ssh_host = options.network
+                    ssh_port = 22  # Default SSH port
+                SSH_IP = ssh_host
+                SSH_PORT = ssh_port
+                logger.info('[*] Connecting via network: {}:{}'.format(SSH_IP, SSH_PORT))
+            elif options.local:
+                check.deviceConnected()
+                # USB connection via iproxy (explicit)
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy): {}:{}'.format(SSH_IP, SSH_PORT))
+            else:
+                check.deviceConnected()
+                # Default: USB connection via iproxy
+                check.iproxyInstalled()
+                SSH_IP = APP_SSH['ip']
+                SSH_PORT = APP_SSH['port']
+                logger.info('[*] Connecting via USB (iproxy - default): {}:{}'.format(SSH_IP, SSH_PORT))
+            
             isExist = check.existSSHCred()
             ARRAY_SSH_USER = APP_SSH['user']
-            SSH_IP = APP_SSH['ip']
-            SSH_PORT = APP_SSH['port']
             if not isExist:
                 choose_ssh_user = input('[?] Choose SSH user ({0} / {1}): '.format(ARRAY_SSH_USER[0], ARRAY_SSH_USER[1]))
                 if choose_ssh_user in ARRAY_SSH_USER:
@@ -518,12 +686,21 @@ def main():
             if re.match(r'^\d+:\d+$', options.sshportforward):
                 LOCAL_PORT = options.sshportforward.split(':')[0]
                 DEVICE_PORT = options.sshportforward.split(':')[1]
-                logger.info("[*] Forward port " + LOCAL_PORT + " to device port " + DEVICE_PORT)
-                cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh -R " + DEVICE_PORT + ":" + SSH_IP+ ":" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                logger.info("[*] Forwarding local port " + LOCAL_PORT + " (machine) to device (mobile) port " + DEVICE_PORT)
+                logger.info("[*] Service on machine:localhost:" + LOCAL_PORT + " will be accessible on mobile:localhost:" + DEVICE_PORT)
+                # Use -R for remote port forwarding: -R remote_port:local_host:local_port
+                # This forwards remote DEVICE_PORT to local LOCAL_PORT (where your service runs)
+                if isExist:
+                    cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
+                else:
+                    cmd = shlex.split("ssh -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
+                logger.info("[*] Port forwarding active. Press Ctrl+C to stop.")
                 completed_process = subprocess.call(cmd)
                 sys.exit(0)
             else:
                 logger.error("[x_x] Please use with command: ./ioshook --ssh-port-forward LOCAL_PORT:DEVICE_PORT")
+                logger.error("[x_x] Example: ./ioshook --ssh-port-forward 8080:8080 --network 192.168.1.100")
+                logger.error("[x_x] This forwards your laptop's port 8080 to device's port 8080")
                 sys.exit(0)
 
         #ioshook cli
