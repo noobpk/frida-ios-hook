@@ -26,6 +26,7 @@ from log import *
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 DUMP_JS = os.path.join(script_dir, '../../methods/dump.js')
+BYPASS_JB_JS = os.path.join(script_dir, '../../methods/bypass_jailbreak.js')
 
 TEMP_DIR = tempfile.gettempdir()
 PAYLOAD_DIR = 'Payload'
@@ -82,7 +83,7 @@ def generate_ipa(path, display_name):
         print(e)
         finished.set()
 
-def on_message(message, data):
+def on_message(message, data, ssh_connection):
     t = tqdm(unit='B',unit_scale=True,unit_divisor=1024,miniters=1)
     last_sent = [0]
 
@@ -101,7 +102,7 @@ def on_message(message, data):
             scp_from = dump_path
             scp_to = PAYLOAD_PATH + '/'
 
-            with SCPClient(ssh.get_transport(), progress = progress, socket_timeout = 60) as scp:
+            with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
                 scp.get(scp_from, scp_to)
 
             chmod_dir = os.path.join(PAYLOAD_PATH, os.path.basename(dump_path))
@@ -119,7 +120,7 @@ def on_message(message, data):
 
             scp_from = app_path
             scp_to = PAYLOAD_PATH + '/'
-            with SCPClient(ssh.get_transport(), progress = progress, socket_timeout = 60) as scp:
+            with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
                 scp.get(scp_from, scp_to, recursive=True)
 
             chmod_dir = os.path.join(PAYLOAD_PATH, os.path.basename(app_path))
@@ -160,12 +161,23 @@ def get_applications(device):
     return applications
 
 
-def load_js_file(session, filename):
+def load_js_file(session, filename, ssh_connection):
     source = ''
     with codecs.open(filename, 'r', 'utf-8') as f:
         source = source + f.read()
     script = session.create_script(source)
-    script.on('message', on_message)
+    # Create a closure to pass ssh_connection to on_message
+    def message_handler(message, data):
+        on_message(message, data, ssh_connection)
+    
+    # Handle script crashes and errors
+    # Note: Frida uses 'destroyed' event, not 'detached'
+    def on_destroyed():
+        logger.warning('Script was destroyed. Process may have crashed or script was unloaded.')
+        finished.set()
+    
+    script.on('message', message_handler)
+    script.on('destroyed', on_destroyed)
     script.load()
 
     return script
@@ -183,42 +195,188 @@ def create_dir(path):
 
 
 def open_target_app(device, name_or_bundleid):
+    if not name_or_bundleid:
+        logger.error('Target app name or bundle identifier is required')
+        return None, '', '', 0
+    
     logger.info('Start the target app {}'.format(name_or_bundleid))
 
-    pid = ''
+    pid = 0
     session = None
     display_name = ''
     bundle_identifier = ''
+    
+    # Find the app in the list of installed applications
     for application in get_applications(device):
         if name_or_bundleid == application.identifier or name_or_bundleid == application.name:
             pid = application.pid
             display_name = application.name
             bundle_identifier = application.identifier
+            break
+
+    if not bundle_identifier:
+        logger.error('App "{}" not found. Please check the app name or bundle identifier.'.format(name_or_bundleid))
+        return None, '', '', 0
 
     try:
-        if not pid:
-            pid = device.spawn([bundle_identifier])
+        # If app is not running (pid == 0), spawn it
+        if pid == 0:
+            logger.info('App is not running. Spawning...')
+            # FIXED: device.spawn() takes a string, not a list (compatible with Frida 12+)
+            pid = device.spawn(bundle_identifier)
+            logger.info('Spawned app with PID: {}'.format(pid))
+            
+            # Attach to the spawned process BEFORE resuming
+            # This allows us to hook early initialization code and bypass anti-debugging
             session = device.attach(pid)
-            device.resume(pid)
+            logger.info('Attached to process')
+            
+            # Set up session crash detection
+            def on_session_detached(reason, crash):
+                if reason == 'process-terminated':
+                    logger.error('')
+                    logger.error('⚠️  CRITICAL: App crashed immediately after spawn!')
+                    logger.error('   This app has very strong anti-debugging protection.')
+                    logger.error('   Even with bypass script, the app detected Frida and crashed.')
+                    logger.error('')
+                    logger.error('   ✅ SOLUTION: Launch the app MANUALLY on your device first,')
+                    logger.error('      then run the dump command again.')
+                    logger.error('      When attached to running app, anti-debugging is bypassed.')
+                elif crash:
+                    logger.error('Session crashed: {}'.format(crash))
+                else:
+                    logger.warning('Session detached: {}'.format(reason))
+                finished.set()
+            session.on('detached', on_session_detached)
+            
+            # Inject bypass script BEFORE resuming to prevent anti-debugging crashes
+            # This is critical for apps that detect Frida immediately on startup
+            bypass_script = None
+            if os.path.isfile(BYPASS_JB_JS):
+                try:
+                    logger.info('Injecting bypass script to prevent anti-debugging detection...')
+                    with codecs.open(BYPASS_JB_JS, 'r', 'utf-8') as f:
+                        bypass_source = f.read()
+                    bypass_script = session.create_script(bypass_source)
+                    bypass_script.load()
+                    logger.info('Bypass script loaded successfully')
+                    time.sleep(0.5)  # Brief delay to let bypass hooks take effect
+                except Exception as bypass_error:
+                    logger.warning('Failed to load bypass script: {}. Continuing without it...'.format(bypass_error))
+            
+            # Resume the process after attaching (and bypass injection)
+            # Note: Some apps may fail to resume if they have security checks
+            try:
+                device.resume(pid)
+                logger.info('Resumed process')
+                # Give the app more time to initialize before we start dumping
+                # Apps with anti-debugging may need this delay
+                time.sleep(3)  # Increased delay to let app initialize with bypass in place
+            except Exception as resume_error:
+                logger.warning('Failed to resume process: {}. Continuing anyway...'.format(resume_error))
+                # Continue even if resume fails - the process might already be running
+                time.sleep(3)
         else:
+            # App is already running, just attach to it
+            logger.info('App is already running with PID: {}. Attaching...'.format(pid))
             session = device.attach(pid)
+            logger.info('Attached to running process')
+            
+            # Set up session crash detection
+            def on_session_detached(reason, crash):
+                if crash:
+                    logger.error('Session crashed: {}'.format(crash))
+                else:
+                    logger.warning('Session detached: {}'.format(reason))
+                finished.set()
+            session.on('detached', on_session_detached)
+            
+    except frida.ProcessNotFoundError as e:
+        logger.error('Process not found: {}. The app may have crashed or been terminated.'.format(e))
+        return None, display_name, bundle_identifier, 0
+    except frida.InvalidOperationError as e:
+        logger.error('Invalid operation: {}. The app may not be debuggable or may require special permissions.'.format(e))
+        return None, display_name, bundle_identifier, 0
+    except frida.TransportError as e:
+        logger.error('Transport error: {}. Connection to device may have been lost.'.format(e))
+        return None, display_name, bundle_identifier, 0
     except Exception as e:
-        print(e)
+        error_msg = str(e)
+        if 'os/kern' in error_msg.lower() or 'failure' in error_msg.lower():
+            logger.error('Kernel-level error: {}. This may indicate:'.format(e))
+            logger.error('  1. The app requires special permissions or entitlements')
+            logger.error('  2. The device may need to be fully jailbroken')
+            logger.error('  3. The app may have anti-debugging protections')
+            logger.error('  4. Try killing the app first and then running the dump again')
+        else:
+            logger.error('Failed to spawn/attach to app: {}'.format(e))
+        return None, display_name, bundle_identifier, 0
 
-    return session, display_name, bundle_identifier
+    return session, display_name, bundle_identifier, pid
 
 
-def start_dump(session, ipa_name):
+def start_dump(session, ipa_name, display_name, ssh_connection, device, pid):
     logger.info('Dumping {} to {}'.format(display_name, TEMP_DIR))
-
-    script = load_js_file(session, DUMP_JS)
-    script.post('dump')
-    finished.wait()
-
-    generate_ipa(PAYLOAD_PATH, ipa_name)
-
-    if session:
-        session.detach()
+    
+    # Wait a bit longer for app to fully initialize before injecting dump script
+    # Some apps with anti-debugging need more time
+    logger.info('Waiting for app to initialize (this helps prevent crashes)...')
+    time.sleep(3)  # Increased delay for apps with anti-debugging
+    
+    # Check if process is still alive before proceeding
+    try:
+        # Try to enumerate processes to verify our target is still running
+        processes = device.enumerate_processes()
+        process_found = False
+        for proc in processes:
+            if proc.pid == pid:
+                process_found = True
+                logger.info('Process {} is still running'.format(pid))
+                break
+        if not process_found:
+            logger.error('Process {} is no longer running. App may have crashed.'.format(pid))
+            return False
+    except Exception as e:
+        logger.warning('Could not verify process status: {}'.format(e))
+        # Continue anyway - the attach might still work
+    
+    try:
+        script = load_js_file(session, DUMP_JS, ssh_connection)
+        logger.info('Dump script loaded. Starting dump process...')
+        
+        # Post dump command to script
+        script.post('dump')
+        
+        # Wait for dump to complete with timeout
+        # Some apps may crash, so we don't want to wait forever
+        logger.info('Waiting for dump to complete (this may take a while)...')
+        if not finished.wait(timeout=300):  # 5 minute timeout
+            logger.error('Dump operation timed out after 5 minutes')
+            logger.error('The app may have crashed or the dump script may be stuck')
+            return False
+        
+        logger.info('Dump completed successfully')
+        generate_ipa(PAYLOAD_PATH, ipa_name)
+        return True
+        
+    except frida.ProcessNotFoundError as e:
+        logger.error('Process not found during dump: {}. App may have crashed.'.format(e))
+        logger.error('This often happens when apps detect Frida or have anti-debugging protection.')
+        return False
+    except frida.TransportError as e:
+        logger.error('Transport error during dump: {}. Connection lost - app may have crashed.'.format(e))
+        logger.error('The app likely crashed when the dump script was injected.')
+        return False
+    except Exception as e:
+        logger.error('Error during dump: {}'.format(e))
+        logger.error('The app may have crashed. Check device logs for more details.')
+        return False
+    finally:
+        if session:
+            try:
+                session.detach()
+            except:
+                pass
 
 
 if __name__ == '__main__':
@@ -251,13 +409,66 @@ if __name__ == '__main__':
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ssh_host, port=ssh_port, username=ssh_user, password=ssh_password, timeout=5)
 
+        if not name_or_bundleid:
+            logger.error('Target app name or bundle identifier is required')
+            parser.print_help()
+            sys.exit(1)
+        
         create_dir(PAYLOAD_PATH)
-        (session, display_name, bundle_identifier) = open_target_app(device, name_or_bundleid)
-        if output_ipa == "None":
-            output_ipa = display_name
+        
+        # Try to open/attach to the target app
+        # Note: If you get "(os/kern) failure" errors, try:
+        # 1. Kill the app manually on the device first
+        # 2. Ensure the device is fully jailbroken
+        # 3. Check that Frida server version matches client version
+        # 4. Some apps with anti-debugging may block Frida
+        (session, display_name, bundle_identifier, pid) = open_target_app(device, name_or_bundleid)
+        
+        if not session:
+            logger.error('Failed to open target app. Exiting.')
+            logger.error('Troubleshooting tips:')
+            logger.error('  - Ensure the app is installed on the device')
+            logger.error('  - Try killing the app first: ssh into device and run "killall <app_name>"')
+            logger.error('  - Verify Frida server is running: frida-ps -U')
+            logger.error('  - Check device is fully jailbroken with proper permissions')
+            sys.exit(1)
+        
+        if output_ipa == "None" or not output_ipa:
+            output_ipa = display_name if display_name else bundle_identifier
         output_ipa = re.sub(r'\.ipa$', '', output_ipa)
         if session:
-            start_dump(session, output_ipa)
+            success = start_dump(session, output_ipa, display_name, ssh, device, pid)
+            if not success:
+                logger.error('')
+                logger.error('=' * 70)
+                logger.error('Dump failed. The app crashed during spawn/attach.')
+                logger.error('')
+                logger.error('This app has strong anti-debugging that detects Frida immediately.')
+                logger.error('The bypass script was injected but the app still crashed.')
+                logger.error('')
+                logger.error('✅ RECOMMENDED SOLUTION: Launch app manually first')
+                logger.error('')
+                logger.error('   Step 1: Open the app on your device manually')
+                logger.error('   Step 2: Wait for it to fully load and be ready')
+                logger.error('   Step 3: Run the dump command again:')
+                logger.error('')
+                logger.error('      ./ioshook -n "{}" -d -o {}'.format(display_name, output_ipa))
+                logger.error('')
+                logger.error('   When the app is already running, it will ATTACH instead of SPAWN,')
+                logger.error('   which bypasses the initial anti-debugging checks.')
+                logger.error('')
+                logger.error('Alternative solutions (if manual launch doesn\'t work):')
+                logger.error('')
+                logger.error('  Option 2: Use bypass in separate terminal first')
+                logger.error('    Terminal 1: ./ioshook -p {} -m bypass-jb'.format(bundle_identifier))
+                logger.error('    Terminal 2: ./ioshook -n "{}" -d -o {}'.format(display_name, output_ipa))
+                logger.error('')
+                logger.error('  Option 3: Advanced Frida hiding techniques')
+                logger.error('    - Use Frida with stealth mode')
+                logger.error('    - Patch Frida detection functions')
+                logger.error('    - Use custom Frida server builds')
+                logger.error('=' * 70)
+                sys.exit(1)
     except paramiko.ssh_exception.NoValidConnectionsError as e:
         print(e)
         exit_code = 1
