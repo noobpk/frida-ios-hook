@@ -1,5 +1,17 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2026-01-21
+
+### Added
+
+- Add new Frida scripts for SSL pinning bypass in Facebook and Instagram apps
+- Add SSH credential handling and port forwarding options to the CLI
+
+### Changed
+- Enhance iOSHook CLI with improved usage examples and option descriptions
+- Enhance option --shell / --ssh with better SSH connection handling
+- Refactor script loading and error handling for better stability
+
 ## [Unrelease] - 2025-10-06
 
 ### Added
@@ -11,7 +23,7 @@
 - Enhance option --shell / --ssh 
 - Update config hook.json
 
-## [Release 3.10] - 2025-29-04
+## [Release 3.10] - 2024-04-29
 
 ### Added
 - Add --pid for attach to target app with PID
