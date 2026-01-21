@@ -12,17 +12,17 @@ import time
 APP_AUTHOR = ''
 APP_VERSION = ''
 APP_SSH = ''
-APP_SSH_CRED = ''
+APP_SSH_DEFAULT_CRED = ''
 APP_PLATFORM_SUPPORT = ''
 APP_FIRST_RUN = ''
 APP_PACKAGES = ''
-APP_CONFIG = 'core/hook.json'
+APP_CONFIG = 'core/hook.conf'
 
 class config():
 
     def loadConfig():
 
-        global APP_VERSION, APP_AUTHOR, APP_SSH, APP_SSH_CRED, APP_PLATFORM_SUPPORT, APP_FIRST_RUN, APP_PACKAGES
+        global APP_VERSION, APP_AUTHOR, APP_SSH, APP_SSH_DEFAULT_CRED, APP_PLATFORM_SUPPORT, APP_FIRST_RUN, APP_PACKAGES
 
         try:
             if os.path.isfile(APP_CONFIG):
@@ -37,7 +37,7 @@ class config():
                 APP_METHODS = obj['methods']
                 APP_UTILS = obj['utils']
                 APP_SSH = obj['ssh']
-                APP_SSH_CRED = obj['sshCredential']
+                APP_SSH_DEFAULT_CRED = obj['sshDefaultCredential']
                 APP_PLATFORM_SUPPORT = obj['platformSupport']
                 APP_FIRST_RUN = obj['firstRun']
                 APP_PACKAGES = obj['packages']
@@ -49,7 +49,7 @@ class config():
                     "methods": APP_METHODS,
                     "utils": APP_UTILS,
                     "ssh": APP_SSH,
-                    "sshCredential": APP_SSH_CRED,
+                    "sshDefaultCredential": APP_SSH_DEFAULT_CRED,
                     "platformSupport": APP_PLATFORM_SUPPORT,
                     "firstRun": APP_FIRST_RUN,
                     "packages": APP_PACKAGES,
@@ -192,7 +192,7 @@ class check():
 
     def existSSHCred():
         try:
-            if APP_SSH_CRED['user'] == '' or APP_SSH_CRED['password'] == '':
+            if APP_SSH_DEFAULT_CRED['user'] == '' or APP_SSH_DEFAULT_CRED['password'] == '':
                 return False
             else:
                 return True

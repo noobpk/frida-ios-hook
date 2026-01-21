@@ -7,6 +7,7 @@ import subprocess
 import re
 import fnmatch
 import shlex
+from shutil import which
 from multiprocessing import Process, Event
 
 from utils.listapp import *
@@ -22,7 +23,7 @@ APP_FRIDA_SCRIPTS = GLOBAL_CONFIG['fridaScripts']
 APP_METHODS = GLOBAL_CONFIG['methods']
 APP_UTILS = GLOBAL_CONFIG['utils']
 APP_SSH = GLOBAL_CONFIG['ssh']
-APP_SSH_CRED = GLOBAL_CONFIG['sshCredential']
+APP_SSH_DEFAULT_CRED = GLOBAL_CONFIG['sshDefaultCredential']
 
 def dump_memory(option, process):
     try:
@@ -64,6 +65,48 @@ def hexbyte_scan(mode, file, option):
     except Exception as e:
         logger.error("[x_x] Something went wrong, please check your error message.\n Message - {0}".format(e))
 
+def open_config_file():
+    """Open hook.conf file with platform-specific editor (Notepad on Windows, TextEdit on macOS, vim/nano on Linux)."""
+    try:
+        # Get the config file path (relative to script directory)
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        config_path = os.path.join(script_dir, 'hook.conf')
+        
+        if not os.path.exists(config_path):
+            logger.error("[x_x] Configuration file not found at: {}".format(config_path))
+            logger.info("[*] Run setup.py first to initialize hook.conf")
+            sys.exit(1)
+        
+        logger.info("[*] Opening configuration file: {}".format(config_path))
+        
+        if sys.platform == 'win32':
+            # Windows: use Notepad
+            os.system('notepad "{}"'.format(config_path))
+        elif sys.platform == 'darwin':
+            # macOS: use TextEdit
+            os.system('open -a TextEdit "{}"'.format(config_path))
+        else:
+            # Linux: try vim, then nano, then $EDITOR
+            editor = os.environ.get('EDITOR')
+            if editor:
+                cmd = shlex.split('{} "{}"'.format(editor, config_path))
+                subprocess.call(cmd)
+            elif which('vim'):
+                cmd = shlex.split('vim "{}"'.format(config_path))
+                subprocess.call(cmd)
+            elif which('nano'):
+                cmd = shlex.split('nano "{}"'.format(config_path))
+                subprocess.call(cmd)
+            else:
+                logger.error("[x_x] No suitable editor found. Please install vim or nano, or set $EDITOR environment variable.")
+                sys.exit(1)
+        
+        logger.info("[*] Configuration file opened. Make your changes and save.")
+        sys.exit(0)
+    except Exception as e:
+        logger.error("[x_x] Something went wrong opening config file.\n Message - {0}".format(e))
+        sys.exit(1)
+
 def main():
     try:
 
@@ -103,6 +146,8 @@ def main():
                         help="List all installed applications on device", dest="listapps")
         info.add_option("--list-scripts", action="store_true", 
                         help="List all available Frida scripts", dest="listscripts")
+        info.add_option("--conf", action="store_true", 
+                        help="Open hook.conf configuration file with default editor", dest="conf")
         info.add_option("--logcat", action="store_true", 
                         help="Show system log of device (idevicesyslog)", dest="logcat")
         info.add_option("--shell", "--ssh", action="store_true", 
@@ -192,6 +237,9 @@ def main():
                         print('|%d|%s|%s|%s|%s|' % (i, mode, file_name, description, version))
             else:
                 logger.error('[x_x] Path frida-script not exists!')
+
+        elif options.conf:
+            open_config_file()
 
         #Spawning application and load script
         elif options.package and options.script:
@@ -490,11 +538,11 @@ def main():
                 SSH_PORT = APP_SSH['port']
                 logger.info('[*] Connecting via USB (iproxy - default): {}:{}'.format(SSH_IP, SSH_PORT))
             
-            # Load credentials from APP_SSH_CRED
+            # Load credentials from APP_SSH_DEFAULT_CRED
             isExist = check.existSSHCred()
             if isExist:
-                SSH_USER = APP_SSH_CRED['user']
-                SSH_PWD = APP_SSH_CRED['password']
+                SSH_USER = APP_SSH_DEFAULT_CRED['user']
+                SSH_PWD = APP_SSH_DEFAULT_CRED['password']
                 logger.info('[*] Using SSH credentials from config: {}@{}'.format(SSH_USER, SSH_IP))
             else:
                 # Fallback to interactive prompt if credentials not in config
@@ -622,8 +670,8 @@ def main():
                     completed_process = subprocess.call(cmd)
                     sys.exit(0)
             else:
-                SSH_USER = APP_SSH_CRED['user']
-                SSH_PWD = APP_SSH_CRED['password']
+                SSH_USER = APP_SSH_DEFAULT_CRED['user']
+                SSH_PWD = APP_SSH_DEFAULT_CRED['password']
                 logger.info("[*] Open SSH Shell on device")
                 cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
                 completed_process = subprocess.call(cmd)
@@ -673,8 +721,8 @@ def main():
                     input_ssh_user = input('[?] Input your SSH user: ')
                     SSH_USER = input_ssh_user
             else:
-                SSH_USER = APP_SSH_CRED['user']
-                SSH_PWD = APP_SSH_CRED['password']
+                SSH_USER = APP_SSH_DEFAULT_CRED['user']
+                SSH_PWD = APP_SSH_DEFAULT_CRED['password']
 
             if re.match(r'^\d+:\d+$', options.sshportforward):
                 LOCAL_PORT = options.sshportforward.split(':')[0]
