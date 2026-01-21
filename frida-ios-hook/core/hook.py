@@ -216,9 +216,12 @@ def main():
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
                 device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
                 pid = device.spawn([options.package])
+                logger.info('[*] Spawned: ' + options.package + ' with PID: ' + str(pid))
                 time.sleep(1)
                 session = device.attach(pid)
+                logger.info('[*] Attached: ' + options.package + ' with PID: ' + str(pid))
                 with open(options.script, 'r') as hook: 
                     script = session.create_script(hook.read()) 
                     script.on('message', lambda message, data: logger.info(message)) 
@@ -253,13 +256,20 @@ def main():
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(options.name)
-                hook = open(options.script, 'r')
-                script = process.create_script(hook.read())
-                script.load()
+                device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
+                process = device.attach(options.name)
+                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                with open(options.script, 'r') as hook:
+                    script = process.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(process.pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
+        
         #Attaching script to application with pid
         elif options.pid and options.script:
             check.deviceConnected()
@@ -282,14 +292,20 @@ def main():
                 logger.info('[*] Attaching PID: ' + options.pid)
                 logger.info('[*] Script: ' + options.script)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(int(options.pid))
-                hook = open(options.script, 'r')
-                script = process.create_script(hook.read())
-                script.load()
+                device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
+                process = device.attach(int(options.pid))
+                logger.info('[*] Attached: ' + options.pid + ' with PID: ' + str(process.pid))
+                with open(options.script, 'r') as hook:
+                    script = process.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(int(options.pid))
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
-        
+
         #Static Analysis Application
         elif options.name and options.method == "app-static":
             check.deviceConnected()
@@ -298,15 +314,35 @@ def main():
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Method: ' + options.method)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(options.name)
-                method = open(method, 'r')
-                script = process.create_script(method.read())
-                script.load()
+                device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
+                process = device.attach(options.name)
+                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                with open(method, 'r') as hook:
+                    script = process.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(process.pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
                 logger.error('[x_x] Script not found!')
+                device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
+                pid = device.spawn([options.package])
+                logger.info('[*] Spawned: ' + options.package + ' with PID: ' + str(pid))
+                time.sleep(1)
+                session = device.attach(pid)
+                logger.info('[*] Attached: ' + options.package + ' with PID: ' + str(pid))
+                with open(method, 'r') as hook:
+                    script = session.create_script(hook.read())
+                    script.on('message', lambda message, data: logger.info(message))
+                    script.load()
+                device.resume(pid)
+                logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
+                sys.stdin.read()
 
-        #Bypass jailbreak
+        #Bypass Jailbreak
         elif options.package and options.method == "bypass-jb":
             check.deviceConnected()
             method = APP_METHODS['Bypass Jailbreak Detection']
@@ -316,9 +352,12 @@ def main():
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
                 device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
                 pid = device.spawn([options.package])
+                logger.info('[*] Spawned: ' + options.package + ' with PID: ' + str(pid))
                 time.sleep(1)
                 session = device.attach(pid)
+                logger.info('[*] Attached: ' + options.package + ' with PID: ' + str(pid))
                 with open(method, 'r') as hook:
                     script = session.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
@@ -339,9 +378,12 @@ def main():
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
                 device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
                 pid = device.spawn([options.package])
+                logger.info('[*] Spawned: ' + options.package + ' with PID: ' + str(pid))
                 time.sleep(1)
                 session = device.attach(pid)
+                logger.info('[*] Attached: ' + options.package + ' with PID: ' + str(pid))
                 with open(method, 'r') as hook:
                     script = session.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
@@ -362,7 +404,10 @@ def main():
                 logger.info('[*] Attaching: ' + options.name)
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
-                process = frida.get_usb_device().attach(options.name)
+                device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
+                process = device.attach(options.name)
+                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
                 with open(method, 'r') as hook:
                     script = process.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
@@ -382,9 +427,12 @@ def main():
                 logger.info('[*] Script: ' + method)
                 time.sleep(2)
                 device = frida.get_usb_device()
+                logger.info('[*] Device: ' + str(device))
                 pid = device.spawn([options.package])
+                logger.info('[*] Spawned: ' + options.package + ' with PID: ' + str(pid))
                 time.sleep(1)
                 session = device.attach(pid)
+                logger.info('[*] Attached: ' + options.package + ' with PID: ' + str(pid))
                 with open(method, 'r') as hook:
                     script = session.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
