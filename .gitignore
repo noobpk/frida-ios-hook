@@ -137,3 +137,5 @@ dmypy.json
 *.zip
 
 py-env
+dumps/
+workspace/

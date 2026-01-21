@@ -24,8 +24,27 @@ except Exception as e:
     raise e
 """""
 
+def _createWorkspaceFolders():
+    """Create workspace folders for storing output files."""
+    workspace_folders = ['dumps', 'workspace']
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    
+    for folder in workspace_folders:
+        folder_path = os.path.join(script_dir, folder)
+        try:
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+                print("[+] Created workspace folder: {}".format(folder))
+            else:
+                print("[*] Workspace folder already exists: {}".format(folder))
+        except Exception as e:
+            print("[!] Warning: Could not create folder '{}': {}".format(folder, e))
+
 def _buildBinary():
     try:
+        # Create workspace folders first
+        _createWorkspaceFolders()
+        
         if sys.platform == 'darwin':
             for i in tqdm(range(100), colour="red"):
                 with open('frida-ios-hook/ioshook','w+', encoding="utf-8") as f:
