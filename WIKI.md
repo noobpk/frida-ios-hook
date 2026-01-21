@@ -128,3 +128,9 @@ Show system log of device (idevicesyslog)
 ```
 ./ioshook -h
 ```
+
+### Frida Scripts
+[See Full Frida Scripts](https://github.com/noobpk/frida-ios-hook/tree/master/frida-ios-hook/frida-scripts)
+
+### Hexbytescan-Task
+[See Full Hexbytescan-Task](https://github.com/noobpk/frida-ios-hook/tree/master/frida-ios-hook/hexbytescan-tasks)
