@@ -138,4 +138,4 @@ dmypy.json
 
 py-env
 dumps/
-workspace/
+workspaces/
