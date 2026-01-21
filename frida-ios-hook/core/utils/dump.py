@@ -3,6 +3,7 @@
 
 # Author : AloneMonkey
 # blog: www.alonemonkey.com
+# Modified by noobpk
 
 import sys
 import codecs
@@ -31,9 +32,12 @@ BYPASS_JB_JS = os.path.join(script_dir, '../../methods/bypass_jailbreak.js')
 TEMP_DIR = tempfile.gettempdir()
 PAYLOAD_DIR = 'Payload'
 PAYLOAD_PATH = os.path.join(TEMP_DIR, PAYLOAD_DIR)
+# Default output directory for dumped IPAs
+DUMP_OUTPUT_DIR = os.path.join(os.getcwd(), 'dumps')
 file_dict = {}
 
 finished = threading.Event()
+dump_success = threading.Event()
 
 
 def get_usb_iphone():
@@ -62,8 +66,31 @@ def get_usb_iphone():
     return device
 
 
-def generate_ipa(path, display_name):
+def generate_ipa(path, display_name, output_dir=None):
+    """
+    Generate IPA file from dumped payload.
+    
+    Args:
+        path: Path to the payload directory
+        display_name: Display name for the IPA file
+        output_dir: Output directory for the IPA file (default: DUMP_OUTPUT_DIR)
+    """
+    if output_dir is None:
+        output_dir = DUMP_OUTPUT_DIR
+    
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        try:
+            os.makedirs(output_dir)
+            logger.info('Created output directory: {}'.format(output_dir))
+        except os.error as err:
+            logger.error('Failed to create output directory {}: {}'.format(output_dir, err))
+            # Fallback to current directory
+            output_dir = os.getcwd()
+            logger.warning('Using current directory instead: {}'.format(output_dir))
+    
     ipa_filename = display_name + '.ipa'
+    ipa_path = os.path.join(output_dir, ipa_filename)
 
     logger.info('Generating "{}"'.format(ipa_filename))
     try:
@@ -76,10 +103,21 @@ def generate_ipa(path, display_name):
                 shutil.move(from_dir, to_dir)
 
         target_dir = './' + PAYLOAD_DIR
-        zip_args = ('zip', '-qr', os.path.join(os.getcwd(), ipa_filename), target_dir)
+        zip_args = ('zip', '-qr', ipa_path, target_dir)
         subprocess.check_call(zip_args, cwd=TEMP_DIR)
         shutil.rmtree(PAYLOAD_PATH)
+        
+        # Verify the IPA was created
+        if os.path.exists(ipa_path):
+            file_size = os.path.getsize(ipa_path)
+            logger.info('✅ IPA generated successfully: {}'.format(ipa_path))
+            logger.info('   File size: {:.2f} MB'.format(file_size / (1024 * 1024)))
+        else:
+            logger.warning('IPA file was not created at expected path: {}'.format(ipa_path))
+        
+        dump_success.set()
     except Exception as e:
+        logger.error('Error generating IPA: {}'.format(e))
         print(e)
         finished.set()
 
@@ -101,9 +139,85 @@ def on_message(message, data, ssh_connection):
 
             scp_from = dump_path
             scp_to = PAYLOAD_PATH + '/'
+            local_file_path = os.path.join(PAYLOAD_PATH, os.path.basename(dump_path))
 
-            with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
-                scp.get(scp_from, scp_to)
+            # Try SCP first
+            scp_success = False
+            try:
+                with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
+                    scp.get(scp_from, scp_to)
+                scp_success = True
+            except Exception as scp_error:
+                error_msg = str(scp_error)
+                if 'Permission denied' in error_msg:
+                    logger.warning('SCP Permission denied for: {}'.format(os.path.basename(dump_path)))
+                    logger.info('Attempting to fix permissions via SSH...')
+                    
+                    # Try to fix permissions via SSH command
+                    try:
+                        # Try to chmod the file on the device
+                        stdin, stdout, stderr = ssh_connection.exec_command('chmod 644 "{}"'.format(dump_path))
+                        exit_status = stdout.channel.recv_exit_status()
+                        if exit_status == 0:
+                            logger.info('Fixed permissions, retrying SCP...')
+                            # Retry SCP after fixing permissions
+                            with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
+                                scp.get(scp_from, scp_to)
+                            scp_success = True
+                        else:
+                            error_output = stderr.read().decode('utf-8')
+                            logger.warning('Could not fix permissions: {}'.format(error_output))
+                    except Exception as fix_error:
+                        logger.warning('Failed to fix permissions via SSH: {}'.format(fix_error))
+                    
+                    # If still failed, try copying to /tmp first (if not already there)
+                    if not scp_success and not dump_path.startswith('/tmp/'):
+                        tmp_path = '/tmp/' + os.path.basename(dump_path)
+                        logger.info('Attempting to copy file to /tmp for easier access...')
+                        try:
+                            # Copy file to /tmp on device
+                            stdin, stdout, stderr = ssh_connection.exec_command('cp "{}" "{}" && chmod 644 "{}"'.format(dump_path, tmp_path, tmp_path))
+                            exit_status = stdout.channel.recv_exit_status()
+                            if exit_status == 0:
+                                logger.info('Copied to /tmp, trying SCP from there...')
+                                with SCPClient(ssh_connection.get_transport(), progress = progress, socket_timeout = 60) as scp:
+                                    scp.get(tmp_path, scp_to)
+                                scp_success = True
+                                # Clean up /tmp file
+                                try:
+                                    ssh_connection.exec_command('rm "{}"'.format(tmp_path))
+                                except:
+                                    pass
+                            else:
+                                error_output = stderr.read().decode('utf-8')
+                                logger.warning('Could not copy to /tmp: {}'.format(error_output))
+                        except Exception as copy_error:
+                            logger.warning('Failed to copy to /tmp: {}'.format(copy_error))
+                    
+                    # If all else fails, try using cat via SSH (slower but works)
+                    if not scp_success:
+                        logger.warning('SCP failed, trying alternative method via SSH cat...')
+                        try:
+                            stdin, stdout, stderr = ssh_connection.exec_command('cat "{}"'.format(dump_path))
+                            file_data = stdout.read()
+                            if file_data:
+                                with open(local_file_path, 'wb') as f:
+                                    f.write(file_data)
+                                logger.info('Successfully retrieved file via SSH cat')
+                                scp_success = True
+                            else:
+                                error_output = stderr.read().decode('utf-8')
+                                logger.error('SSH cat failed: {}'.format(error_output))
+                        except Exception as cat_error:
+                            logger.error('SSH cat method also failed: {}'.format(cat_error))
+                else:
+                    logger.error('SCP error: {}'.format(scp_error))
+            
+            if not scp_success:
+                logger.error('Failed to retrieve file: {}'.format(os.path.basename(dump_path)))
+                logger.error('This file will be missing from the IPA. Continuing with other files...')
+                # Continue processing other files instead of failing completely
+                return
 
             chmod_dir = os.path.join(PAYLOAD_PATH, os.path.basename(dump_path))
             chmod_args = ('chmod', '655', chmod_dir)
@@ -173,7 +287,10 @@ def load_js_file(session, filename, ssh_connection):
     # Handle script crashes and errors
     # Note: Frida uses 'destroyed' event, not 'detached'
     def on_destroyed():
-        logger.warning('Script was destroyed. Process may have crashed or script was unloaded.')
+        if dump_success.is_set():
+            logger.info('Script destroyed after dump completion (expected).')
+        else:
+            logger.warning('Script was destroyed. Process may have crashed or script was unloaded.')
         finished.set()
     
     script.on('message', message_handler)
@@ -233,7 +350,9 @@ def open_target_app(device, name_or_bundleid):
             
             # Set up session crash detection
             def on_session_detached(reason, crash):
-                if reason == 'process-terminated':
+                if dump_success.is_set():
+                    logger.info('Session detached after dump completion (reason: {}).'.format(reason))
+                elif reason == 'process-terminated':
                     logger.error('')
                     logger.error('⚠️  CRITICAL: App crashed immediately after spawn!')
                     logger.error('   This app has very strong anti-debugging protection.')
@@ -284,7 +403,9 @@ def open_target_app(device, name_or_bundleid):
             
             # Set up session crash detection
             def on_session_detached(reason, crash):
-                if crash:
+                if dump_success.is_set():
+                    logger.info('Session detached after dump completion (reason: {}).'.format(reason))
+                elif crash:
                     logger.error('Session crashed: {}'.format(crash))
                 else:
                     logger.warning('Session detached: {}'.format(reason))
@@ -315,7 +436,7 @@ def open_target_app(device, name_or_bundleid):
     return session, display_name, bundle_identifier, pid
 
 
-def start_dump(session, ipa_name, display_name, ssh_connection, device, pid):
+def start_dump(session, ipa_name, display_name, ssh_connection, device, pid, output_dir=None):
     logger.info('Dumping {} to {}'.format(display_name, TEMP_DIR))
     
     # Wait a bit longer for app to fully initialize before injecting dump script
@@ -356,7 +477,7 @@ def start_dump(session, ipa_name, display_name, ssh_connection, device, pid):
             return False
         
         logger.info('Dump completed successfully')
-        generate_ipa(PAYLOAD_PATH, ipa_name)
+        generate_ipa(PAYLOAD_PATH, ipa_name, output_dir)
         return True
         
     except frida.ProcessNotFoundError as e:
@@ -386,6 +507,7 @@ if __name__ == '__main__':
     parser.add_argument('-H', '--host', dest='ssh_host', help='SSH host')
     parser.add_argument('-P', '--port', dest='ssh_port', type=int, help='SSH port')
     parser.add_argument('-o', '--output', dest='output_ipa', help='Specify name of the decrypted IPA')
+    parser.add_argument('-d', '--output-dir', dest='output_dir', help='Output directory for dumped IPAs (default: ./dumps)')
     parser.add_argument('target', nargs='?', help='Bundle identifier or display name of the target app')
     args = parser.parse_args()
 
@@ -404,6 +526,7 @@ if __name__ == '__main__':
     ssh_port = args.ssh_port
     name_or_bundleid = args.target
     output_ipa = args.output_ipa
+    output_dir = args.output_dir if args.output_dir else DUMP_OUTPUT_DIR
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -437,7 +560,7 @@ if __name__ == '__main__':
             output_ipa = display_name if display_name else bundle_identifier
         output_ipa = re.sub(r'\.ipa$', '', output_ipa)
         if session:
-            success = start_dump(session, output_ipa, display_name, ssh, device, pid)
+            success = start_dump(session, output_ipa, display_name, ssh, device, pid, output_dir)
             if not success:
                 logger.error('')
                 logger.error('=' * 70)
