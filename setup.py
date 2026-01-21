@@ -26,8 +26,15 @@ except Exception as e:
 
 def _createWorkspaceFolders():
     """Create workspace folders for storing output files."""
-    workspace_folders = ['dumps', 'workspace']
-    script_dir = os.path.dirname(os.path.realpath(__file__))
+    workspace_folders = ['dumps', 'workspaces']
+    # Create folders inside the `frida-ios-hook/` subfolder (not repo root)
+    repo_dir = os.path.dirname(os.path.realpath(__file__))
+    script_dir = os.path.join(repo_dir, 'frida-ios-hook')
+
+    if not os.path.isdir(script_dir):
+        raise FileNotFoundError(
+            "Expected subfolder 'frida-ios-hook' not found at: {}".format(script_dir)
+        )
     
     for folder in workspace_folders:
         folder_path = os.path.join(script_dir, folder)
