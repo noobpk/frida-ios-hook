@@ -1,6 +1,6 @@
 colorlog
-frid
-frida-tools
+frida==16.1.4
+frida-tools==12.2.1
 scp
 requests
 paramiko

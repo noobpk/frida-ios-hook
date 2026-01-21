@@ -4,7 +4,7 @@
 
 [![CodeQL](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/noobpk/frida-ios-hook/actions/workflows/codeql-analysis.yml)
 ![python](https://img.shields.io/badge/python-3.x-blue)
-![frida](https://img.shields.io/badge/frida-15.x-orange)
+![frida](https://img.shields.io/badge/frida-16.1.4-orange)
 
 📍 A tool that helps you can easy using frida. It support script for trace classes, functions, and modify the return values of methods on iOS platform.
 
@@ -22,7 +22,9 @@
 ## Compatible with
 | iOS      |  Frida   | Frida-tools | Supported        |
 | -------- | -------  | ----------- |----------------- |
-|  16.7.11  | 16.7.14   | 13.7.1      | :white_check_mark:|
+|  16.7.11  | 16.1.4   | 12.2.1      | :white_check_mark:|
+
+**Note:** Using stable versions frida==16.1.4 and frida-tools==12.2.1 to fix the [ObjC not defined issue](https://github.com/frida/frida/issues/3460) present in frida 17.0.1.
 
 ## Feature
 
