@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys
 import os
+import shutil
 from tqdm import tqdm
 
 setup = """#!/usr/bin/python3
@@ -47,10 +48,38 @@ def _createWorkspaceFolders():
         except Exception as e:
             print("[!] Warning: Could not create folder '{}': {}".format(folder, e))
 
+def _initHookJson():
+    """Initialize hook.conf from hook.conf.default if it doesn't exist."""
+    repo_dir = os.path.dirname(os.path.realpath(__file__))
+    script_dir = os.path.join(repo_dir, 'frida-ios-hook')
+    core_dir = os.path.join(script_dir, 'core')
+    
+    hook_json_env = os.path.join(core_dir, 'hook.conf.default')
+    hook_json = os.path.join(core_dir, 'hook.conf')
+    
+    if not os.path.isdir(core_dir):
+        print("[!] Warning: 'frida-ios-hook/core' directory not found")
+        return
+    
+    if not os.path.exists(hook_json_env):
+        print("[!] Warning: 'hook.conf.default' not found at: {}".format(hook_json_env))
+        return
+    
+    try:
+        if not os.path.exists(hook_json):
+            shutil.copy2(hook_json_env, hook_json)
+            print("[+] Initialized hook.conf from hook.conf.default")
+        else:
+            print("[*] hook.conf already exists, skipping initialization")
+    except Exception as e:
+        print("[!] Warning: Could not initialize hook.conf: {}".format(e))
+
 def _buildBinary():
     try:
         # Create workspace folders first
         _createWorkspaceFolders()
+        # Initialize hook.conf from hook.conf.default
+        _initHookJson()
         
         if sys.platform == 'darwin':
             for i in tqdm(range(100), colour="red"):

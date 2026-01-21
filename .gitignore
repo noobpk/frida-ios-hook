@@ -139,4 +139,4 @@ dmypy.json
 py-env
 dumps/
 workspaces/
-frida-ios-hook/core/hook.json
+frida-ios-hook/core/hook.conf
