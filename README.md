@@ -54,6 +54,7 @@ Support both spawn & attach script to process.
     --list-apps         List all installed applications on device
     --list-scripts      List all available Frida scripts
     --logcat            Show system log of device (idevicesyslog)
+    --conf              Open and edit hook.conf file
     --shell, --ssh      Open SSH shell to device (default USB via iproxy)
     --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
                         Forward port from local to device (ssh -R)

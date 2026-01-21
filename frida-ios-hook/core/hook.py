@@ -147,7 +147,7 @@ def main():
         info.add_option("--list-scripts", action="store_true", 
                         help="List all available Frida scripts", dest="listscripts")
         info.add_option("--conf", action="store_true", 
-                        help="Open hook.conf configuration file with default editor", dest="conf")
+                        help="Open and edit hook.conf file", dest="conf")
         info.add_option("--logcat", action="store_true", 
                         help="Show system log of device (idevicesyslog)", dest="logcat")
         info.add_option("--shell", "--ssh", action="store_true", 
