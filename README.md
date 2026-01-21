@@ -20,11 +20,12 @@
 | Windows | :white_check_mark: | Unstable|
 
 ## Compatible with
-| iOS      |  Frida   | Frida-tools | Supported        |
-| -------- | -------  | ----------- |----------------- |
-|  16.7.11  | 16.1.4   | 12.2.1      | :white_check_mark:|
+| iOS      |  Frida   | Frida-tools | Supported        | Stable Version |
+| -------- | -------  | ----------- |----------------- | -------------- |
+| 16.7.11  | 16.7.14   | 13.7.1      | :white_check_mark:| |
+|  16.7.11  | 16.1.4   | 12.2.1      | :white_check_mark:| :white_check_mark:|
 
-**Note:** Using stable versions frida==16.1.4 and frida-tools==12.2.1 to fix the [ObjC not defined issue](https://github.com/frida/frida/issues/3460) present in frida 17.0.1.
+**Note:** Using stable versions to fix the [ObjC not defined issue](https://github.com/frida/frida/issues/3460) present in frida 17.0.1.
 
 ## Feature
 
@@ -35,52 +36,48 @@ Support both spawn & attach script to process.
 ```
 [+] Options:
   -h, --help            Show basic help message and exit
-  --cli                 iOSHook command line interface
+  --cli                 Launch iOSHook interactive CLI
   -p PACKAGE, --package=PACKAGE
-                        Identifier of the target app
-  -n NAME, --name=NAME  Name of the target app
-  --pid=PID             PID of the target app
+                        Bundle identifier of target app (spawn)
+  -n NAME, --name=NAME  Display name of target app (attach)
+  --pid=PID             Process ID of target app (attach)
   -s SCRIPT.JS, --script=SCRIPT.JS
-                        Frida Script Hooking
-  -c, --check-version   Check iOSHook for the newest version
-  -u, --update          Update iOSHook to the newest version
-
-  Dump decrypt IPA:
-    -d, --dump-app      Dump decrypt application.ipa
-    -o OUTPUT_IPA, --output=OUTPUT_IPA
-                        Specify name of the decrypted IPA
-
-  Dump memory of Application:
-    --dump-memory=DUMPMEMORY
-                        Dump memory of application
-
-  HexByte Scan IPA:
-    --hexbyte-scan=HEXSCAN
-                        Choose help - scan - patch - json
-    --file=SCANFILE     File App.ipa
-    --pattern=PATTERN   Pattern for hexbytescan
-    --address=ADDRESS   Address for hexbytescan
-    --task=TASK         Json File task for hexbytescan
-
-  Information:
-    --list-devices      List All Devices
-    --list-apps         List The Installed apps
-    --list-scripts      List All Scripts
-    --logcat            Show system log of device
-    --shell, --ssh      Get the shell of connect device
-    --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
-                        Forward the port from local to device
+                        Path to Frida JavaScript hooking script
+  -c, --check-version   Check for iOSHook updates
+  -u, --update          Update iOSHook to latest version
   Quick Method:
     -m METHOD, --method=METHOD
-                        app-static: Static Analysis Application(-n)
-                        bypass-jb: Bypass Jailbreak Detection(-p)
-                        bypass-ssl: Bypass SSL Pinning(-p)
-                        i-url-req: Intercept URLRequest in App(-n)
-                        i-crypto: Intercept Crypto in App(-p)
+                        app-static | bypass-jb | bypass-ssl | i-url-req | i-crypto
+
+  Information:
+    --list-devices      List all connected Frida devices
+    --list-apps         List all installed applications on device
+    --list-scripts      List all available Frida scripts
+    --logcat            Show system log of device (idevicesyslog)
+    --shell, --ssh      Open SSH shell to device (default USB via iproxy)
+    --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
+                        Forward port from local to device (ssh -R)
+    --network=HOST:PORT Connect via network SSH (default port 22)
+    --local             Connect via USB using iproxy
+
+  Dump decrypt IPA:
+    -d, --dump-app      Dump and decrypt application IPA file
+    -o OUTPUT_IPA, --output=OUTPUT_IPA
+                        Output filename for decrypted IPA (without .ipa)
+
+  Dump memory of Application:
+    --dump-memory=OPTS  Dump memory of running application (e.g. --string)
+
+  HexByte Scan IPA:
+    --hexbyte-scan=MODE help | scan | patch | json
+    --file=FILE.IPA     IPA file to scan/patch
+    --pattern=PATTERN   Hex pattern for scan
+    --address=ADDRESS   Address,bytes,distance for patch
+    --task=TASK.json    JSON task file for hexbyte scan
 
   reFlutter:
-    --reflutter=FLUTTERFILE
-                        File Flutter.ipa
+    --reflutter=FLUTTER.IPA
+                        Path to Flutter IPA for reFlutter analysis
 ```
 
 ## 📜 ChangeLog
