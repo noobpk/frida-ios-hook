@@ -24,11 +24,28 @@ cd frida-ios-hook
 ```
 
 ### Quick Methods
+Attach to App Store and run static analysis
 ```
 ./ioshook -n 'App Store' -m app-static
+```
+
+Spawn App Store and bypass jailbreak detection
+```
 ./ioshook -p com.apple.AppStore -m bypass-jb
+```
+
+Spawn App Store and bypass SSL pinning
+```
 ./ioshook -p com.apple.AppStore -m bypass-ssl
+```
+
+Attach to App Store and intercept URL request
+```
 ./ioshook -n 'App Store' -m i-url-req
+```
+
+Spawn App Store and intercept crypto operations
+```
 ./ioshook -p com.apple.AppStore -m i-crypto
 ```
 
@@ -41,44 +58,69 @@ cd frida-ios-hook
 ```
 
 ### Dump Memory
+Dump memory of running application (e.g. --string)
+
 ```
 ./ioshook -n 'App Store' --dump-memory --string
 ```
 
 ### HexByte Scan IPA
+Scan/patch IPA file for hex pattern (e.g. E103??AA????E0)
+
 ```
 ./ioshook --hexbyte-scan scan --file AppStore.ipa --pattern E103??AA????E0
 ./ioshook --hexbyte-scan json --file AppStore.ipa --task /hexbytescan-tasks/openssl_hook.json
 ```
 
 ### SSH Shell (Network)
+Connect via network SSH (default port 22)
+
 ```
 ./ioshook --shell --network 192.168.1.100:22
 ./ioshook --ssh --network 192.168.1.100
 ```
 
 ### SSH Shell (USB - Default)
+Connect via USB using iproxy (default if not specified)
+
 ```
 ./ioshook --shell
 ./ioshook --shell --local
 ```
 
 ### SSH Port Forward (Network)
+Forward port from local to device (ssh -R)
+
 ```
 ./ioshook --ssh-port-forward 8080:8080 --network 192.168.1.100
 ```
 
 ### SSH Port Forward (USB)
+Forward port from local to device (ssh -R)
+
 ```
 ./ioshook --ssh-port-forward 8080:8080 --local
 ./ioshook --ssh-port-forward 8080:8080
 ```
 
 ### Information
+List all connected Frida devices
 ```
 ./ioshook --list-devices
+```
+
+List all installed applications on device
+```
 ./ioshook --list-apps
+```
+
+List all available Frida scripts
+```
 ./ioshook --list-scripts
+```
+
+Show system log of device (idevicesyslog)
+```
 ./ioshook --logcat
 ```
 

@@ -94,12 +94,7 @@ def main():
         parser.add_option("-u", "--update", action="store_true", help='Update iOSHook to latest version', dest="update")
 
         quick.add_option("-m", "--method", dest="method", type="choice", choices=['app-static','bypass-jb','bypass-ssl','i-url-req','i-crypto'],
-                        help='''Quick method shortcuts:
-  app-static  - Static analysis of application (use with -n)
-  bypass-jb   - Bypass jailbreak detection (use with -p)
-  bypass-ssl  - Bypass SSL pinning (use with -p)
-  i-url-req   - Intercept URL requests (use with -n)
-  i-crypto    - Intercept crypto operations (use with -p)''', metavar="METHOD")
+                        help='''Quick method shortcuts: app-static (use with -n) | bypass-jb (use with -p) | bypass-ssl (use with -p) | i-url-req (use with -n) | i-crypto (use with -p)''', metavar="METHOD")
         
         # Information options
         info.add_option("--list-devices", action="store_true", 
