@@ -124,6 +124,11 @@ Show system log of device (idevicesyslog)
 ./ioshook --logcat
 ```
 
+Open and edit hook.conf configuration file with default editor
+```
+./ioshook --conf
+```
+
 ### More Help
 ```
 ./ioshook -h
