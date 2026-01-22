@@ -160,7 +160,7 @@ class check():
                             break
                         elif not iproxy_device_port.isdigit():
                             logger.error("[x_x] Please enter valid port number.")
-                        iproxy_start = input('[?] Do you want start iproxy 2222 22 (yes/no): ')
+                        iproxy_start = input('[?] Do you want start iproxy 2222 {} (yes/no): '.format(iproxy_device_port))
                         yes_choices = ['yes', 'y']
                         no_choices = ['no', 'n']
                         if iproxy_start.lower() in yes_choices:
