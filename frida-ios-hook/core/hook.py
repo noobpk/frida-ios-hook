@@ -307,12 +307,13 @@ def main():
                 device = frida.get_usb_device()
                 logger.info('[*] Device: ' + str(device))
                 process = device.attach(options.name)
-                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                # logger.info('process:', process)
+                # logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
                 with open(options.script, 'r') as hook:
                     script = process.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
                     script.load()
-                device.resume(process.pid)
+                # device.resume(process.pid)
                 logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
@@ -665,15 +666,19 @@ def main():
                     logger.error("[x_x] SSH user not found in list!")
                     input_ssh_user = input('[?] Input your SSH user: ')
                     SSH_USER = input_ssh_user
-                    logger.info("[*] Open SSH Shell on device")
-                    cmd = shlex.split("ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
-                    completed_process = subprocess.call(cmd)
-                    sys.exit(0)
+                logger.info("[*] Open SSH Shell on device")
+                # Add SSH options to suppress host key warnings (keep stderr for interactive sessions)
+                ssh_opts = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
+                cmd = shlex.split("ssh " + ssh_opts + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                completed_process = subprocess.call(cmd)
+                sys.exit(0)
             else:
                 SSH_USER = APP_SSH_DEFAULT_CRED['user']
                 SSH_PWD = APP_SSH_DEFAULT_CRED['password']
                 logger.info("[*] Open SSH Shell on device")
-                cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
+                # Add SSH options to suppress host key warnings (keep stderr for interactive sessions)
+                ssh_opts = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
+                cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh " + ssh_opts + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT))
                 completed_process = subprocess.call(cmd)
                 sys.exit(0)
 
@@ -731,12 +736,16 @@ def main():
                 logger.info("[*] Service on machine:localhost:" + LOCAL_PORT + " will be accessible on mobile:localhost:" + DEVICE_PORT)
                 # Use -R for remote port forwarding: -R remote_port:local_host:local_port
                 # This forwards remote DEVICE_PORT to local LOCAL_PORT (where your service runs)
+                # Add SSH options to suppress warnings and improve stability
+                ssh_opts = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
                 if isExist:
-                    cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
+                    cmd = shlex.split("sshpass -p " + SSH_PWD + " ssh " + ssh_opts + " -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
                 else:
-                    cmd = shlex.split("ssh -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
+                    cmd = shlex.split("ssh " + ssh_opts + " -R " + DEVICE_PORT + ":localhost:" + LOCAL_PORT + " " + SSH_USER + "@" + SSH_IP + " -p " + str(SSH_PORT) + " -N")
                 logger.info("[*] Port forwarding active. Press Ctrl+C to stop.")
-                completed_process = subprocess.call(cmd)
+                # Suppress stderr to hide iproxy TCP_NODELAY warnings
+                with open(os.devnull, 'w') as devnull:
+                    completed_process = subprocess.call(cmd, stderr=devnull)
                 sys.exit(0)
             else:
                 logger.error("[x_x] Please use with command: ./ioshook --ssh-port-forward LOCAL_PORT:DEVICE_PORT")
