@@ -307,13 +307,11 @@ def main():
                 device = frida.get_usb_device()
                 logger.info('[*] Device: ' + str(device))
                 process = device.attach(options.name)
-                # logger.info('process:', process)
-                # logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                logger.info('[*] Attached: ' + options.name)
                 with open(options.script, 'r') as hook:
                     script = process.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
                     script.load()
-                # device.resume(process.pid)
                 logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
@@ -366,12 +364,11 @@ def main():
                 device = frida.get_usb_device()
                 logger.info('[*] Device: ' + str(device))
                 process = device.attach(options.name)
-                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                logger.info('[*] Attached: ' + options.name)
                 with open(method, 'r') as hook:
                     script = process.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
                     script.load()
-                device.resume(process.pid)
                 logger.info("[*] Hook loaded, press Ctrl+C to exit.") 
                 sys.stdin.read()
             else:
@@ -456,7 +453,7 @@ def main():
                 device = frida.get_usb_device()
                 logger.info('[*] Device: ' + str(device))
                 process = device.attach(options.name)
-                logger.info('[*] Attached: ' + options.name + ' with PID: ' + str(process.pid))
+                logger.info('[*] Attached: ' + options.name )
                 with open(method, 'r') as hook:
                     script = process.create_script(hook.read())
                     script.on('message', lambda message, data: logger.info(message))
