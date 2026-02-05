@@ -27,17 +27,18 @@ except Exception as e:
 
 def _createWorkspaceFolders():
     """Create workspace folders for storing output files."""
-    workspace_folders = ['dumps', 'workspaces']
     # Create folders inside the `frida-ios-hook/` subfolder (not repo root)
     repo_dir = os.path.dirname(os.path.realpath(__file__))
     script_dir = os.path.join(repo_dir, 'frida-ios-hook')
+    workspaces_dir = os.path.join(script_dir, 'workspaces')
 
     if not os.path.isdir(script_dir):
         raise FileNotFoundError(
             "Expected subfolder 'frida-ios-hook' not found at: {}".format(script_dir)
         )
-    
-    for folder in workspace_folders:
+
+    # Ensure workspaces exists
+    for folder in ['workspaces']:
         folder_path = os.path.join(script_dir, folder)
         try:
             if not os.path.exists(folder_path):
@@ -47,6 +48,17 @@ def _createWorkspaceFolders():
                 print("[*] Workspace folder already exists: {}".format(folder))
         except Exception as e:
             print("[!] Warning: Could not create folder '{}': {}".format(folder, e))
+
+    # Create dumps folder inside workspaces
+    dumps_path = os.path.join(workspaces_dir, 'dumps')
+    try:
+        if not os.path.exists(dumps_path):
+            os.makedirs(dumps_path)
+            print("[+] Created workspace folder: workspaces/dumps")
+        else:
+            print("[*] Workspace folder already exists: workspaces/dumps")
+    except Exception as e:
+        print("[!] Warning: Could not create folder 'workspaces/dumps': {}".format(e))
 
 def _initHookJson():
     """Initialize hook.conf from hook.conf.default if it doesn't exist."""

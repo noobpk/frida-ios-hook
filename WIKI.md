@@ -16,6 +16,7 @@ pip3 install -r requirements.txt
 python3 setup.py
 cd frida-ios-hook
 ```
+Setup creates `workspaces` and `workspaces/dumps` (default output folder for dumped IPAs).
 
 ### Spawn/Attach App with Script
 ```
@@ -50,9 +51,16 @@ Spawn App Store and intercept crypto operations
 ```
 
 ### Dump Decrypt IPA
+Decrypted IPA is saved to **`workspaces/dumps`** by default.
+
+- `-d`, `--dump-app` — dump and decrypt the app IPA
+- `-o`, `--output` — output filename (without .ipa)
+- `--dump-output-dir DIR` — folder for the IPA (default: `workspaces/dumps`)
+
 ```
 ./ioshook -p com.apple.AppStore -d -o App_dump_name
 ./ioshook -n 'App Store' -d -o App_dump_name
+./ioshook -n 'App Store' -d -o App_dump_name --dump-output-dir /path/to/output
 ./ioshook -p com.apple.AppStore -d --network 192.168.1.100:22
 ./ioshook -n 'App Store' -d --local
 ```

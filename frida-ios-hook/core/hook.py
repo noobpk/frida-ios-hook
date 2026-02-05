@@ -167,6 +167,9 @@ def main():
         dumpapp.add_option("-o", "--output", action="store", 
                         help="Output filename for decrypted IPA (without .ipa extension)", 
                         dest="output_ipa", metavar="OUTPUT_IPA", type="string")
+        dumpapp.add_option("--dump-output-dir", action="store",
+                        help="Output directory for dumped IPA (default: workspaces/dumps)",
+                        dest="dump_output_dir", metavar="DIR", type="string")
 
         # Dump memory options
         dumpmemory.add_option("--dump-memory", action="store", 
@@ -561,7 +564,8 @@ def main():
                     input_ssh_pwd = input('[?] Input your SSH password: ')
                     SSH_PWD = input_ssh_pwd
 
-            logger.info('[*] Dumping...')
+            out_dir = getattr(options, 'dump_output_dir', None) or 'workspaces/dumps'
+            logger.info('[*] Dumping... (IPA output dir: {})'.format(out_dir))
             util = APP_UTILS['Dump Decrypt Application']
             # Build command as list to properly handle app names with spaces
             cmd = ["python3", util, "-u", SSH_USER, "-p", SSH_PWD, "-H", SSH_IP, "-P", str(SSH_PORT)]
@@ -571,6 +575,8 @@ def main():
                 cmd.append(options.name)  # App name with spaces will be properly handled
             if options.output_ipa:
                 cmd.extend(["-o", str(options.output_ipa)])
+            if getattr(options, 'dump_output_dir', None):
+                cmd.extend(["-d", str(options.dump_output_dir)])
             completed_process = subprocess.call(cmd)
             sys.exit(0)
 

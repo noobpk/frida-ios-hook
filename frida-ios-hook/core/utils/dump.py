@@ -25,6 +25,8 @@ import traceback
 from log import *
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
+# frida-ios-hook root (parent of core/)
+hook_root = os.path.normpath(os.path.join(script_dir, '../..'))
 
 DUMP_JS = os.path.join(script_dir, '../../methods/dump.js')
 BYPASS_JB_JS = os.path.join(script_dir, '../../methods/bypass_jailbreak.js')
@@ -32,8 +34,8 @@ BYPASS_JB_JS = os.path.join(script_dir, '../../methods/bypass_jailbreak.js')
 TEMP_DIR = tempfile.gettempdir()
 PAYLOAD_DIR = 'Payload'
 PAYLOAD_PATH = os.path.join(TEMP_DIR, PAYLOAD_DIR)
-# Default output directory for dumped IPAs
-DUMP_OUTPUT_DIR = os.path.join(os.getcwd(), 'dumps')
+# Default output directory for dumped IPAs: workspaces/dumps inside frida-ios-hook
+DUMP_OUTPUT_DIR = os.path.join(hook_root, 'workspaces', 'dumps')
 file_dict = {}
 
 finished = threading.Event()
