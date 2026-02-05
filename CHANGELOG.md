@@ -1,5 +1,22 @@
 # Frida iOS Hook ChangeLog
 
+## [Unrelease] - 2026-02-05
+
+### Added
+
+- Add `workspaces/dumps` as default output folder for dump decrypt IPA
+- Add option `--dump-output-dir DIR` to choose custom folder for dumped IPA
+- Setup creates `workspaces` and `workspaces/dumps` on build
+
+### Changed
+
+- Dump IPA now saves to `frida-ios-hook/workspaces/dumps` by default (no longer CWD/dumps)
+- Log when dumping now shows IPA output dir (e.g. `IPA output dir: workspaces/dumps`)
+- WIKI: document default dump path, `-o`/`--output`, and `--dump-output-dir`
+- WIKI: document that setup creates workspaces and workspaces/dumps
+
+---
+
 ## [Unrelease] - 2026-01-21
 
 ### Added
