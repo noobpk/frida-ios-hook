@@ -46,7 +46,7 @@
 |42|S+A|show-modify-method-return-value.js|Show and modify return value of a particular method inside a class|1.0|
 |43|S+A|show_binarycookies.js|Show contents of Cookies.binarycookies file|1.0|
 
-## Credit
+## Credits
 
 ➡️ [interference-security/frida-scripts](https://github.com/interference-security/frida-scripts/tree/master/android)
 

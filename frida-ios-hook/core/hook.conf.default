@@ -1,6 +1,6 @@
 {
     "name": "frida-ios-hook",
-    "version": "3.8",
+    "version": "3.11",
     "cliVersion": "1.1",
     "author": "noobpk",
     "license": "LICENSE",
@@ -48,7 +48,7 @@
         "ip": "127.0.0.1",
         "port": 2222
     },
-    "sshCredential": {
+    "sshDefaultCredential": {
         "user": "mobile",
         "password": "root"
     },

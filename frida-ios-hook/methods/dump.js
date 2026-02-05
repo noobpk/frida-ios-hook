@@ -145,6 +145,7 @@ var close = getExportFunction("f", "close", "int", ["int"]);
 var remove = getExportFunction("f", "remove", "int", ["pointer"]);
 var access = getExportFunction("f", "access", "int", ["pointer", "int"]);
 var dlopen = getExportFunction("f", "dlopen", "pointer", ["pointer", "int"]);
+var fchmod = getExportFunction("f", "fchmod", "int", ["int", "int"]);
 
 function getDocumentDir() {
     var NSDocumentDirectory = 9;
@@ -224,7 +225,9 @@ function dumpModule(name) {
         remove(allocStr(newmodpath));
     }
 
-    var fmodule = open(newmodpath, O_CREAT | O_RDWR, 0);
+    // NOTE: use a readable file mode so we can pull it back over SSH/SCP.
+    // The previous mode `0` created files with perms 000, causing "Permission denied" on scp.get().
+    var fmodule = open(newmodpath, O_CREAT | O_RDWR, 0o644);
     var foldmodule = open(oldmodpath, O_RDONLY, 0);
 
     if (fmodule == -1 || foldmodule == -1) {
@@ -315,8 +318,51 @@ function dumpModule(name) {
         write(fmodule, modbase.add(crypt_off), crypt_size);
     }
 
-    close(fmodule);
     close(foldmodule);
+    
+    // Explicitly set file permissions to be readable by all (0644)
+    // This helps with SCP access issues
+    try {
+        fchmod(fmodule, 0o644);
+    } catch(e) {
+        console.log(colors.yellow, "[Warning] Could not set file permissions: ", colors.resetColor, e);
+    }
+    
+    close(fmodule);
+    
+    // Copy file to /tmp for easier SCP access (avoids sandbox permission issues)
+    // The Documents directory is sandboxed and may not be accessible via SSH
+    var tmp_path = "/tmp/" + newmodname + ".fid";
+    try {
+        // Remove old file in /tmp if it exists
+        if(!access(allocStr(tmp_path), 0)) {
+            remove(allocStr(tmp_path));
+        }
+        
+        // Copy file to /tmp
+        var ftmp = open(tmp_path, O_CREAT | O_RDWR, 0o644);
+        if (ftmp != -1) {
+            var fsrc = open(newmodpath, O_RDONLY, 0);
+            if (fsrc != -1) {
+                lseek(fsrc, 0, SEEK_SET);
+                lseek(ftmp, 0, SEEK_SET);
+                var readLen = 0;
+                while((readLen = read(fsrc, buffer, BUFSIZE)) > 0) {
+                    write(ftmp, buffer, readLen);
+                }
+                close(fsrc);
+                fchmod(ftmp, 0o644);
+                close(ftmp);
+                console.log(colors.green, "[frida-ios-dump]: Copied to /tmp for SCP access: ", colors.resetColor, tmp_path);
+                return tmp_path;  // Return /tmp path instead
+            }
+            close(ftmp);
+        }
+    } catch(e) {
+        console.log(colors.yellow, "[Warning] Could not copy to /tmp, using original path: ", colors.resetColor, e);
+    }
+    
+    // Fallback to original path if /tmp copy fails
     return newmodpath
 }
 

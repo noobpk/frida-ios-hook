@@ -1,17 +1,30 @@
 # Frida iOS Hook ChangeLog
 
-## [Unrelease] - 2025-10-06
+## [Release 3.11] - 2025-02-01
 
 ### Added
 
-- Add --ssh-port-forward for Forward the port from local to device
-- Add using sshpass for auto input ssh password
+- **Default dump output folder:** `workspaces/dumps` for decrypted IPA (created by setup).
+- **Option `--dump-output-dir DIR`:** Custom output directory for dumped IPA (CLI and hook.py).
+- **Setup:** Creates `workspaces` and `workspaces/dumps` when running `python3 setup.py`.
+- New Frida scripts for SSL pinning bypass in Facebook and Instagram apps.
+- SSH credential handling and port forwarding options in the CLI.
+- `--ssh-port-forward` to forward port from local to device (ssh -R).
+- Using sshpass for auto input SSH password.
 
 ### Changed
-- Enhance option --shell / --ssh 
-- Update config hook.json
 
-## [Release 3.10] - 2025-29-04
+- **Dump IPA path:** Saves to `frida-ios-hook/workspaces/dumps` by default instead of `./dumps` (no longer depends on CWD).
+- **Dump util (`core/utils/dump.py`):** `DUMP_OUTPUT_DIR` set from script location (`hook_root/workspaces/dumps`).
+- **Dump log:** When dumping, log shows output dir (e.g. `IPA output dir: workspaces/dumps`).
+- **WIKI:** Document default path, `-o`/`--output`, `--dump-output-dir`, and that setup creates workspaces/dumps.
+- **README:** Feature section replaced with full options table from hook.py; changelog section updated to 3.11.
+- Enhance iOSHook CLI with improved usage examples and option descriptions.
+- Enhance option `--shell` / `--ssh` with better SSH connection handling.
+- Refactor script loading and error handling for better stability.
+- Update config (hook.conf / hook.json).
+
+## [Release 3.10] - 2024-04-29
 
 ### Added
 - Add --pid for attach to target app with PID

@@ -137,3 +137,6 @@ dmypy.json
 *.zip
 
 py-env
+dumps/
+workspaces/
+frida-ios-hook/core/hook.conf
