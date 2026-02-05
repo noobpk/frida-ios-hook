@@ -29,72 +29,41 @@
 
 ## Feature
 
-Running with python3.x
+Running with python3.x. Support both **spawn** & **attach** script to process. All options from `./ioshook -h`:
 
-Support both spawn & attach script to process.
-
-```
-[+] Options:
-  -h, --help            Show basic help message and exit
-  --cli                 Launch iOSHook interactive CLI
-  -p PACKAGE, --package=PACKAGE
-                        Bundle identifier of target app (spawn)
-  -n NAME, --name=NAME  Display name of target app (attach)
-  --pid=PID             Process ID of target app (attach)
-  -s SCRIPT.JS, --script=SCRIPT.JS
-                        Path to Frida JavaScript hooking script
-  -c, --check-version   Check for iOSHook updates
-  -u, --update          Update iOSHook to latest version
-  Quick Method:
-    -m METHOD, --method=METHOD
-                        app-static | bypass-jb | bypass-ssl | i-url-req | i-crypto
-
-  Information:
-    --list-devices      List all connected Frida devices
-    --list-apps         List all installed applications on device
-    --list-scripts      List all available Frida scripts
-    --logcat            Show system log of device (idevicesyslog)
-    --conf              Open and edit hook.conf file
-    --shell, --ssh      Open SSH shell to device (default USB via iproxy)
-    --ssh-port-forward=LOCAL_PORT:DEVICE_PORT
-                        Forward port from local to device (ssh -R)
-    --network=HOST:PORT Connect via network SSH (default port 22)
-    --local             Connect via USB using iproxy
-
-  Dump decrypt IPA:
-    -d, --dump-app      Dump and decrypt application IPA file
-    -o OUTPUT_IPA, --output=OUTPUT_IPA
-                        Output filename for decrypted IPA (without .ipa)
-
-  Dump memory of Application:
-    --dump-memory=OPTS  Dump memory of running application (e.g. --string)
-
-  HexByte Scan IPA:
-    --hexbyte-scan=MODE help | scan | patch | json
-    --file=FILE.IPA     IPA file to scan/patch
-    --pattern=PATTERN   Hex pattern for scan
-    --address=ADDRESS   Address,bytes,distance for patch
-    --task=TASK.json    JSON task file for hexbyte scan
-
-  reFlutter:
-    --reflutter=FLUTTER.IPA
-                        Path to Flutter IPA for reFlutter analysis
-```
+| Category | Option | Description |
+|----------|--------|-------------|
+| **General** | `-h`, `--help` | Show help message and exit |
+| | `--cli` | Launch iOSHook interactive CLI |
+| | `-p`, `--package` *PACKAGE* | Bundle identifier of target app (spawn) |
+| | `-n`, `--name` *NAME* | Display name of target app (attach) |
+| | `--pid` *PID* | Process ID of target app (attach) |
+| | `-s`, `--script` *SCRIPT.JS* | Path to Frida JavaScript hooking script |
+| | `-c`, `--check-version` | Check for iOSHook updates |
+| | `-u`, `--update` | Update iOSHook to latest version |
+| **Quick Method** | `-m`, `--method` *METHOD* | `app-static`, `bypass-jb`, `bypass-ssl`, `i-url-req`, `i-crypto` (use `-n` or `-p` as required) |
+| **Information** | `--list-devices` | List all connected Frida devices |
+| | `--list-apps` | List all installed applications on device |
+| | `--list-scripts` | List all available Frida scripts |
+| | `--logcat` | Show system log of device (idevicesyslog) |
+| | `--conf` | Open and edit hook.conf file |
+| | `--shell`, `--ssh` | Open SSH shell to device (default: USB via iproxy) |
+| | `--ssh-port-forward` *LOCAL:DEVICE* | Forward port from local to device (ssh -R) |
+| | `--network` *HOST:PORT* | Connect via network SSH (default port 22) |
+| | `--local` | Connect via USB using iproxy |
+| **Dump decrypt IPA** | `-d`, `--dump-app` | Dump and decrypt application IPA file |
+| | `-o`, `--output` *OUTPUT_IPA* | Output filename for decrypted IPA (without .ipa) |
+| | `--dump-output-dir` *DIR* | Output directory for dumped IPA (default: `workspaces/dumps`) |
+| **Dump memory** | `--dump-memory` *OPTS* | Dump memory of running application (e.g. `--string`, `--read-only`) |
+| **HexByte Scan IPA** | `--hexbyte-scan` *MODE* | Mode: `help`, `scan`, `patch`, `json` |
+| | `--file` *FILE.IPA* | IPA file to scan/patch |
+| | `--pattern` *PATTERN* | Hex pattern to search (e.g. E103??AA????E0) |
+| | `--address` *ADDRESS* | Address for patch (format: address,bytes,distance) |
+| | `--task` *TASK.json* | JSON task file for hexbyte scan |
+| **reFlutter** | `--reflutter` *FLUTTER.IPA* | Path to Flutter IPA for reFlutter analysis |
 
 ## 📜 ChangeLog
 
-Version: 3.10
-```
-	[+] Add:
-		- Add --pid for attach to target app with PID
-	[+] Change:
-		- Update option --shell / --ssh 
-    - Update option -d / --dump-app
-    - Update frida version
-    - Update readme, changelog, requirement
-	[+] Fix
-		- Fix issue #84
-```
 [See Full ChangeLog](https://github.com/noobpk/frida-ios-hook/blob/master/CHANGELOG.md)
 
 ## Install
