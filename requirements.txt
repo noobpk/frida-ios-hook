@@ -1,5 +1,5 @@
 colorlog
-frida==16.1.4
+frida==17.6.2
 frida-tools==12.2.1
 scp
 requests
